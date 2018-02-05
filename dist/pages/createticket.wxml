@@ -1,0 +1,12 @@
+
+<view class="container" style="background-color:grey">
+
+
+  <view class="zan-panel content">
+   s
+  </view>
+  <view class="zan-panel recorder">
+    <button class="zan-btn zan-btn--large zan-btn--primary">确认付款</button>
+  </view>
+
+</view>

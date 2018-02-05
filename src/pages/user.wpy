@@ -1,0 +1,44 @@
+<style lang="less">
+
+</style>
+<template>
+  <view class="container">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+
+  export default class User extends wepy.page {
+    config = {
+      navigationBarTitleText: 'User'
+    }
+    components = {
+    }
+
+    mixins = [testMixin]
+
+    data = {
+
+    }
+
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+
+    methods = {
+
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+
+    }
+  }
+</script>

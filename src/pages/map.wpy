@@ -1,0 +1,55 @@
+<style lang="less">
+.container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.container map {
+  width: 100%;
+  height: 100%;
+}
+</style>
+<template>
+  <view class="container">
+    <map id="map" class="map" longitude="113.324520" latitude="23.099994" scale="14"
+        controls="" bindcontroltap="" markers="" bindmarkertap=""
+        bindregionchange="" show-location=true></map>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+
+  export default class Map extends wepy.page {
+    config = {
+      navigationBarTitleText: '吉米敢说'
+    }
+    components = {
+    }
+
+    mixins = [testMixin]
+
+    data = {
+
+    }
+
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+
+    methods = {
+
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+
+    }
+  }
+</script>
