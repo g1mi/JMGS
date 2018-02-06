@@ -42,14 +42,13 @@ import 'wepy-async-function'
 export default class extends wepy.app {
   config = {
     pages: [
-
-      'pages/createticket',
       'pages/displayticket',
       'pages/grcoin',
       'pages/map',
       'pages/user',
       'pages/userrecord',
-      'pages/index'
+      'pages/index',
+       'pages/createticket'
     ],
     window: {
       backgroundTextStyle: 'light',

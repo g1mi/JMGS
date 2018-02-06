@@ -1,0 +1,1 @@
+.hero__terminal{width:80%;margin:1rem auto 3rem auto;text-align:left;color:white;padding:0 1rem;border-radius:4px;background-color:#232323;min-height:285px;animation:fadeUp 2s;box-shadow:0 12px 36.8px 9.2px rgba(0,0,0,0.1)}.code{font-size:16px;font-family:'Courier New',Courier,monospace;color:#F0E8E8}.i{font-size:16px;font-family:'Courier New',Courier,monospace;color:#F0E8E8}

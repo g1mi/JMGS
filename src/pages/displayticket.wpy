@@ -2,25 +2,34 @@
 
 </style>
 <template>
-  <view class="container">
-  </view>
+  <bulletin :content.sync="content"></bulletin>
 </template>
 
 <script>
   import wepy from 'wepy'
+  import 'wepy-async-function'
   import testMixin from '../mixins/test'
+   import Bulletin from '../components/bulletin'
 
   export default class Displayticket extends wepy.page {
     config = {
       navigationBarTitleText: 'Displayticket'
     }
     components = {
+      bulletin: Bulletin
     }
 
     mixins = [testMixin]
 
     data = {
-
+      content: '',
+      demo: `
+    亲爱的顾客，你好！您是今天第101个敢说发起者。
+    请注意发起的敢说不得包含如下内容：
+        🈲色情，
+        🈲违法，
+        🈲政治相关。
+     想看看昨天的数据么？`
     }
 
     computed = {
@@ -37,8 +46,25 @@
 
     }
 
-    onLoad() {
+  onReady() {
+    this.typeOut(this.demo)
+    console.log(this.$com.bulletin)
+  }
 
+  async typeOut (content) {
+    let script = content.split('')
+    let speed = 60
+    for(let i = 0 ; i < script.length ; i++){
+      this.content += await this.spitLetter(script[i], '\n' === script[i] ? speed * 5 : speed)
+      this.$apply()
+    }
+  }
+ spitLetter(letter, speed) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(letter)
+          }, speed)
+        })
     }
   }
 </script>
