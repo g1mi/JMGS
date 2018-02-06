@@ -4,7 +4,7 @@
   margin: 1rem auto 3rem auto;
   text-align: left;
   color: white;
-  padding: 0 1rem;
+  padding: 0 1rem 1rem;
   border-radius: 4px;
   background-color: #232323;
   min-height: 285px;
@@ -15,6 +15,8 @@
   font-size: 16px;
   font-family:'Courier New', Courier, monospace;
   color: #F0E8E8;
+  display: block;
+  white-space: pre-line;
 }
 .i {
   font-size: 16px;
@@ -25,8 +27,7 @@
 <template>
     <view class="hero__terminal">
       <code class="code">
-        <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>\n
-        <i id="content">{{content}}</i>
+        <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>{{content}}
       </code>
     </view>
 </template>

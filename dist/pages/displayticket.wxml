@@ -2,7 +2,6 @@
   
     <view class="hero__terminal">
       <code class="code">
-        <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>\n
-        <i id="content">{{$bulletin$content}}</i>
+        <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>{{$bulletin$content}}
       </code>
     </view>
