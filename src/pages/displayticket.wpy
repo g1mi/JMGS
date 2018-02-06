@@ -2,7 +2,7 @@
 
 </style>
 <template>
-  <bulletin :content.sync="content"></bulletin>
+  <bulletin></bulletin>
 </template>
 
 <script>
@@ -46,25 +46,8 @@
 
     }
 
-  onReady() {
-    this.typeOut(this.demo)
-    console.log(this.$com.bulletin)
-  }
-
-  async typeOut (content) {
-    let script = content.split('')
-    let speed = 60
-    for(let i = 0 ; i < script.length ; i++){
-      this.content += await this.spitLetter(script[i], '\n' === script[i] ? speed * 5 : speed)
-      this.$apply()
-    }
-  }
- spitLetter(letter, speed) {
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve(letter)
-          }, speed)
-        })
+    onReady() {
+      this.$invoke('bulletin', 'typeInfo', this.demo)
     }
   }
 </script>
