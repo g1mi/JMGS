@@ -1,122 +1,63 @@
-<style lang="less">
-.index {
-    .weui-flex{
-        align-items: center;
-    }
-    .weui-cells{
-        margin-top: 0;
-        opacity: 0;
-        transform: translateY(-50%);
-        transition: 1s;
-        &:before, &:after{
-            display: none;
-        }
-        &_show{
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    .weui-cell{
-        &:before{
-            right: 15px;
-        }
-    }
+<style lang='css'>
+@import '/zanui/panel.wxss';
+@import '/zanui/col.wxss';
+@import '/zanui/row.wxss';
+@import '/zanui/btn.wxss';
 
-    .kind-list{
-    }
-    .kind-list__item{
-        border: 1rpx solid #e0e0e0;
-        box-shadow: 0 0 6rpx rgba(0, 0, 0, .15);
-        border-radius: 7rpx;
-
-        margin: 10px 0;
-        background-color: #FFFFFF;
-        border-radius: 2px;
-        overflow: hidden;
-        &:first-child{
-            margin-top: 0;
-        }
-    }
-    .kind-list__img{
-        width: 30px;
-        height: 30px;
-    }
-
-    .kind-list__item-hd{
-        padding: 20px;
-        transition: opacity .3s;
-        &_show{
-            opacity: .4;
-        }
-    }
-    .kind-list__item-bd{
-        height: 0;
-        overflow: hidden;
-        &_show{
-            height: auto;
-        }
-    }
+.zan-col {
+  line-height: 30px;
+  text-align: center;
+  background-color: #39a9ed;
+  font-size: 12px;
+  color: #fff;
 }
-.bg {
-    background-color: white;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+
+.zan-col:nth-child(even) {
+  background-color: #66c6f2;
+}
+.recorder {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 1rem;
+  padding-top: 15px;
+}
+.showcontent {
+  display: inline;
+}
+.hidecontent {
+  display: none;
 }
 </style>
 <template>
+<view class="container" style="background-color:grey">
 
-    <view class="index page bg">
-      <bulletin></bulletin>
-        <view class="page__bd page__bd_spacing">
-            <view class="kind-list">
-                <repeat for="{{list}}" key="id">
-                    <view class="kind-list__item">
-                         <view class="kind-list__item-bd {{item.open ? 'kind-list__item-bd_show' : ''}}">
-                            <view class="weui-cells {{item.open ? 'weui-cells_show' : ''}}">
-                                <navigator url="./{{page}}" class="weui-cell weui-cell_access" wx:for="{{item.pages}}" wx:for-item="page" wx:key="*this">
-                                    <view class="weui-cell__bd">{{page}}</view>
-                                    <view class="weui-cell__ft weui-cell__ft_in-access"></view>
-                                </navigator>
-                            </view>
-                        </view>
-                        <view id="{{item.id}}" class="weui-flex kind-list__item-hd {{item.open ? 'kind-list__item-hd_show' : ''}}" @tap="toggle({{item.id}})">
-                            <button>开始录音</button>
-                        </view>
 
-                    </view>
-                </repeat>
-            </view>
-        </view>
-    </view>
-  <!--<bulletin></bulletin>-->
+  <view class="zan-panel content">
+   
+  </view>
+  <view class="zan-panel recorder">
+    <button class="zan-btn zan-btn--large zan-btn--primary">确认付款</button>
+  </view>
+
+</view>
 </template>
+
 
 <script>
   import wepy from 'wepy'
-  import 'wepy-async-function'
   import testMixin from '../mixins/test'
-  import Bulletin from '../components/bulletin'
-  import mock from '../util/Mock'
 
-  export default class Displayticket extends wepy.page {
+  export default class Createticket extends wepy.page {
     config = {
-      navigationBarTitleText: 'Displayticket'
+      navigationBarTitleText: '显示敢说'
     }
     components = {
-      bulletin: Bulletin
     }
 
     mixins = [testMixin]
 
     data = {
-      list: [
-                {
-                    id: 'widget',
-                    name: '基础组件',
-                    open: false,
-                    pages: ['article', 'badge', 'flex', 'footer', 'gallery', 'grid', 'icons', 'loadmore', 'panel', 'preview', 'progress']
-                }]
     }
 
     computed = {
@@ -126,18 +67,14 @@
     }
 
     methods = {
-      toggle (id) {
-          this.list.forEach(v => v.open = (v.id === id) ? !v.open : false);
-        }
+
     }
 
     events = {
 
     }
 
-    onReady() {
-      console.log(mock)
-      this.$invoke('bulletin', 'typeInfo', mock.getBulletinInfo())
+    onLoad() {
     }
   }
 </script>

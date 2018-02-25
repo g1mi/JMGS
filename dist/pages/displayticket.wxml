@@ -1,32 +1,12 @@
 
+<view class="container" style="background-color:grey">
 
-    <view class="index page bg">
-      
-    <view class="hero__terminal">
-      <code class="code">
-        <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>{{$bulletin$content}}
-      </code>
-    </view>
 
-        <view class="page__bd page__bd_spacing">
-            <view class="kind-list">
-                <block wx:for="{{list}}" wx:for-index="index" wx:for-item="item" wx:key="id">
-                    <view class="kind-list__item">
-                         <view class="kind-list__item-bd {{item.open ? 'kind-list__item-bd_show' : ''}}">
-                            <view class="weui-cells {{item.open ? 'weui-cells_show' : ''}}">
-                                <navigator url="./{{page}}" class="weui-cell weui-cell_access"  wx:for="{{item.pages}}" wx:for-item="page" wx:key="*this">
-                                    <view class="weui-cell__bd">{{page}}</view>
-                                    <view class="weui-cell__ft weui-cell__ft_in-access"/>
-                                </navigator>
-                            </view>
-                        </view>
-                        <view id="{{item.id}}" class="weui-flex kind-list__item-hd {{item.open ? 'kind-list__item-hd_show' : ''}}" bindtap="toggle" data-wpytoggle-a="{{item.id}}">
-                            <button>开始录音</button>
-                        </view>
+  <view class="zan-panel content">
+   
+  </view>
+  <view class="zan-panel recorder">
+    <button class="zan-btn zan-btn--large zan-btn--primary">确认付款</button>
+  </view>
 
-                    </view>
-                </block>
-            </view>
-        </view>
-    </view>
-  <!--<bulletin></bulletin>-->
+</view>

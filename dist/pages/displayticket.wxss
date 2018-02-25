@@ -1,2 +1,30 @@
-@import "./../components/bulletin.wxss";
-.index .weui-flex{align-items:center}.index .weui-cells{margin-top:0;opacity:0;transform:translateY(-50%);transition:1s}.index .weui-cells:before,.index .weui-cells:after{display:none}.index .weui-cells_show{opacity:1;transform:translateY(0)}.index .weui-cell:before{right:15px}.index .kind-list__item{border:1rpx solid #e0e0e0;box-shadow:0 0 6rpx rgba(0,0,0,0.15);border-radius:7rpx;margin:10px 0;background-color:#FFFFFF;border-radius:2px;overflow:hidden}.index .kind-list__item:first-child{margin-top:0}.index .kind-list__img{width:30px;height:30px}.index .kind-list__item-hd{padding:20px;transition:opacity .3s}.index .kind-list__item-hd_show{opacity:.4}.index .kind-list__item-bd{height:0;overflow:hidden}.index .kind-list__item-bd_show{height:auto}.bg{background-color:white;position:absolute;bottom:0;width:100%}
+
+@import '/zanui/panel.wxss';
+@import '/zanui/col.wxss';
+@import '/zanui/row.wxss';
+@import '/zanui/btn.wxss';
+
+.zan-col {
+  line-height: 30px;
+  text-align: center;
+  background-color: #39a9ed;
+  font-size: 12px;
+  color: #fff;
+}
+
+.zan-col:nth-child(even) {
+  background-color: #66c6f2;
+}
+.recorder {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  padding-bottom: 1rem;
+  padding-top: 15px;
+}
+.showcontent {
+  display: inline;
+}
+.hidecontent {
+  display: none;
+}
