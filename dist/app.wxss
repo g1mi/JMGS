@@ -1,8 +1,8 @@
 
-@import '/zanui/helper.wxss';
+@import '/zanui/index.wxss';
 
 .container {
-  background: #f9f9f9;
+  background: #f8f8f8;
   overflow: hidden;
   min-height: 100vh;
   box-sizing: border-box;

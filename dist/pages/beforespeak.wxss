@@ -1,0 +1,2 @@
+@import "./../components/bulletin.wxss";
+.recorder{width:80%;position:absolute;bottom:0;text-align:center;padding:15px calc(10%) 2rem}.showcontent{display:inline}.hidecontent{display:none}

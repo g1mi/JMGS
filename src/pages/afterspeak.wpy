@@ -1,0 +1,78 @@
+<style lang='less'>
+.player {
+  width: 80%;
+  bottom: 0;
+  text-align: center;
+  padding: 15px calc(10%) 15px;
+}
+</style>
+<template>
+  <view class="container">
+      <view class="zan-panel">
+        <view class="player">
+          <button type="primary">播放内容</button>
+        </view>
+      </view>
+      <view class="zan-panel">
+        <view style="padding: 15px;">允许自己参与    <switch checked ></switch></view>
+      </view>
+
+      <view class="zan-panel">
+        <view style="padding: 15px;">内容</view>
+      </view>
+  </view>
+</template>
+
+
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+  import Mock from '@/util/Mock'
+  export default class AfterSpeak extends wepy.page {
+    config = {
+      navigationBarTitleText: '创建敢说'
+    }
+    components = {
+    }
+
+    mixins = [testMixin]
+
+    data = {
+      userInfo: {
+        nickName: '加载中...'
+      }
+    }
+
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+
+    methods = {
+
+    }
+
+    events = {
+
+    }
+
+    onLoad() {
+      let self = this
+      this.$parent.getUserInfo(function (userInfo) {
+        if (userInfo) {
+          self.userInfo = userInfo
+        }
+        self.normalTitle = '标题已被修改'
+
+        self.setTimeoutTitle = '标题三秒后会被修改'
+        setTimeout(() => {
+          self.setTimeoutTitle = '到三秒了'
+          self.$apply()
+        }, 3000)
+
+        self.$apply()
+      })
+    }
+  }
+</script>

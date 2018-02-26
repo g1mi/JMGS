@@ -10,7 +10,7 @@
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
 
-  export default class Grcoin extends wepy.page {
+  export default class DisplayRecord extends wepy.page {
     config = {
       navigationBarTitleText: 'Grcoin'
     }

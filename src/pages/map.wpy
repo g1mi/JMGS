@@ -1,20 +1,35 @@
 <style lang="less">
-.container {
+.full-screen {
   position: absolute;
   width: 100%;
   height: 100%;
+  background-color: #f8f8f8;
 }
-.container map {
-  width: 100%;
-  height: 100%;
+.speak {
+  position: absolute;
+  top: 60%;
+  right: 5%;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: inline-block;
+}
+.record {
+    .speak;
+    top: 78%;
 }
 </style>
 <template>
-  <view class="container">
-    <map id="map" class="map" longitude="113.324520" latitude="23.099994" scale="14"
-        controls="" bindcontroltap="" markers="" bindmarkertap=""
-        bindregionchange="" show-location="true"></map>
-  </view>
+  <view >
+  <map id="map" class="full-screen" longitude="113.324520" latitude="23.099994" scale="14"
+    controls="" bindcontroltap="" markers="" bindmarkertap=""
+    bindregionchange="" show-location="true"></map>
+  <cover-view class="speak" bindtap="speak">
+      <cover-image src="../assets/speak.png" />
+  </cover-view>
+   <cover-view class="record" bindtap="record">
+      <cover-image src="../assets/record.png" />
+  </cover-view>
+</view>
 </template>
 
 <script>
@@ -41,7 +56,12 @@
     }
 
     methods = {
-
+      speak: function (e) {
+        console.log('speak')
+      },
+      record: function (e) {
+        console.log('record')
+      }
     }
 
     events = {

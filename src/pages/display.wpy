@@ -30,16 +30,8 @@
 }
 </style>
 <template>
-<view class="container" style="background-color:grey">
-
-
-  <view class="zan-panel content">
-   
-  </view>
-  <view class="zan-panel recorder">
-    <button class="zan-btn zan-btn--large zan-btn--primary">确认付款</button>
-  </view>
-
+<view class="container">
+  <camera device-position="front" flash="off" binderror="error" style="width: 100%; height: 500px;"></camera>
 </view>
 </template>
 
@@ -48,9 +40,9 @@
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
 
-  export default class Createticket extends wepy.page {
+  export default class Display extends wepy.page {
     config = {
-      navigationBarTitleText: '创建敢说'
+      navigationBarTitleText: '显示敢说'
     }
     components = {
     }

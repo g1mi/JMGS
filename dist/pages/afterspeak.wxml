@@ -1,0 +1,15 @@
+
+  <view class="container">
+      <view class="zan-panel">
+        <view class="player">
+          <button type="primary">播放内容</button>
+        </view>
+      </view>
+      <view class="zan-panel">
+        <view style="padding: 15px;">允许自己参与    <switch checked/></view>
+      </view>
+
+      <view class="zan-panel">
+        <view style="padding: 15px;">内容</view>
+      </view>
+  </view>

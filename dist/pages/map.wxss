@@ -1,1 +1,1 @@
-.container{position:absolute;width:100%;height:100%}.container map{width:100%;height:100%}
+.full-screen{position:absolute;width:100%;height:100%;background-color:#f8f8f8}.speak{position:absolute;top:60%;right:5%;width:3.5rem;height:3.5rem;display:inline-block}.record{position:absolute;top:60%;right:5%;width:3.5rem;height:3.5rem;display:inline-block;top:78%}
