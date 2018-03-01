@@ -1,24 +1,23 @@
-<style lang='less'>
+<style lang='css'>
+@import "../assets/styles/animate.wxss";
+
 .recorder {
   width: 80%;
   position: absolute;
   bottom: 0;
-  text-align: center;
   padding: 15px calc(10%) 2rem;
 }
-.showcontent {
-  display: inline;
-}
-.hidecontent {
-  display: none;
-}
+
 </style>
 <template>
 <view class="container">
     <bulletin></bulletin>
 
-    <view class="recorder">
-      <button class="">开始录音</button>
+    <view id="btn-speak" class="recorder {{animation}}">
+      <button type="{{buttonState.type}}"
+      @tap="tip" @longpress="record" @touchend="touchend" @touchcancel=""
+      hover-stop-propagation="true">
+      {{buttonState.content}}</button>
     </view>
 
 </view>
@@ -30,17 +29,41 @@
   import testMixin from '../mixins/test'
   import Bulletin from '@/components/bulletin'
   import Mock from '@/util/Mock'
+  const  pageVars = {
+    readyToRecord: "准备说：",
+    buttonTip: "请长按录音...",
+    recording: '正在录音...',
+    canceled: '已取消!',
+    waitAWhile: '请稍后...',
+    cancelRecording: '松开 取消'
+  }
+
+  const status = {
+    beforeRecording: 0,
+    recording: 1,
+    recorded: 2
+  }
   export default class BeforeSpeak extends wepy.page {
     config = {
-      navigationBarTitleText: '准备说'
+      navigationBarTitleText: "准备说"
     }
     components = {
-      bulletin: Bulletin
+      bulletin: Bulletin,
     }
 
     mixins = [testMixin]
 
     data = {
+      animation: 'animated bounce', //record button div
+      buttonState: {
+        "content": pageVars.readyToRecord,
+        "type": "default",
+      },
+      currentStatus: status.beforeRecording,
+      touchPoint: {
+        clientX: 0,
+        clientY: 0
+      },
     }
 
     computed = {
@@ -50,7 +73,73 @@
     }
 
     methods = {
+      tip() {
+        this.buttonState.content = pageVars.buttonTip;
+      },
+      record(e) {
+        //longpress
+        //change status
 
+        //vibrate and alert sound
+        for(let i = 0; i < 5; i++){
+          setTimeout(() => {
+            wepy.vibrateShort()
+          }, i*15);
+        }
+
+        this.currentStatus = status.recording
+        this.buttonState.content = pageVars.cancelRecording
+        wepy.showToast({
+          icon: 'loading',
+          title: pageVars.recording,
+          mask:true,
+          duration: 60000
+        })
+        //mark the coordinates
+        this.touchPoint = {
+          clientX: e.touches[0].clientX,
+          clientY: e.touches[0].clientY
+        }
+
+        //start recording------
+        wepy.startRecord({
+          success: function(res) {
+            var tempFilePath = res.tempFilePath
+          },
+          fail: function(res) {
+
+          }
+        })
+      },
+      touchend(e) {
+        //when catch the touchend event , we should check the status first
+        if (status.recording === this.currentStatus) {
+          wepy.hideToast()
+          let slidedUp = e.changedTouches[0].clientY < this.touchPoint.clientY // canceling recording by sliding up
+          if (slidedUp) { // if cancel the recording
+            console.log('canceled recording')
+            this.currentStatus = status.beforeRecording //reset status
+            this.buttonState.content = pageVars.readyToRecord //reset the button
+            setTimeout(() => {
+              wepy.showToast({
+              title: pageVars.canceled,
+              icon: 'none'
+            })
+            }, 300);
+            //stop recording and not save
+
+          } else {
+            //console.log('recorded')
+            // recorded, add mask
+            wepy.showLoading({
+              title: pageVars.waitAWhile,
+              mask: true
+            })
+            // prcessing the recording
+
+          }
+        }
+      }
     }
 
     events = {
@@ -59,6 +148,7 @@
 
     onLoad() {
       this.$invoke('bulletin', 'typeInfo',Mock.getBulletinInfo())
+
     }
   }
 </script>

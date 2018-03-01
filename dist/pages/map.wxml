@@ -2,9 +2,9 @@
   <view>
   <map id="map" class="full-screen" longitude="113.324520" latitude="23.099994" scale="14" controls="" bindcontroltap="" markers="" bindmarkertap="" bindregionchange="" show-location="true"/>
   <cover-view class="speak" bindtap="speak">
-      <cover-image src="../assets/speak.png"/>
+      <cover-image src="../assets/images/speak.png"/>
   </cover-view>
    <cover-view class="record" bindtap="record">
-      <cover-image src="../assets/record.png"/>
+      <cover-image src="../assets/images/record.png"/>
   </cover-view>
 </view>

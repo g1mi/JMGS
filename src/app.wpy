@@ -25,14 +25,15 @@ import 'wepy-async-function'
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/afterspeak',
+
       'pages/beforespeak',
-      'pages/map',
+      'pages/afterspeak',
       'pages/beforerecord',
       'pages/afterrecord',
       'pages/display',
       'pages/userrecord',
       'pages/index',
+       'pages/map',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -43,7 +44,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
-    userInfo: null
+    userInfo: null,
   }
 
   constructor () {

@@ -24,10 +24,10 @@
     controls="" bindcontroltap="" markers="" bindmarkertap=""
     bindregionchange="" show-location="true"></map>
   <cover-view class="speak" bindtap="speak">
-      <cover-image src="../assets/speak.png" />
+      <cover-image src="../assets/images/speak.png" />
   </cover-view>
    <cover-view class="record" bindtap="record">
-      <cover-image src="../assets/record.png" />
+      <cover-image src="../assets/images/record.png" />
   </cover-view>
 </view>
 </template>
