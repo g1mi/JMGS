@@ -1,4 +1,5 @@
 
+@import './assets/style/weui.wxss';
 .container {
   background: #f8f8f8;
   overflow: hidden;

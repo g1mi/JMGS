@@ -1,4 +1,5 @@
 <style lang="css">
+@import './assets/style/weui.wxss';
 .container {
   background: #f8f8f8;
   overflow: hidden;
@@ -21,15 +22,14 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-
+import Mock from "@/util/Mock";
 export default class extends wepy.app {
   config = {
     pages: [
-
-      'pages/beforespeak',
       'pages/afterspeak',
-      'pages/beforerecord',
-      'pages/afterrecord',
+      'pages/beforespeak',
+      'pages/beforefilm',
+      'pages/afterfilm',
       'pages/display',
       'pages/userrecord',
       'pages/index',
@@ -45,6 +45,7 @@ export default class extends wepy.app {
 
   globalData = {
     userInfo: null,
+    allowedCity: '',
   }
 
   constructor () {
@@ -54,6 +55,8 @@ export default class extends wepy.app {
 
   onLaunch() {
     this.testAsync()
+
+    this.globalData.allowedCity = Mock.getAllowedCities().join(',')
   }
 
   sleep (s) {

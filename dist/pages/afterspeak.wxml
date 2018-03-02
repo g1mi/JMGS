@@ -1,15 +1,61 @@
 
   <view class="container">
-      <view class="zan-panel">
-        <view class="player">
-          <button type="primary">播放内容</button>
-        </view>
+
+      <view class="weui-panel weui-panel_access">
+            <view class="weui-panel__hd"><button type="primary">播放内容</button></view>
       </view>
-      <view class="zan-panel">
-        <view style="padding: 15px;">允许自己参与    <switch checked/></view>
+      <view class="weui-cells__title">默认为1天，超出需要支付占位费。</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">时限</view>
+                <view class="weui-cell__ft">
+                  <slider min="1" show-value disabled/>
+                </view>
+            </view>
+        </view>
+        <view class="weui-cells__title">默认为当前地址。范围: {{allowedCity}}内。</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">地点</view>
+                <view class="weui-cell__ft" bindtap="pickLoc">
+                    <button type="{{mapPicked}}" plain="true" size="mini">点击选取地图坐标</button>
+                </view>
+            </view>
+        </view>
+        <view class="weui-cells__title">默认为50人，最低10人。</view>
+        <view class="weui-cells weui-cells_after-title">
+            <view class="weui-cell">
+                <view class="weui-cell__bd">人限</view>
+                <view class="weui-cell__ft">
+                  <slider value="50" min="10" max="50" show-value/>
+                </view>
+            </view>
+        </view>
+
+
+      <view class="submit weui-flex">
+        <button type="warn" plain="true" style="width:40%">返回</button>
+        <button type="primary" style="width:40%">提交</button>
       </view>
 
-      <view class="zan-panel">
-        <view style="padding: 15px;">内容</view>
-      </view>
+      
+  <view class="zan-popup {{$mappicker$direction ? 'popup-example--' + $mappicker$direction + ' zan-popup--' + $mappicker$direction : ''}} {{ $mappicker$showPopup ? 'zan-popup--show' : ''}}">
+    <view class="zan-popup__mask"/>
+    <view class="zan-popup__container {{$mappicker$direction ? '' : 'popup-example--center'}}">
+      
+        <view class="weui-panel weui-panel_access {{pickerDisplay}}">
+            <view class="weui-panel__hd">请在地图中选中展出的位置</view>
+            <view class="weui-panel__bd  addPadding">
+                 <map id="map" longitude="107.153435" latitude="34.373231" scale="14" show-location="show-location" style="width:100%; height:20rem;"/>
+            </view>
+              <view class="weui-flex addPadding" style="padding-bottom: 1rem;">
+                <button size="mini" bindtap="cancelPick" type="default" plain="true" style="width:40%">返回</button>
+                <button size="mini" bindtap="grabCoordinates" type="primary" plain="true" style="width:40%">选中</button>
+              </view>
+
+        </view>
+      
+    </view>
+  </view>
+
   </view>

@@ -1,6 +1,6 @@
 @import "./../components/bulletin.wxss";
 
-@import "../assets/styles/animate.wxss";
+@import "../assets/style/animate.wxss";
 
 .recorder {
   width: 80%;

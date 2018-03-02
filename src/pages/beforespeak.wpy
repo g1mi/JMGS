@@ -1,5 +1,5 @@
 <style lang='css'>
-@import "../assets/styles/animate.wxss";
+@import "../assets/style/animate.wxss";
 
 .recorder {
   width: 80%;
