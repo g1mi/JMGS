@@ -22,6 +22,13 @@
   text-align: center;
   padding-bottom: 1rem;
 }
+.checkedIcon {
+  margin: 0px 10px 0px;
+}
+.flex {
+  display: flex;
+  flex-direction: row;
+}
 </style>
 <template>
   <view class="container">
@@ -43,8 +50,11 @@
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
                 <view class="weui-cell__bd">地点：</view>
-                <view class="weui-cell__ft" @tap="pickLoc">
-                    <button type="{{mapPicked}}" plain="true" size="mini">{{config.beforPosChosed}}</button>
+                <view class="weui-cell__ft flex" >
+                    <view class="checkedIcon {{posChosed}}">
+                      <icon type="success" size="32"/>
+                    </view>
+                    <button type="{{mapPicked}}" plain="true" size="mini" @tap="pickLoc">{{config.beforPosChosed}}</button>
                 </view>
             </view>
         </view>
@@ -104,6 +114,7 @@ export default class AfterSpeak extends wepy.page {
   data = {
     pickerDisplay: "hide", //flag to hide the original component
     mapPicked: "warn",
+    posChosed: "hide",
     controls: [],
     formData: {
       howLong: 1,
@@ -129,9 +140,17 @@ export default class AfterSpeak extends wepy.page {
       console.log("mapPicker taped");
       this.pickerDisplay = "show";
       this.$invoke("mappicker", "showPopup");
+      //add loading toast for safety
+      wepy.showLoading({
+        title: '请稍后...',
+        mask: true
+      })
 
       //set the pin pic after the animation
       setTimeout(() => {
+        //hideloading
+        wepy.hideLoading();
+
         //get the coordinates of pin pic
         wepy
           .createSelectorQuery()
@@ -152,13 +171,15 @@ export default class AfterSpeak extends wepy.page {
             //console.log(rect);
           })
           .exec();
-      }, 250); // a lucky number
+
+      }, 400); // a lucky number
     },
     cancelPick() {
       this.pickerDisplay = "hide";
       this.$invoke("mappicker", "hidePopup");
     },
     grabCoordinates() {
+      this.pickerDisplay = "hide";
       this.$invoke("mappicker", "hidePopup");
       this.mapPicked = "primary";
       this.config.beforPosChosed = this.config.afterPosChosed;
@@ -172,6 +193,8 @@ export default class AfterSpeak extends wepy.page {
             longitude: res.longitude,
             latitude: res.latitude
           };
+          _this.posChosed = 'show'
+          _this.$apply()
         },
         fail: function(res) {
           console.log(res);
