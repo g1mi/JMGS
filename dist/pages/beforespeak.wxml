@@ -1,5 +1,6 @@
 
 <view class="container">
+
     
     <view class="hero__terminal">
       <code class="code">
@@ -7,10 +8,11 @@
       </code>
     </view>
 
-
+    <view>{{log}}</view>
     <view id="btn-speak" class="recorder {{animation}}">
       <button type="{{buttonState.type}}" bindtap="tip" bindlongpress="record" bindtouchend="touchend" bindtouchcancel="" hover-stop-propagation="true">
-      {{buttonState.content}}</button>
+        {{buttonState.content}}
+      </button>
     </view>
 
 </view>
