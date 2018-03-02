@@ -1,2 +1,0 @@
-@import "./../components/mapPicker.wxss";
-.player{width:80%;bottom:0;text-align:center;padding:15px calc(10%) 15px}.submit{position:absolute;width:80%;bottom:0;padding:15px calc(10%) 2rem}.hide{display:none}.show{display:inline}.addPadding{padding:2rem auto 2rem;text-align:center;padding-bottom:1rem}
