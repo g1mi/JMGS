@@ -8,8 +8,4 @@ export default class MockingData {
         🈲政治相关。
      想看看昨天的数据么？`
   }
-  static getAllowedCities () {
-    return ['宝鸡市', "汉中市"]
-  }
-
 }

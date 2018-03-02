@@ -21,7 +21,6 @@
   padding: 2rem auto 2rem;
   text-align: center;
   padding-bottom: 1rem;
-
 }
 </style>
 <template>
@@ -30,30 +29,31 @@
       <view class="weui-panel weui-panel_access">
             <view class="weui-panel__hd"><button type="primary">播放内容</button></view>
       </view>
-      <view class="weui-cells__title">默认为1天，超出需要支付占位费。</view>
+      <view class="weui-cells__title">默认为{{config.howLong}}天，超出需要支付占位费。</view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__bd">时限</view>
+                <view class="weui-cell__bd">时限：</view>
                 <view class="weui-cell__ft">
-                  <slider min="1" show-value disabled/>
+                  <!-- remember to set the value with the data in config file, set it dynamically will cause the slider not working -->
+                  <slider min="1" max="7" @change="changeTime" show-value/>
                 </view>
             </view>
         </view>
-        <view class="weui-cells__title">默认为当前地址。范围: {{allowedCity}}内。</view>
+        <view class="weui-cells__title">默认为当前地址。范围: {{config.allowedCities}}内。</view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__bd">地点</view>
+                <view class="weui-cell__bd">地点：</view>
                 <view class="weui-cell__ft" @tap="pickLoc">
-                    <button type="{{mapPicked}}" plain="true" size="mini">点击选取地图坐标</button>
+                    <button type="{{mapPicked}}" plain="true" size="mini">{{config.beforPosChosed}}</button>
                 </view>
             </view>
         </view>
-        <view class="weui-cells__title">默认为50人，最低10人。</view>
+        <view class="weui-cells__title">默认为{{config.howMany}}人，关闭后则没有人数限制，但须支援服务器费用。</view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__bd">人限</view>
+                <view class="weui-cell__bd">人数限制：</view>
                 <view class="weui-cell__ft">
-                  <slider value='50' min="10" max="50" show-value/>
+                  <switch bindchange="unlimitNo"/>
                 </view>
             </view>
         </view>
@@ -61,7 +61,7 @@
 
       <view class="submit weui-flex">
         <button type="warn" plain="true" style="width:40%">返回</button>
-        <button type="primary" style="width:40%">提交</button>
+        <button type="primary" style="width:40%" @tap="submit">提交</button>
       </view>
 
       <mappicker direction="bottom">
@@ -69,6 +69,7 @@
             <view class="weui-panel__hd">请在地图中选中展出的位置</view>
             <view class="weui-panel__bd  addPadding">
                  <map id="map" longitude="107.153435" latitude="34.373231" scale="14"
+                    controls="{{controls}}"
                     show-location style="width:100%; height:20rem;"></map>
             </view>
               <view class="weui-flex addPadding" style="padding-bottom: 1rem;">
@@ -87,7 +88,8 @@
 import wepy from "wepy";
 import testMixin from "../mixins/test";
 import Mock from "@/util/Mock";
-import MapPicker from '../components/mapPicker'
+import Config from "@/util/config";
+import MapPicker from "../components/mapPicker";
 
 export default class AfterSpeak extends wepy.page {
   config = {
@@ -100,9 +102,19 @@ export default class AfterSpeak extends wepy.page {
   mixins = [testMixin];
 
   data = {
-    allowedCity: '',
-    pickerDisplay: 'hide', //flag to hide the original component
-    mapPicked: 'warn'
+    pickerDisplay: "hide", //flag to hide the original component
+    mapPicked: "warn",
+    controls: [],
+    formData: {
+      howLong: 1,
+      where: {
+        longitude: "",
+        latitude: ""
+      },
+      howMany: 50
+    },
+    config: Config(),
+    mapCtx: null
   };
 
   computed = {
@@ -113,28 +125,96 @@ export default class AfterSpeak extends wepy.page {
 
   methods = {
     pickLoc() {
-      console.log('mapPicker taped')
-      this.pickerDisplay = 'show'
-      this.$invoke('mappicker', 'showPopup')
+      let _this = this
+      console.log("mapPicker taped");
+      this.pickerDisplay = "show";
+      this.$invoke("mappicker", "showPopup");
+
+      //set the pin pic after the animation
+      setTimeout(() => {
+        //get the coordinates of pin pic
+        wepy
+          .createSelectorQuery()
+          .select("#map")
+          .boundingClientRect(function(rect) {
+            _this.controls.push({
+              id: 1,
+              iconPath: "../assets/images/pin.png",
+              position: {
+                left: rect.width / 2 - 12,
+                top: rect.height / 2 - 24,
+                width: 24,
+                height: 24
+              },
+              clickable: false
+            });
+            _this.$apply()
+            //console.log(rect);
+          })
+          .exec();
+      }, 250); // a lucky number
     },
     cancelPick() {
-      this.pickerDisplay = 'hide'
-      this.$invoke('mappicker', 'hidePopup')
+      this.pickerDisplay = "hide";
+      this.$invoke("mappicker", "hidePopup");
     },
     grabCoordinates() {
-      this.$invoke('mappicker', 'hidePopup')
-      this.mapPicked = 'primary'
+      this.$invoke("mappicker", "hidePopup");
+      this.mapPicked = "primary";
+      this.config.beforPosChosed = this.config.afterPosChosed;
+
+      //set the cent coordinates into form data
+      this.mapCtx = this.mapCtx || wepy.createMapContext("map");
+      let _this = this;
+      this.mapCtx.getCenterLocation({
+        success: function(res) {
+          _this.formData.where = {
+            longitude: res.longitude,
+            latitude: res.latitude
+          };
+        },
+        fail: function(res) {
+          console.log(res);
+        }
+      });
+    },
+    submit() {
+      console.log(this.formData);
+    },
+    changeTime(e) {
+      this.formData.howLong = e.detail.value;
+      // console.log(this.formData)
+    },
+    unlimitNo(e) {
+      this.formData.howMany = e.detail.value ? undefined : this.config.howMany;
+      //console.log(e)
     }
   };
 
   events = {};
 
   onLoad() {
-    this.allowedCity = this.$parent.globalData.allowedCity
+    let _this = this;
+
+    //get current position
+    wepy.getLocation({
+      type: "gcj02",
+      success: function(res) {
+        //console.log(res);
+        _this.formData.where = {
+          longitude: res.longitude,
+          latitude: res.latitude
+        };
+      },
+      fail: function(err) {
+        wepy.showToast({
+          icon: "none",
+          title: "无法获取当前位置坐标"
+        });
+      }
+    });
   }
 
-  onReady(){
-
-  }
+  onReady() {}
 }
 </script>
