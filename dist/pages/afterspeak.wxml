@@ -4,30 +4,31 @@
       <view class="weui-panel weui-panel_access">
             <view class="weui-panel__hd"><button type="primary">播放内容</button></view>
       </view>
-      <view class="weui-cells__title">默认为1天，超出需要支付占位费。</view>
+      <view class="weui-cells__title">默认为{{config.howLong}}天，超出需要支付占位费。</view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__bd">时限</view>
+                <view class="weui-cell__bd">时限：</view>
                 <view class="weui-cell__ft">
-                  <slider min="1" show-value disabled/>
+                  <!-- remember to set the value with the data in config file, set it dynamically will cause the slider not working -->
+                  <slider min="1" max="7" bindchange="changeTime" show-value/>
                 </view>
             </view>
         </view>
-        <view class="weui-cells__title">默认为当前地址。范围: {{allowedCity}}内。</view>
+        <view class="weui-cells__title">默认为当前地址。范围: {{config.allowedCities}}内。</view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__bd">地点</view>
+                <view class="weui-cell__bd">地点：</view>
                 <view class="weui-cell__ft" bindtap="pickLoc">
-                    <button type="{{mapPicked}}" plain="true" size="mini">点击选取地图坐标</button>
+                    <button type="{{mapPicked}}" plain="true" size="mini">{{config.beforPosChosed}}</button>
                 </view>
             </view>
         </view>
-        <view class="weui-cells__title">默认为50人，最低10人。</view>
+        <view class="weui-cells__title">默认为{{config.howMany}}人，关闭后则没有人数限制，但须支援服务器费用。</view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
-                <view class="weui-cell__bd">人限</view>
+                <view class="weui-cell__bd">人数限制：</view>
                 <view class="weui-cell__ft">
-                  <slider value="50" min="10" max="50" show-value/>
+                  <switch bindchange="unlimitNo"/>
                 </view>
             </view>
         </view>
@@ -35,7 +36,7 @@
 
       <view class="submit weui-flex">
         <button type="warn" plain="true" style="width:40%">返回</button>
-        <button type="primary" style="width:40%">提交</button>
+        <button type="primary" style="width:40%" bindtap="submit">提交</button>
       </view>
 
       
@@ -46,7 +47,7 @@
         <view class="weui-panel weui-panel_access {{pickerDisplay}}">
             <view class="weui-panel__hd">请在地图中选中展出的位置</view>
             <view class="weui-panel__bd  addPadding">
-                 <map id="map" longitude="107.153435" latitude="34.373231" scale="14" show-location="show-location" style="width:100%; height:20rem;"/>
+                 <map id="map" longitude="107.153435" latitude="34.373231" scale="14" controls="{{controls}}" show-location="show-location" style="width:100%; height:20rem;"/>
             </view>
               <view class="weui-flex addPadding" style="padding-bottom: 1rem;">
                 <button size="mini" bindtap="cancelPick" type="default" plain="true" style="width:40%">返回</button>

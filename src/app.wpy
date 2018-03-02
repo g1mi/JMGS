@@ -45,7 +45,6 @@ export default class extends wepy.app {
 
   globalData = {
     userInfo: null,
-    allowedCity: '',
   }
 
   constructor () {
@@ -55,8 +54,6 @@ export default class extends wepy.app {
 
   onLaunch() {
     this.testAsync()
-
-    this.globalData.allowedCity = Mock.getAllowedCities().join(',')
   }
 
   sleep (s) {
