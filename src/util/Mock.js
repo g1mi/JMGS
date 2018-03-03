@@ -8,4 +8,7 @@ export default class MockingData {
         🈲政治相关。
      想看看昨天的数据么？`
   }
+  static getTicketSponsor() {
+    return 'NickName 水水水水水水水水水水水水水水水水'
+  }
 }

@@ -26,11 +26,11 @@ import Mock from "@/util/Mock";
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/display',
       'pages/afterspeak',
       'pages/beforespeak',
       'pages/beforefilm',
       'pages/afterfilm',
-      'pages/display',
       'pages/userrecord',
       'pages/index',
        'pages/map',
