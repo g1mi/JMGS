@@ -63,7 +63,7 @@
             <view class="weui-cell">
                 <view class="weui-cell__bd">人数限制：</view>
                 <view class="weui-cell__ft">
-                  <switch bindchange="unlimitNo"/>
+                  <switch bindchange="unlimitNoCheck" checked/>
                 </view>
             </view>
         </view>
@@ -99,7 +99,7 @@ import wepy from "wepy";
 import testMixin from "../mixins/test";
 import Mock from "@/util/Mock";
 import Config from "@/util/config";
-import MapPicker from "../components/mapPicker";
+import MapPicker from "../components/mappicker";
 
 export default class AfterSpeak extends wepy.page {
   config = {
@@ -208,8 +208,8 @@ export default class AfterSpeak extends wepy.page {
       this.formData.howLong = e.detail.value;
       // console.log(this.formData)
     },
-    unlimitNo(e) {
-      this.formData.howMany = e.detail.value ? undefined : this.config.howMany;
+    unlimitNoCheck(e) {
+      this.formData.howMany = e.detail.value ? this.config.howMany : undefined;
       //console.log(e)
     }
   };
