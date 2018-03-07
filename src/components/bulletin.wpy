@@ -13,15 +13,15 @@
 }
 .code {
   font-size: 12px;
-  font-family:'Courier New', Courier, monospace;
-  color: #F0E8E8;
+  font-family: "Courier New", Courier, monospace;
+  color: #f0e8e8;
   display: block;
   white-space: pre-line;
 }
 .i {
   font-size: 16px;
-  font-family:'Courier New', Courier, monospace;
-  color: #F0E8E8;
+  font-family: "Courier New", Courier, monospace;
+  color: #f0e8e8;
 }
 </style>
 <template>
@@ -32,52 +32,44 @@
     </view>
 </template>
 <script>
-  import wepy from 'wepy'
-  import 'wepy-async-function'
+import wepy from "wepy";
+import "wepy-async-function";
 
-  export default class Bulletin extends wepy.component {
-    props = {
-      content: {
-        type: String,
-        default: ""
-      }
+export default class Bulletin extends wepy.component {
+  props = {
+    content: {
+      type: String,
+      default: ""
     }
+  };
 
-    data = {
+  data = {};
+  events = {};
+
+  watch = {};
+
+  methods = {
+    typeInfo(arg) {
+      this.typeOut(arg);
     }
-    events = {
-
+  };
+  async typeOut(content) {
+    let script = content.split("");
+    let speed = 60;
+    for (let i = 0; i < script.length; i++) {
+      this.content += await this.spitLetter(
+        script[i],
+        "\n" === script[i] ? speed * 5 : speed
+      );
+      this.$apply();
     }
-
-    watch = {
-    }
-
-    methods = {
-      typeInfo (arg) {
-        this.typeOut(arg)
-      }
-    }
-
-    world() {
-      console.log('world')
-    }
-
- async typeOut (content) {
-      let script = content.split('')
-      let speed = 60
-      for(let i = 0 ; i < script.length ; i++){
-        this.content += await this.spitLetter(script[i], '\n' === script[i] ? speed * 5 : speed)
-        this.$apply()
-      }
-    }
- spitLetter(letter, speed) {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              resolve(letter)
-            }, speed)
-          })
-    }
-
-
   }
+  spitLetter(letter, speed) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(letter);
+      }, speed);
+    });
+  }
+}
 </script>

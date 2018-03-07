@@ -7,7 +7,12 @@ export default config => {
 
     //----------afterspeak---------------
     beforPosChosed: '点击选取地图坐标',
-    afterPosChosed: '点击重新选取坐标'
+    afterPosChosed: '点击重新选取坐标',
+
+
+    //user limitations
+    maxGanshuoUp: 1,
+    maxGanshuoIn: 5
   }
   return con
 }
