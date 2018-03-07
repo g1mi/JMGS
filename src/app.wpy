@@ -26,14 +26,15 @@ import Mock from "@/util/Mock";
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/userrecord',
       'pages/display',
+      'pages/playvideo',
+      'pages/beforefilm',
       'pages/afterspeak',
       'pages/beforespeak',
-      'pages/beforefilm',
       'pages/afterfilm',
-      'pages/userrecord',
       'pages/index',
-       'pages/map',
+      'pages/map'
     ],
     window: {
       backgroundTextStyle: 'light',

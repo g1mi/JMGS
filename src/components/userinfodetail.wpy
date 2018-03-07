@@ -1,0 +1,88 @@
+<style lang="less">
+.uid-box {
+  overflow: hidden;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 7rpx;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  max-width: calc(80%);
+  min-width: calc(80%);
+}
+.uid-rd-box {
+  position: relative;
+  padding: 32rpx 0 32rpx;
+}
+.uid-record-detail {
+  right: 20rpx;
+  top: -52rpx;
+  font-size: 22rpx;
+  padding: 6rpx 6rpx 0rpx;
+  text-align: left;
+}
+.uid-user-avatar {
+  margin: 24rpx;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 1.4rem;
+  box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);
+}
+.toRight {
+  text-align: right;
+}
+.uid-wrap-box {
+  padding: 10rpx;
+}
+</style>
+<template>
+<view class="uid-wrap-box">
+  <!-- should calculate the time locally and show the progress -->
+<view style=" box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);"  class="uid-box">
+  <image class="uid-user-avatar" src="{{detail.avatarSrc}}"></image>
+  <view class="uid-rd-box">
+    <view class="uid-record-detail">发起时间：{{detail.createTime}}</view>
+    <view class="uid-record-detail">当前状态：<i style="color:{{status}}">asasas</i></view>
+  </view>
+</view>
+</view>
+</template>
+<script>
+  import wepy from 'wepy'
+  export default class UserInfoDetail extends wepy.component {
+
+    props = {
+      detail:{
+        createTime: '',
+        status: '',//orange:进行中loading, green：已完成closed, purple：待完成readytoclose, red:异常error
+        avatarSrc: ''
+      },
+
+    }
+
+    data = {
+      currentStatus: {
+        green: '已完成',
+        orange: '进行中…',
+        purple: '待完成',
+        red: '异常'
+      }
+    }
+    computed = {
+      ssl() {
+        return status;
+      }
+    }
+    events = {
+
+    }
+
+    watch = {
+    }
+
+    methods = {
+
+    }
+    onLoad() {
+    }
+  }
+</script>

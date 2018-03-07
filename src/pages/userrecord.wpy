@@ -1,44 +1,94 @@
 <style lang="less">
-
+.uid-box {
+  overflow: hidden;
+  border: 1rpx solid #e0e0e0;
+  border-radius: 7rpx;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  max-width: calc(80%);
+  min-width: calc(80%);
+}
+.uid-rd-box {
+  position: relative;
+  padding: 32rpx 0 32rpx;
+}
+.uid-record-detail {
+  right: 20rpx;
+  top: -52rpx;
+  font-size: 22rpx;
+  padding: 6rpx 6rpx 0rpx;
+  text-align: left;
+}
+.uid-user-avatar {
+  margin: 24rpx;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 1.4rem;
+  box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);
+}
+.toRight {
+  text-align: right;
+}
+.uid-wrap-box {
+  padding: 10rpx;
+}
 </style>
 <template>
-  <view class="container">
+<view class="container">
+
+
+<userinfo nickname="我最帅" avatarSrc="../assets/images/default-avatar.png" ganshuoCounts="256" ganzuoCounts="22"></userinfo>
+
+
+<infodetail :detail="detail"></infodetail>
+
+<view class="uid-wrap-box">
+<view style=" box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);"  class="uid-box">
+  <image class="uid-user-avatar" src="../assets/images/default-avatar.png"></image>
+  <view class="uid-rd-box">
+    <view class="uid-record-detail">发起时间：2018/9/11 14:22</view>
+    <view class="uid-record-detail">当前状态：<i style="color:orange">正在进行</i></view>
   </view>
+</view>
+</view>
+
+
+
+</view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import testMixin from '../mixins/test'
-
-  export default class Userrecord extends wepy.page {
-    config = {
-      navigationBarTitleText: 'Userrecord'
-    }
-    components = {
-    }
-
-    mixins = [testMixin]
-
-    data = {
-
-    }
-
-    computed = {
-      now () {
-        return +new Date()
-      }
-    }
-
-    methods = {
+import wepy from "wepy";
+import testMixin from "../mixins/test";
+import Mock from "@/util/Mock";
+import Tools from "@/util/tools";
+import UserInfo from '@/components/userinfo'
+import UserInfoDetail from '@/components/userinfodetail'
+export default class UserRecord extends wepy.page {
+  config = {};
+  components = {
+    userinfo: UserInfo,
+    infodetail: UserInfoDetail
+  };
+  mixins = [testMixin];
+  data = {
+    detail: {
+      avatarSrc: "../assets/images/default-avatar.png",
+      createTime: "2018/9/11 14:22",
 
     }
-
-    events = {
-
+  };
+  computed = {
+    now() {
+      return +new Date();
     }
+  };
 
-    onLoad() {
+  methods = {};
 
-    }
-  }
+  events = {};
+
+  onLoad() {}
+}
 </script>

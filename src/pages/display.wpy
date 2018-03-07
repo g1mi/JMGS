@@ -1,71 +1,195 @@
-<style lang='css'>
-
-.zan-col {
-  line-height: 30px;
-  text-align: center;
-  background-color: #39a9ed;
-  font-size: 12px;
-  color: #fff;
-}
-
-.zan-col:nth-child(even) {
-  background-color: #66c6f2;
-}
-.recorder {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  padding-bottom: 1rem;
-  padding-top: 15px;
-}
+<style lang='less'>
 .showcontent {
   display: inline;
 }
 .hidecontent {
   display: none;
 }
+//dare button ----------------------
+.round-button {
+  position: absolute;
+  display: block;
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
+  border: 0.2rem solid #f5f5f5;
+  border-radius: 50%;
+  color: #f5f5f5;
+  text-align: center;
+  text-decoration: none;
+  background: #464646;
+  box-shadow: 0 0 0.3rem gray;
+  font-size: 24px;
+  font-weight: bold;
+  user-select: none;
+}
+.round-button-pos {
+  top: 414px;
+  left: 207px;
+}
+.round-button-shine {
+  animation: bgcolorchange ease-in 2s infinite;
+}
+.round-button-tap {
+  background: #262626;
+}
+@keyframes bgcolorchange {
+  0% {
+    background: #464646;
+  }
+  50% {
+    background: #87240e;
+  }
+  100% {
+    background: #464646;
+  }
+}
 </style>
 <template>
 <view class="container">
-
+ <repeat for="{{ticketDetailList}}" item="item">
+    <ticketdetail :details="item"></ticketdetail>
+ </repeat>
+  <roundbutton name="^" shine="true" @tap.user="tapBtn"></roundbutton>
 </view>
 </template>
 
 
 <script>
-  import wepy from 'wepy'
-  import testMixin from '../mixins/test'
-  import Mock from '@/util/Mock'
-  import Tools from '@/util/tools'
-  export default class Display extends wepy.page {
-    config = {
-    }
-    components = {
-    }
+import wepy from "wepy";
+import testMixin from "../mixins/test";
+import Mock from "@/util/Mock";
+import Tools from "@/util/tools";
+import TicketDetail from "@/components/ticketdetail";
+import RoundButton from "@/components/roundbutton"
+export default class Display extends wepy.page {
+  config = {};
+  components = {
+    ticketdetail: TicketDetail,
+    roundbutton: RoundButton
+  };
 
-    mixins = [testMixin]
+  mixins = [testMixin];
 
-    data = {
-    }
-
-    computed = {
-      now () {
-        return +new Date()
+  data = {
+    ticketDetailList: [
+      {
+        nickname: "帅帅帅帅帅帅1",
+        vertical: "true",
+        timeset: "2018/3/4 14:38",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅2",
+        vertical: "false",
+        timeset: "2018/3/4 14:39",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
+      },
+      {
+        nickname: "帅帅帅帅帅帅3",
+        vertical: "true",
+        timeset: "2018/3/4 14:48",
+        avatarSrc: "../assets/images/default-avatar.png",
+        posterSrc: "../assets/images/default-poster.jpg"
       }
+    ]
+  };
+
+  computed = {
+    now() {
+      return +new Date();
+    }
+  };
+
+  methods = {
+    tapBtn() {
+      console.log('round button taped in display page')
     }
 
-    methods = {
+  };
 
-    }
+  events = {};
 
-    events = {
-
-    }
-
-    onLoad() {
-      wx.setNavigationBarTitle({
-        title: Tools.getEllipsis(Mock.getTicketSponsor(),'10','…') + ' 敢说， 你可敢做？'
-      })
-    }
+  onLoad() {
+    wx.setNavigationBarTitle({
+      title:
+        Tools.getEllipsis(Mock.getTicketSponsor(), "10", "…") +
+        " 敢说， 你可敢做？"
+    });
   }
+  onReady() {
+  }
+}
 </script>
