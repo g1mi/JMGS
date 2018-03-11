@@ -29,12 +29,20 @@
   display: flex;
   flex-direction: row;
 }
+.play-record {
+  text-align: left;
+  font-size: 16px;
+}
 </style>
 <template>
   <view class="container">
 
       <view class="weui-panel weui-panel_access">
-            <view class="weui-panel__hd"><button type="primary">播放内容</button></view>
+            <view class="weui-panel__hd">
+              <button type="primary" loading="{{playingRecord}}" class="play-record" @tap.stop="playrecord" hover-class="button-hover">
+                {{playingRecord ? pageVers.playingRecord : pageVers.playRecord }}
+              </button>
+            </view>
       </view>
       <view class="weui-cells__title">默认为{{config.howLong}}天，超出需要支付占位费。</view>
         <view class="weui-cells weui-cells_after-title">
@@ -70,7 +78,7 @@
 
 
       <view class="submit weui-flex">
-        <button type="warn" plain="true" style="width:40%">返回</button>
+        <button type="warn" plain="true" style="width:40%" @tap="goback">返回</button>
         <button type="primary" style="width:40%" @tap="submit">提交</button>
       </view>
 
@@ -96,11 +104,11 @@
 
 <script>
 import wepy from "wepy";
-import testMixin from "../mixins/test";
 import Mock from "@/util/Mock";
 import Config from "@/util/config";
 import MapPicker from "../components/mappicker";
 
+const pageVers = {};
 export default class AfterSpeak extends wepy.page {
   config = {
     navigationBarTitleText: "创建敢说"
@@ -109,7 +117,7 @@ export default class AfterSpeak extends wepy.page {
     mappicker: MapPicker
   };
 
-  mixins = [testMixin];
+  mixins = [];
 
   data = {
     pickerDisplay: "hide", //flag to hide the original component
@@ -125,7 +133,13 @@ export default class AfterSpeak extends wepy.page {
       howMany: 50
     },
     config: Config(),
-    mapCtx: null
+    mapCtx: null, //map context
+    acCtx: null, // audio context
+    playingRecord: "",
+    pageVers: {
+      playRecord: "播放内容",
+      playingRecord: "播放中……"
+    }
   };
 
   computed = {
@@ -135,16 +149,27 @@ export default class AfterSpeak extends wepy.page {
   };
 
   methods = {
+    goback() {
+      wepy.navigateBack()
+    },
+    playrecord() {
+      //console.log('play button taped', this.playingRecord, this.acCtx)
+      if ("true" === this.playingRecord) {
+        this.acCtx.stop();
+      } else {
+        this.acCtx.play();
+      }
+    },
     pickLoc() {
-      let _this = this
+      let _this = this;
       console.log("mapPicker taped");
       this.pickerDisplay = "show";
       this.$invoke("mappicker", "showPopup");
       //add loading toast for safety
       wepy.showLoading({
-        title: '请稍后...',
+        title: "请稍后...",
         mask: true
-      })
+      });
 
       //set the pin pic after the animation
       setTimeout(() => {
@@ -167,11 +192,10 @@ export default class AfterSpeak extends wepy.page {
               },
               clickable: false
             });
-            _this.$apply()
+            _this.$apply();
             //console.log(rect);
           })
           .exec();
-
       }, 400); // a lucky number
     },
     cancelPick() {
@@ -193,8 +217,8 @@ export default class AfterSpeak extends wepy.page {
             longitude: res.longitude,
             latitude: res.latitude
           };
-          _this.posChosed = 'show'
-          _this.$apply()
+          _this.posChosed = "show";
+          _this.$apply();
         },
         fail: function(res) {
           console.log(res);
@@ -202,7 +226,13 @@ export default class AfterSpeak extends wepy.page {
       });
     },
     submit() {
-      console.log(this.formData);
+      //上传form信息&上传录音文件
+      console.log(this.formData + this.acCtx.src)
+      setTimeout(() => {
+        wepy.redirectTo({
+          url: 'display'
+        })
+      }, 2000);
     },
     changeTime(e) {
       this.formData.howLong = e.detail.value;
@@ -216,9 +246,29 @@ export default class AfterSpeak extends wepy.page {
 
   events = {};
 
-  onLoad() {
+  onLoad(params, data) {
     let _this = this;
-
+    //取得录音文件地址
+    this.acCtx = wepy.createInnerAudioContext();
+    this.acCtx.src = data.preload.recordPath;
+    this.acCtx.onPlay(() => {
+      //播放时改变button内容
+      _this.playingRecord = "true";
+      _this.$apply();
+      console.log("play record : " + this.acCtx.src);
+    });
+    this.acCtx.onStop(() => {
+      //停止时改回button内容
+      _this.playingRecord = "";
+      _this.$apply();
+      console.log("stop playing");
+    });
+    this.acCtx.onEnded(() => {
+      //完成时改回button内容
+      _this.playingRecord = "";
+      _this.$apply();
+      console.log("played done");
+    });
     //get current position
     wepy.getLocation({
       type: "gcj02",
@@ -239,5 +289,13 @@ export default class AfterSpeak extends wepy.page {
   }
 
   onReady() {}
+  onHide() {
+    console.log('afterspeak onHide')
+    this.acCtx.stop()
+  }
+  onUnload() {
+    console.log('afterspeak onUnload')
+    this.acCtx.stop()
+  }
 }
 </script>

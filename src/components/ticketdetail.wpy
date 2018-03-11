@@ -31,12 +31,12 @@
   word-wrap: break-word;
 }
 .td-content--detail-ver {
-  .video-ver;
+  .td-video-ver;
   border: 1rpx solid #999;
   margin: 0.2rem 0.2rem 0.2rem;
 }
 .td-content--detail-hoz {
-  .video-hoz;
+  .td-video-hoz;
   border: 1rpx solid #999;
   margin: 0.2rem 0.2rem 0.2rem;
 }

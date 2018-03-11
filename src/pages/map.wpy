@@ -14,62 +14,134 @@
   display: inline-block;
 }
 .record {
-    .speak;
-    top: 78%;
+  .speak;
+  top: 78%;
+}
+.pin {
+  .speak;
+  width: 1.5rem;
+  height: 1.5rem;
+  top: 50% - 1.5rem;
+  left: 50% - 0.75rem;
+}
+.precision {
+  .speak;
+  width: 1.5rem;
+  height: 1.5rem;
+  top: 55% - 1.5rem;
+  left: 87% - 0.75rem;
 }
 </style>
 <template>
   <view >
-  <map id="map" class="full-screen" longitude="113.324520" latitude="23.099994" scale="14"
+  <map id="map" class="full-screen" longitude="107.235982" latitude="34.360620" scale="16"
     controls="" bindcontroltap="" markers="" bindmarkertap=""
-    bindregionchange="" show-location="true"></map>
-  <cover-view class="speak" bindtap="speak">
-      <cover-image src="../assets/images/speak.png" />
+    bindregionchange="getGSNearBy" show-location="true"></map>
+  <cover-view class="speak">
+      <cover-image src="../assets/images/speak.png"  @tap.stop="speak"/>
   </cover-view>
-   <cover-view class="record" bindtap="record">
-      <cover-image src="../assets/images/record.png" />
+   <cover-view class="record">
+      <cover-image src="../assets/images/record.png"  @tap.stop="record"/>
+  </cover-view>
+  <cover-view class="pin">
+      <cover-image src="../assets/images/pin.png" />
+  </cover-view>
+  <cover-view class="precision">
+      <cover-image src="../assets/images/precision.png" @tap.stop="locate"/>
   </cover-view>
 </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import testMixin from '../mixins/test'
+import wepy from "wepy";
+import moment from "moment";
+import "moment/locale/zh-cn";
+import xs from "xstream";
 
-  export default class Map extends wepy.page {
-    config = {
-      navigationBarTitleText: '吉米敢说'
+let readyTorequest = undefined; //定义变量延时request，后面的request会取代之前未完成的request
+const userRecordURL = "userrecord";
+const sendGanshuoURL = "beforespeak";
+export default class Map extends wepy.page {
+  config = {
+    navigationBarTitleText: "吉米敢说"
+  };
+  components = {};
+
+  mixins = [];
+
+  data = {
+    mapCtx: null //map context
+  };
+
+  computed = {
+    now() {
+      return +new Date();
     }
-    components = {
-    }
+  };
 
-    mixins = [testMixin]
+  methods = {
+    locate() {
+      //返回自己的所在地点
+      this.mapCtx.moveToLocation();
+    },
+    speak: function(e) {
+      //转到添加敢说页面
+      wepy.navigateTo({
+        url: sendGanshuoURL
+      });
+    },
+    record: function(e) {
+      //转到userrecord页面
+      wepy.navigateTo({
+        url: userRecordURL
+      });
+    },
+    getGSNearBy(e) {
+      let center = null;
+      if ("begin" === e.type) {
+      } else {
+        //仅仅只检测滑动结束
+        this.mapCtx.getCenterLocation({
+          success(res) {
+            center = {
+              longitude: res.longitude,
+              latitude: res.latitude
+            };
+          },
+          fail(res) {
+            //console.log(res)
+          },
+          complete(res) {
+            //console.log(res)
+          }
+        });
 
-    data = {
-
-    }
-
-    computed = {
-      now () {
-        return +new Date()
+        //记录timer，后面的timer会取代之前的timer
+        if (readyTorequest) {
+          clearTimeout(readyTorequest);
+        } else {
+          console.log("first time set the timer");
+        }
+        readyTorequest = setTimeout(() => {
+          //request all the Ganshuo near by
+          console.log('sending the request')
+        }, 1000);
       }
     }
+  };
 
-    methods = {
-      speak: function (e) {
-        console.log('speak')
-      },
-      record: function (e) {
-        console.log('record')
-      }
-    }
+  events = {};
 
-    events = {
-
-    }
-
-    onLoad() {
-
-    }
+  onLoad() {
+    let _this = this;
+    this.mapCtx = wx.createMapContext("map", this);
   }
+  onShow() {
+    console.log('map show')
+  }
+
+  onHide() {
+    console.log('map hide')
+  }
+}
 </script>

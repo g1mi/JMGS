@@ -1,5 +1,6 @@
 <style lang="css">
 @import './assets/style/weui.wxss';
+@import './assets/style/fontawesome.wxss'
 .container {
   background: #f8f8f8;
   overflow: hidden;
@@ -22,19 +23,18 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-import Mock from "@/util/Mock";
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/map',
+      'pages/beforefilm',
+      'pages/playvideo',
       'pages/userrecord',
       'pages/display',
-      'pages/playvideo',
-      'pages/beforefilm',
       'pages/afterspeak',
       'pages/beforespeak',
       'pages/afterfilm',
       'pages/index',
-      'pages/map'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -46,6 +46,8 @@ export default class extends wepy.app {
 
   globalData = {
     userInfo: null,
+    location: {},
+
   }
 
   constructor () {
@@ -54,7 +56,8 @@ export default class extends wepy.app {
   }
 
   onLaunch() {
-    this.testAsync()
+    this.getUserInfo()
+    //this.testAsync()
   }
 
   sleep (s) {
