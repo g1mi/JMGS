@@ -1,44 +1,107 @@
 <style lang="less">
-
+.camera {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.btn-back {
+  position: absolute;
+  border-radius: 50rpx;
+  top: calc(80%);
+  left: calc(65%);
+  background: transparent;
+  width: 64rpx;
+  height: 64rpx;
+  padding: 12rpx;
+  font-size: 22rpx;
+  color: #ccc;
+  text-align: center;
+}
+.btn-film {
+  position: absolute;
+  border-radius: 90rpx;
+  top: calc(60%);
+  left: calc(60%);
+  background: transparent;
+  width: 160rpx;
+  height: 160rpx;
+  border: 5rpx orange solid;
+  padding: 14rpx;
+  font-size: 118rpx;
+  color: orange;
+  text-align: center;
+}
+.btn-switch {
+  position: absolute;
+  border-radius: 90rpx;
+  top: calc(10%);
+  left: calc(80%);
+  background: transparent;
+  width: 64rpx;
+  height: 64rpx;
+  padding: 14rpx;
+  font-size: 56rpx;
+  color: orange;
+  text-align: center;
+}
 </style>
 <template>
-  <view class="container">
-  </view>
+
+    <camera class="camera" device-position="{{cameraDirection}}" flash='off' bindstop="" binderror="">
+      <cover-view class="btn-back" @tap.stop="goBack">
+        <cover-image src="../assets/images/goback.png"></cover-image>
+       </cover-view>
+       <cover-view class="btn-film" @tap.stop="film">
+        敢
+       </cover-view>
+       <cover-view class="btn-switch" @tap="switchCamera">
+        <cover-image src="../assets/images/switch.png"></cover-image>
+       </cover-view>
+    </camera>
+
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import testMixin from '../mixins/test'
-  import Mock from "@/util/Mock";
-  import Tools from "@/util/tools";
-  export default class BeforeFilm extends wepy.page {
-    config = {
+import wepy from "wepy";
+import Mock from "@/util/Mock";
+import Tools from "@/util/tools";
+export default class BeforeFilm extends wepy.page {
+  config = {};
+  components = {};
+
+  mixins = [];
+
+  data = {
+    cameraCtx: null,
+    cameraDirection: "front",
+  };
+
+  computed = {
+    now() {
+      return +new Date();
     }
-    components = {
+  };
+
+  methods = {
+    goBack() {
+      wepy.showToast({
+        title: "go back",
+        icon: "none"
+      });
+    },
+    film() {
+      console.log('filming')
+    },
+    switchCamera() {
+      this.cameraDirection =
+        "front" === this.cameraDirection ? "back" : "front";
     }
+  };
 
-    mixins = [testMixin]
+  events = {};
 
-    data = {
-
-    }
-
-    computed = {
-      now () {
-        return +new Date()
-      }
-    }
-
-    methods = {
-
-    }
-
-    events = {
-
-    }
-
-    onLoad() {
-
-    }
+  onLoad() {
+    this.cameraCtx = wx.createCameraContext(this);
   }
+}
 </script>

@@ -41,7 +41,7 @@
   <image class="uid-user-avatar" src="{{detail.avatarSrc}}"></image>
   <view class="uid-rd-box">
     <view class="uid-record-detail">发起时间：{{detail.createTime}}</view>
-    <view class="uid-record-detail">当前状态：<i style="color:{{status}}">asasas</i></view>
+    <view class="uid-record-detail">当前状态：<i style="color:{{status}}">{{ }}</i></view>
   </view>
 </view>
 </view>
@@ -53,23 +53,33 @@
     props = {
       detail:{
         createTime: '',
-        status: '',//orange:进行中loading, green：已完成closed, purple：待完成readytoclose, red:异常error
         avatarSrc: ''
       },
 
     }
 
     data = {
-      currentStatus: {
-        green: '已完成',
-        orange: '进行中…',
-        purple: '待完成',
-        red: '异常'
+      statusScript: {
+        closed: '已完成',
+        launching: '进行中…',
+        readytoclose: '待完成',
+        error: '异常'
+      },
+      statusColor: {
+        launching: 'orange',
+        closed: 'green',
+        readytoclose: 'purple',
+        error: 'red'
       }
     }
     computed = {
-      ssl() {
-        return status;
+      currentStatus() {
+        let s = this.status
+        console.log(s)
+        return this.statusScript[s]
+      },
+      currentColor() {
+
       }
     }
     events = {

@@ -27,7 +27,6 @@
 
 <script>
 import wepy from "wepy";
-import testMixin from "../mixins/test";
 import Bulletin from "@/components/bulletin";
 import Mock from "@/util/Mock";
 const pageVars = {
@@ -36,7 +35,7 @@ const pageVars = {
   recording: "正在录音...",
   canceled: "已取消!",
   waitAWhile: "请稍后...",
-  cancelRecording: "松开 取消"
+  cancelRecording: "向上滑动松开 取消录音"
 };
 
 const status = {
@@ -53,7 +52,7 @@ export default class BeforeSpeak extends wepy.page {
     bulletin: Bulletin
   };
 
-  mixins = [testMixin];
+  mixins = [];
 
   data = {
     animation: "animated bounce", //record button div
@@ -109,9 +108,9 @@ export default class BeforeSpeak extends wepy.page {
       //start recording------
       let args = {
         duration: 60000,
-        sampleRate: 8000,
+        sampleRate: 16000,
         numberOfChannels: 1,
-        encodeBitRate: 16000,
+        encodeBitRate: 36000,
         format: "aac"
       };
       this.recorderManager.start(args);
@@ -120,7 +119,7 @@ export default class BeforeSpeak extends wepy.page {
       //when catch the touchend event , we should check the status first
       if (status.recording === this.currentStatus) {
         wepy.hideToast();
-        let slidedUp = e.changedTouches[0].clientY < this.touchPoint.clientY; // canceling recording by sliding up
+        let slidedUp =  (this.touchPoint.clientY - e.changedTouches[0].clientY) > 20; // canceling recording by sliding up
         if (slidedUp) {
           // if canceled the recording
           console.log("canceled the recording");
@@ -136,12 +135,13 @@ export default class BeforeSpeak extends wepy.page {
           this.recorderManager.stop();
         } else {
           //console.log('recorded')
-          // recorded, add mask
+          // 录音完成 处理文件时锁定屏幕
           wepy.showLoading({
             title: pageVars.waitAWhile,
             mask: true
           });
-          // prcessing the recording
+          // 处理录音文件
+          console.log('stop recording')
           this.recorderManager.stop();
         }
       }
@@ -151,9 +151,27 @@ export default class BeforeSpeak extends wepy.page {
   events = {};
 
   onLoad() {
-    this.$invoke("bulletin", "typeInfo", Mock.getBulletinInfo());
+    let _this = this
+    //检测是否已经打印过bulletin信息，否则直接显示
+    wepy.getStorage({
+      key: 'BulletinTyped',
+      success: function(res) {
+        console.log('type info: ' + res.data)
+        _this.$invoke("bulletin", "showInfo", Mock.getBulletinInfo());
+      },
+      fail: function(res) {
+        console.log('show info')
+        _this.$invoke("bulletin", "typeInfo", Mock.getBulletinInfo());
+        wepy.setStorage({
+          key:"BulletinTyped",
+          data:"true"
+        })
+      }
+    })
 
-    //
+
+
+    //取得recordmanager
     let rm = wepy.getRecorderManager();
     rm.onStart(() => {
       console.log("recorder start");
@@ -163,19 +181,28 @@ export default class BeforeSpeak extends wepy.page {
     });
     rm.onStop(res => {
       console.log("recorder stop", res);
-      //save the temp file path
+      //保存临时文件
       this.tempFilePath = res.tempFilePath;
       console.log("filepath: " + this.tempFilePath);
       if (status.canceled === this.currentStatus) {
         this.log = "cancel the recording, nothing saved  ";
       } else {
-        //precess the audio
-        let ac = wepy.createInnerAudioContext();
-        ac.src = this.tempFilePath;
-        ac.play();
+        // 处理录音文件
+        // let ac = wepy.createInnerAudioContext();
+        // ac.src = this.tempFilePath;
+        // ac.play();
+        //this.log = res.tempFilePath
+        this.$preload('recordPath', res.tempFilePath)
+        this.$redirect({
+          url: 'afterspeak'
+        })
       }
     });
     this.recorderManager = this.recorderManager || rm;
+  }
+
+  onUnload() {
+
   }
 }
 </script>
