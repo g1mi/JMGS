@@ -44,7 +44,7 @@ export default class Bulletin extends wepy.component {
   };
 
   data = {
-    typeTimers: []
+    showInfo: false
   };
   events = {};
 
@@ -55,12 +55,7 @@ export default class Bulletin extends wepy.component {
       this.typeOut(arg);
     },
     showInfo(arg) {
-      //删除之间添加的定时器
-      for (let i = this.typeTimers.length - 1; i >= 0 ; i--) {
-        const element = this.typeTimers[i];
-        clearTimeout(element)
-        this.typeTimers.pop()
-      }
+      this.showInfo = true
       this.content = arg
     }
   };
@@ -72,6 +67,10 @@ export default class Bulletin extends wepy.component {
         script[i],
         "\n" === script[i] ? speed * 5 : speed
       );
+      //页面切换后应直接显示内容
+      if(this.showInfo) {
+        return;
+      }
       this.$apply();
     }
   }
@@ -80,7 +79,6 @@ export default class Bulletin extends wepy.component {
       let t = setTimeout(() => {
         resolve(letter);
       }, speed);
-      this.typeTimers.push(t)
     });
   }
 }

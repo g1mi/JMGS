@@ -75,7 +75,6 @@
     computed = {
       currentStatus() {
         let s = this.status
-        console.log(s)
         return this.statusScript[s]
       },
       currentColor() {

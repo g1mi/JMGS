@@ -1,4 +1,5 @@
 <style lang="less">
+
 </style>
 <template>
 <view class="container">
@@ -19,23 +20,26 @@
 
 <script>
 import wepy from "wepy";
-import testMixin from "../mixins/test";
 import Mock from "@/util/Mock";
 import Tools from "@/util/tools";
-import UserInfo from '@/components/userinfo'
-import UserInfoDetail from '@/components/userinfodetail'
+import UserInfo from "@/components/userinfo";
+import UserInfoDetail from "@/components/userinfodetail";
+
+
 export default class UserRecord extends wepy.page {
-  config = {};
+  config = {
+    enablePullDownRefresh: true
+  };
   components = {
     userinfo: UserInfo,
     infodetail: UserInfoDetail
   };
-  mixins = [testMixin];
+  mixins = [];
   data = {
     detail: {
       avatarSrc: "../assets/images/default-avatar.png",
       createTime: "2018/9/11 14:22",
-      status: 'launching'
+      status: "launching"
     }
   };
   computed = {
@@ -43,11 +47,16 @@ export default class UserRecord extends wepy.page {
       return +new Date();
     }
   };
+  onPullDownRefresh() {}
 
   methods = {};
 
   events = {};
 
   onLoad() {}
+
+  onPullDownRefresh() {
+    wx.stopPullDownRefresh();
+  }
 }
 </script>

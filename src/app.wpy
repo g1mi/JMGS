@@ -1,6 +1,6 @@
 <style lang="css">
-@import './assets/style/weui.wxss';
-@import './assets/style/fontawesome.wxss'
+@import "./assets/style/weui.wxss";
+@import "./assets/style/fontawesome.wxss";
 .container {
   background: #f8f8f8;
   overflow: hidden;
@@ -12,7 +12,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  content: ' ';
+  content: " ";
   width: 100%;
   height: 1rpx;
   background-color: #e2e2e2;
@@ -21,69 +21,71 @@
 </style>
 
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
+import wepy from "wepy";
+import "wepy-async-function";
+
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/map',
-      'pages/beforefilm',
-      'pages/playvideo',
-      'pages/userrecord',
-      'pages/display',
-      'pages/afterspeak',
-      'pages/beforespeak',
-      'pages/afterfilm',
-      'pages/index',
+      "pages/map",
+      "pages/beforefilm",
+      "pages/playvideo",
+      "pages/userrecord",
+      "pages/display",
+      "pages/afterspeak",
+      "pages/beforespeak",
+      "pages/afterfilm",
+      "pages/index"
     ],
     window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      backgroundTextStyle: "light",
+      navigationBarBackgroundColor: "#fff",
+      navigationBarTitleText: "WeChat",
+      navigationBarTextStyle: "black"
     }
-  }
+  };
 
   globalData = {
     userInfo: null,
     location: {},
+    bulletinTyped: false,
+    acCtx: null
+  };
 
-  }
-
-  constructor () {
-    super()
-    this.use('requestfix')
+  constructor() {
+    super();
+    this.use("requestfix");
   }
 
   onLaunch() {
-    this.getUserInfo()
     //this.testAsync()
+    this.globalData.acCtx = wepy.createInnerAudioContext();
   }
 
-  sleep (s) {
+  sleep(s) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        resolve('promise resolved')
-      }, s * 1000)
-    })
+        resolve("promise resolved");
+      }, s * 1000);
+    });
   }
 
-  async testAsync () {
-    const data = await this.sleep(3)
-    console.log(data)
+  async testAsync() {
+    const data = await this.sleep(3);
+    console.log(data);
   }
 
   getUserInfo(cb) {
-    const that = this
+    const that = this;
     if (this.globalData.userInfo) {
-      return this.globalData.userInfo
+      return this.globalData.userInfo;
     }
     wepy.getUserInfo({
-      success (res) {
-        that.globalData.userInfo = res.userInfo
-        cb && cb(res.userInfo)
+      success(res) {
+        that.globalData.userInfo = res.userInfo;
+        cb && cb(res.userInfo);
       }
-    })
+    });
   }
 }
 </script>

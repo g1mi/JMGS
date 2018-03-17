@@ -1,6 +1,6 @@
 {
   "name": "jmgs",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "G1mi",
-  "license": "private",
+  "license": "MIT",
   "dependencies": {
     "moment": "^2.21.0",
     "wepy": "^1.7.0",
@@ -34,6 +34,7 @@
     "wepy-compiler-babel": "^1.5.1",
     "wepy-compiler-less": "^1.3.10",
     "wepy-eslint": "^1.5.3",
+    "wepy-plugin-imagemin": "^1.5.3",
     "wepy-plugin-uglifyjs": "^1.3.7"
   }
 }

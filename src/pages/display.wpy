@@ -1,75 +1,48 @@
 <style lang='less'>
-.showcontent {
-  display: inline;
-}
-.hidecontent {
-  display: none;
-}
-//dare button ----------------------
-.round-button {
-  position: absolute;
-  display: block;
-  width: 3rem;
-  height: 3rem;
-  line-height: 3rem;
-  border: 0.2rem solid #f5f5f5;
-  border-radius: 50%;
-  color: #f5f5f5;
-  text-align: center;
-  text-decoration: none;
-  background: #464646;
-  box-shadow: 0 0 0.3rem gray;
-  font-size: 24px;
-  font-weight: bold;
-  user-select: none;
-}
-.round-button-pos {
-  top: 414px;
-  left: 207px;
-}
-.round-button-shine {
-  animation: bgcolorchange ease-in 2s infinite;
-}
-.round-button-tap {
-  background: #262626;
-}
-@keyframes bgcolorchange {
-  0% {
-    background: #464646;
-  }
-  50% {
-    background: #87240e;
-  }
-  100% {
-    background: #464646;
-  }
-}
+
 </style>
 <template>
-<view class="container">
- <repeat for="{{ticketDetailList}}" item="item">
-    <ticketdetail :details="item"></ticketdetail>
- </repeat>
-  <roundbutton name="^" shine="true" @tap.user="tapBtn"></roundbutton>
-</view>
+  <view>
+    <userinfo nickname="我最帅" avatarSrc="../assets/images/default-avatar.png" ganshuoCounts="256" ganzuoCounts="22" size="small">
+      <view slot="content" class="weui-panel__hd" style="width:70%">
+            <playrecordbtn></playrecordbtn>
+      </view>
+    </userinfo>
+
+    <repeat for="{{ticketDetailList}}" item="item">
+      <ticketdetail :details="item"></ticketdetail>
+    </repeat>
+
+    <roundbutton class="" name="敢" shine="true" @tap.user="tapBtn"></roundbutton>
+
+    <view class="weui-footer">
+      <view class="weui-footer__text">———— 到底啦， 没有更多啦 —————</view>
+    </view>
+  </view>
 </template>
 
 
 <script>
 import wepy from "wepy";
-import testMixin from "../mixins/test";
 import Mock from "@/util/Mock";
 import Tools from "@/util/tools";
 import TicketDetail from "@/components/ticketdetail";
-import RoundButton from "@/components/roundbutton"
+import RoundButton from "@/components/roundbutton";
+import PlayRecordBtn from '../components/playrecordbtn'
+import UserInfo from "@/components/userinfo";
 export default class Display extends wepy.page {
-  config = {};
+  config = {
+    onPullDownRefresh: true,
+    navigationBarTitleText: 'de 敢说'
+  };
   components = {
     ticketdetail: TicketDetail,
-    roundbutton: RoundButton
+    roundbutton: RoundButton,
+    playrecordbtn: PlayRecordBtn,
+    userinfo: UserInfo,
   };
 
-  mixins = [testMixin];
+  mixins = [];
 
   data = {
     ticketDetailList: [
@@ -78,7 +51,8 @@ export default class Display extends wepy.page {
         vertical: "true",
         timeset: "2018/3/4 14:38",
         avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
+        posterSrc: "../assets/images/default-poster.jpg",
+        self: 'true'
       },
       {
         nickname: "帅帅帅帅帅帅2",
@@ -158,13 +132,14 @@ export default class Display extends wepy.page {
         posterSrc: "../assets/images/default-poster.jpg"
       },
       {
-        nickname: "帅帅帅帅帅帅3",
+        nickname: "帅帅帅帅帅帅007",
         vertical: "true",
         timeset: "2018/3/4 14:48",
         avatarSrc: "../assets/images/default-avatar.png",
         posterSrc: "../assets/images/default-poster.jpg"
       }
-    ]
+    ],
+    acCtx: null
   };
 
   computed = {
@@ -175,21 +150,36 @@ export default class Display extends wepy.page {
 
   methods = {
     tapBtn() {
-      console.log('round button taped in display page')
-    }
+      console.log("round button taped in display page");
+      wx.showModal({
+        title: "提示",
+        content: "时限为20秒，超过时间将无法上传！",
+        success(res) {
+          if (res.confirm) {
+            wx.chooseVideo({
+              sourceType: ["camera"],
+              compressed: true,
+              maxDuration: 60,
+              success(res) {
+                console.log(res);
+              }
+            });
+          }
+        },
+        fail() {}
+      });
 
+      // this.$navigate({
+      //   url: 'beforefilm'
+      // })
+    }
   };
 
   events = {};
 
   onLoad() {
-    wx.setNavigationBarTitle({
-      title:
-        Tools.getEllipsis(Mock.getTicketSponsor(), "10", "…") +
-        " 敢说， 你可敢做？"
-    });
+
   }
-  onReady() {
-  }
+  onReady() {}
 }
 </script>
