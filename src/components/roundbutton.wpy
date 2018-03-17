@@ -16,6 +16,7 @@
   font-size: 24px;
   font-weight: bold;
   user-select: none;
+  z-index: 1000;
 }
 .rd-round-button-shine {
   animation: bgcolorchange ease-in 2s infinite;
@@ -79,6 +80,7 @@ export default class RoundButton extends wepy.component {
       this.buttonTouched = "rd-round-button-tap";
       this.buttonShine = "";
       this.touchStarted = true;
+      this.$apply()
     },
     touchend(e) {
       //console.log('touch ended')

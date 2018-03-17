@@ -7,38 +7,29 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import testMixin from '../mixins/test'
+import wepy from "wepy";
+import testMixin from "../mixins/test";
 
-  export default class AfterRecord extends wepy.page {
-    config = {
-      navigationBarTitleText: 'Grcoin'
+export default class AfterRecord extends wepy.page {
+  config = {
+    navigationBarTitleText: "Grcoin"
+  };
+  components = {};
+
+  mixins = [testMixin];
+
+  data = {};
+
+  computed = {
+    now() {
+      return +new Date();
     }
-    components = {
-    }
+  };
 
-    mixins = [testMixin]
+  methods = {};
 
-    data = {
+  events = {};
 
-    }
-
-    computed = {
-      now () {
-        return +new Date()
-      }
-    }
-
-    methods = {
-
-    }
-
-    events = {
-
-    }
-
-    onLoad() {
-
-    }
-  }
+  onLoad() {}
+}
 </script>

@@ -68,7 +68,7 @@
 <template>
 <view class="td-ticket-box">
     <view class="td-timeset">{{details.timeset}}</view>
-      <view class="td-content-box td-flex-self">
+      <view class="td-content-box {{details.self ? 'td-flex-self' : 'td-flex-user'}}">
         <view class="td-userinfo">
           <view class="td-user-pic">
             <image class="td-image" src="{{details.avatarSrc}}"></image>
@@ -92,7 +92,11 @@
         timeset: '',
         avatarSrc: '',
         posterSrc: '',
-        vertical: ''
+        vertical: '',
+        self: {
+          type: String,
+          default: ''
+        }
       }
 
     }

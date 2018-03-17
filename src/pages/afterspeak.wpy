@@ -39,9 +39,7 @@
 
       <view class="weui-panel weui-panel_access">
             <view class="weui-panel__hd">
-              <button type="primary" loading="{{playingRecord}}" class="play-record" @tap.stop="playrecord" hover-class="button-hover">
-                {{playingRecord ? pageVers.playingRecord : pageVers.playRecord }}
-              </button>
+              <playrecordbtn></playrecordbtn>
             </view>
       </view>
       <view class="weui-cells__title">默认为{{config.howLong}}天，超出需要支付占位费。</view>
@@ -66,7 +64,7 @@
                 </view>
             </view>
         </view>
-        <view class="weui-cells__title">默认为{{config.howMany}}人，关闭后则没有人数限制，但须支援服务器费用。</view>
+        <view class="weui-cells__title">当前人数限制为：<i style="color:{{formData.howMany ? 'red' : 'green'}}">{{formData.howMany ? config.howMany : '无限制'}}</i>  <i style="font-size:12px">{{ formData.howMany ? '' : '（无限制须支援服务器费用。）  '}}</i></view>
         <view class="weui-cells weui-cells_after-title">
             <view class="weui-cell">
                 <view class="weui-cell__bd">人数限制：</view>
@@ -107,14 +105,14 @@ import wepy from "wepy";
 import Mock from "@/util/Mock";
 import Config from "@/util/config";
 import MapPicker from "../components/mappicker";
-
-const pageVers = {};
+import PlayRecordBtn from '../components/playrecordbtn'
 export default class AfterSpeak extends wepy.page {
   config = {
     navigationBarTitleText: "创建敢说"
   };
   components = {
-    mappicker: MapPicker
+    mappicker: MapPicker,
+    playrecordbtn: PlayRecordBtn
   };
 
   mixins = [];
@@ -135,11 +133,6 @@ export default class AfterSpeak extends wepy.page {
     config: Config(),
     mapCtx: null, //map context
     acCtx: null, // audio context
-    playingRecord: "",
-    pageVers: {
-      playRecord: "播放内容",
-      playingRecord: "播放中……"
-    }
   };
 
   computed = {
@@ -150,9 +143,12 @@ export default class AfterSpeak extends wepy.page {
 
   methods = {
     goback() {
+      //返回程序首页 地图
       wepy.navigateBack()
     },
+
     playrecord() {
+      //播放录音
       //console.log('play button taped', this.playingRecord, this.acCtx)
       if ("true" === this.playingRecord) {
         this.acCtx.stop();
@@ -161,17 +157,18 @@ export default class AfterSpeak extends wepy.page {
       }
     },
     pickLoc() {
+      //在小地图中选择展出坐标
       let _this = this;
       console.log("mapPicker taped");
       this.pickerDisplay = "show";
       this.$invoke("mappicker", "showPopup");
       //add loading toast for safety
       wepy.showLoading({
-        title: "请稍后...",
+        title: _this.config.waitAWhile,
         mask: true
       });
 
-      //set the pin pic after the animation
+      //在动画结束后加载pin
       setTimeout(() => {
         //hideloading
         wepy.hideLoading();
@@ -199,16 +196,18 @@ export default class AfterSpeak extends wepy.page {
       }, 400); // a lucky number
     },
     cancelPick() {
+      //小地图选取中点击返回按钮
       this.pickerDisplay = "hide";
       this.$invoke("mappicker", "hidePopup");
     },
     grabCoordinates() {
+      //抓取所选坐标
       this.pickerDisplay = "hide";
       this.$invoke("mappicker", "hidePopup");
       this.mapPicked = "primary";
       this.config.beforPosChosed = this.config.afterPosChosed;
 
-      //set the cent coordinates into form data
+      //在提交数据formdata中加入所选坐标
       this.mapCtx = this.mapCtx || wepy.createMapContext("map");
       let _this = this;
       this.mapCtx.getCenterLocation({
@@ -226,9 +225,18 @@ export default class AfterSpeak extends wepy.page {
       });
     },
     submit() {
+      let _this = this
       //上传form信息&上传录音文件
       console.log(this.formData + this.acCtx.src)
+      wepy.showLoading({
+        title: _this.config.waitAWhile,
+        mask: true
+      });
+
+      //上传成功后跳转页面
+
       setTimeout(() => {
+        wepy.hideLoading()
         wepy.redirectTo({
           url: 'display'
         })
@@ -249,26 +257,9 @@ export default class AfterSpeak extends wepy.page {
   onLoad(params, data) {
     let _this = this;
     //取得录音文件地址
-    this.acCtx = wepy.createInnerAudioContext();
+    this.acCtx = this.$parent.globalData.acCtx
     this.acCtx.src = data.preload.recordPath;
-    this.acCtx.onPlay(() => {
-      //播放时改变button内容
-      _this.playingRecord = "true";
-      _this.$apply();
-      console.log("play record : " + this.acCtx.src);
-    });
-    this.acCtx.onStop(() => {
-      //停止时改回button内容
-      _this.playingRecord = "";
-      _this.$apply();
-      console.log("stop playing");
-    });
-    this.acCtx.onEnded(() => {
-      //完成时改回button内容
-      _this.playingRecord = "";
-      _this.$apply();
-      console.log("played done");
-    });
+
     //get current position
     wepy.getLocation({
       type: "gcj02",

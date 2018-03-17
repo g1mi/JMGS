@@ -29,14 +29,9 @@
 import wepy from "wepy";
 import Bulletin from "@/components/bulletin";
 import Mock from "@/util/Mock";
-const pageVars = {
-  readyToRecord: "准备说：",
-  buttonTip: "请长按录音...",
-  recording: "正在录音...",
-  canceled: "已取消!",
-  waitAWhile: "请稍后...",
-  cancelRecording: "向上滑动松开 取消录音"
-};
+import Config from "@/util/config"
+import moment from "moment";
+import "moment/locale/zh-cn";
 
 const status = {
   beforeRecording: 0,
@@ -55,9 +50,10 @@ export default class BeforeSpeak extends wepy.page {
   mixins = [];
 
   data = {
+    config: Config(),
     animation: "animated bounce", //record button div
     buttonState: {
-      content: pageVars.readyToRecord,
+      content: Config().readyToRecord,
       type: "default"
     },
     currentStatus: status.beforeRecording,
@@ -78,13 +74,13 @@ export default class BeforeSpeak extends wepy.page {
 
   methods = {
     tip() {
-      this.buttonState.content = pageVars.buttonTip;
+      this.buttonState.content = this.config.buttonTip;
     },
     record(e) {
+      let _this = this
       //longpress
-      //change status
 
-      //vibrate and alert sound
+      //震动
       for (let i = 0; i < 5; i++) {
         setTimeout(() => {
           wepy.vibrateShort();
@@ -92,10 +88,10 @@ export default class BeforeSpeak extends wepy.page {
       }
 
       this.currentStatus = status.recording;
-      this.buttonState.content = pageVars.cancelRecording;
+      this.buttonState.content = this.config.cancelRecording;
       wepy.showToast({
         icon: "loading",
-        title: pageVars.recording,
+        title: _this.config.recording,
         mask: true,
         duration: 60000
       });
@@ -118,16 +114,17 @@ export default class BeforeSpeak extends wepy.page {
     touchend(e) {
       //when catch the touchend event , we should check the status first
       if (status.recording === this.currentStatus) {
+        let _this = this
         wepy.hideToast();
         let slidedUp =  (this.touchPoint.clientY - e.changedTouches[0].clientY) > 20; // canceling recording by sliding up
         if (slidedUp) {
           // if canceled the recording
           console.log("canceled the recording");
           this.currentStatus = status.canceled;
-          this.buttonState.content = pageVars.readyToRecord; //reset the button
+          this.buttonState.content = this.config.readyToRecord; //reset the button
           setTimeout(() => {
             wepy.showToast({
-              title: pageVars.canceled,
+              title: _this.config.canceled,
               icon: "none"
             });
           }, 300);
@@ -137,7 +134,7 @@ export default class BeforeSpeak extends wepy.page {
           //console.log('recorded')
           // 录音完成 处理文件时锁定屏幕
           wepy.showLoading({
-            title: pageVars.waitAWhile,
+            title: _this.config.waitAWhile,
             mask: true
           });
           // 处理录音文件
@@ -153,23 +150,13 @@ export default class BeforeSpeak extends wepy.page {
   onLoad() {
     let _this = this
     //检测是否已经打印过bulletin信息，否则直接显示
-    wepy.getStorage({
-      key: 'BulletinTyped',
-      success: function(res) {
-        console.log('type info: ' + res.data)
-        _this.$invoke("bulletin", "showInfo", Mock.getBulletinInfo());
-      },
-      fail: function(res) {
-        console.log('show info')
-        _this.$invoke("bulletin", "typeInfo", Mock.getBulletinInfo());
-        wepy.setStorage({
-          key:"BulletinTyped",
-          data:"true"
-        })
-      }
-    })
-
-
+    let typed = this.$parent.globalData.bulletinTyped
+    if(typed) {
+      this.$invoke("bulletin", "showInfo", Mock.getBulletinInfo());
+    } else {
+      this.$invoke("bulletin", "typeInfo", Mock.getBulletinInfo());
+      this.$parent.globalData.bulletinTyped = true
+    }
 
     //取得recordmanager
     let rm = wepy.getRecorderManager();
@@ -203,6 +190,8 @@ export default class BeforeSpeak extends wepy.page {
 
   onUnload() {
 
+  }
+  onReady() {
   }
 }
 </script>

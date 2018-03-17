@@ -34,14 +34,14 @@
 </style>
 <template>
   <view >
-  <map id="map" class="full-screen" longitude="107.235982" latitude="34.360620" scale="16"
-    controls="" bindcontroltap="" markers="" bindmarkertap=""
+  <map id="map" class="full-screen" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" scale="16"
+    controls="" bindcontroltap="" markers="{{markers}}" bindmarkertap="markertap"
     bindregionchange="getGSNearBy" show-location="true"></map>
   <cover-view class="speak">
-      <cover-image src="../assets/images/speak.png"  @tap.stop="speak"/>
+      <cover-image src="../assets/images/speak.png"  @tap.stop="beforespeak"/>
   </cover-view>
    <cover-view class="record">
-      <cover-image src="../assets/images/record.png"  @tap.stop="record"/>
+      <cover-image src="../assets/images/record.png"  @tap.stop="userrecord"/>
   </cover-view>
   <cover-view class="pin">
       <cover-image src="../assets/images/pin.png" />
@@ -54,13 +54,14 @@
 
 <script>
 import wepy from "wepy";
+import Config from "@/util/config";
 import moment from "moment";
 import "moment/locale/zh-cn";
 import xs from "xstream";
+import Mock from "@/util/Mock";
+import navigateSafely from "@/util/navigateSafely";
 
 let readyTorequest = undefined; //定义变量延时request，后面的request会取代之前未完成的request
-const userRecordURL = "userrecord";
-const sendGanshuoURL = "beforespeak";
 export default class Map extends wepy.page {
   config = {
     navigationBarTitleText: "吉米敢说"
@@ -70,7 +71,9 @@ export default class Map extends wepy.page {
   mixins = [];
 
   data = {
-    mapCtx: null //map context
+    mapCtx: null, //map context
+    config: Config(),
+    markers: []
   };
 
   computed = {
@@ -80,25 +83,31 @@ export default class Map extends wepy.page {
   };
 
   methods = {
+    markertap(e) {
+      console.log(e);
+      //添加跳转信息
+      this.$preload("", "");
+
+      this.$navigate({
+        url: "display"
+      });
+    },
     locate() {
       //返回自己的所在地点
       this.mapCtx.moveToLocation();
     },
-    speak: function(e) {
-      //转到添加敢说页面
-      wepy.navigateTo({
-        url: sendGanshuoURL
-      });
+    beforespeak: function(e) {
+      navigateSafely(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], "beforespeak");
     },
-    record: function(e) {
-      //转到userrecord页面
-      wepy.navigateTo({
-        url: userRecordURL
-      });
+    userrecord: function(e) {
+      navigateSafely(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], "userrecord");
     },
     getGSNearBy(e) {
+      let _this = this;
       let center = null;
       if ("begin" === e.type) {
+        //清理markers
+        _this.markers.splice(0, _this.markers.length);
       } else {
         //仅仅只检测滑动结束
         this.mapCtx.getCenterLocation({
@@ -107,6 +116,33 @@ export default class Map extends wepy.page {
               longitude: res.longitude,
               latitude: res.latitude
             };
+
+            //记录timer，后面的timer会取代之前的timer
+            if (readyTorequest) {
+              clearTimeout(readyTorequest);
+            } else {
+              console.log("首次request");
+            }
+            readyTorequest = setTimeout(() => {
+              //发送请求,取得附近敢说
+              console.log("request取得附近敢说");
+              let markers = Mock.getGanshuoNearBy(center, Mock.getAllMarkers());
+              let i = 0;
+              markers.forEach(marker => {
+                let location = marker.location.split(",");
+                let t = {
+                  iconPath: "../assets/images/placeholder.png",
+                  id: i++,
+                  latitude: location[1],
+                  longitude: location[0],
+                  width: 24,
+                  height: 24
+                };
+                _this.markers.push(t);
+              });
+              _this.$apply();
+              //console.log(_this.markers);
+            }, 1000);
           },
           fail(res) {
             //console.log(res)
@@ -115,17 +151,6 @@ export default class Map extends wepy.page {
             //console.log(res)
           }
         });
-
-        //记录timer，后面的timer会取代之前的timer
-        if (readyTorequest) {
-          clearTimeout(readyTorequest);
-        } else {
-          console.log("first time set the timer");
-        }
-        readyTorequest = setTimeout(() => {
-          //request all the Ganshuo near by
-          console.log('sending the request')
-        }, 1000);
       }
     }
   };
@@ -133,15 +158,14 @@ export default class Map extends wepy.page {
   events = {};
 
   onLoad() {
-    let _this = this;
     this.mapCtx = wx.createMapContext("map", this);
   }
   onShow() {
-    console.log('map show')
+    // console.log("map show");
   }
 
   onHide() {
-    console.log('map hide')
+    // console.log("map hide");
   }
 }
 </script>

@@ -4,14 +4,13 @@
   border: 1rpx solid #e0e0e0;
   border-radius: 7rpx;
   margin: 20rpx 9rpx 40rpx;
-  transition: all 0.2s ease;
   box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);
-  z-index: 10;
   background: #fff;
 }
 
 .ui-userinfo {
-  padding: 35rpx;
+  padding-left: 35rpx;
+  padding-top: 35rpx;
   display: flex;
   flex-direction: row;
 }
@@ -28,22 +27,13 @@
   top: -24rpx;
   line-height: 26rpx;
   padding: 10rpx 14rpx;
-  font-size: 26rpx;
+  font-size: 22rpx;
   color: #555;
   border-radius: 8rpx;
   background: #f2f2f2;
 }
 
-.ui-user-nickname {
-  margin-top: 20rpx;
-  margin-left: 2rem;
-  color: #555;
-  font-size: 36rpx;
-  max-width: 6rem;
-  max-height: 2rem;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+
 
 .ui-record-box {
   position: relative;
@@ -59,6 +49,15 @@
   text-align: right;
 }
 
+.ui-user-record {
+  right: 20rpx;
+  color: #369;
+  opacity: 0.5;
+  font-size: 26rpx;
+  padding: 12rpx 12rpx 12rpx;
+  text-align: right;
+}
+
 .ui-user-avatar {
   left: 1rem;
   width: 3.2rem;
@@ -66,18 +65,45 @@
   border-radius: 1.6rem;
   box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);
 }
+.ui-user-nickname {
+  margin-top: 24rpx;
+  margin-left: 2rem;
+  color: #555;
+  font-size: 32rpx;
+  max-width: 6rem;
+  max-height: 2rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.ui-user-nickname-small {
+  .ui-user-nickname;
+  font-size: 24rpx;
+}
+.ui-user-avatar-small {
+  .ui-user-avatar;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 1.4rem;
+}
+.ui-detail-border {
+  background-image: linear-gradient(-135deg, #ccc 1px, #58595B 40px, #FFFFFF 41px, #FFFFFF 80px, #999999 81px, #58595B 120px, #FFFFFF 121px);
+}
+.hide {
+  display: none
+}
 </style>
 <template>
-<view class="ui-userinfo--box">
+<view class="ui-userinfo--box {{'small' === size ? 'ui-detail-border' : ''}}">
 
     <view class="ui-userinfo">
-      <image class="ui-user-avatar" src="{{avatarSrc}}"></image>
-      <view class="ui-user-nickname">{{nickname}}</view>
+      <image class="ui-user-avatar{{'small' === size ? '-small' : ''}}" src="{{avatarSrc}}"></image>
+      <view class="ui-user-nickname{{'small' === size ? '-small' : ''}}">{{nickname}}</view>
     </view>
-    <view class="ui-slogan-box">
+    <slot name="content"></slot>
+    <view class="ui-slogan-box {{'small' === size ? 'hide' : ''}}">
         <view class="ui-slogan">    敢说不是能儿，敢做才是事儿</view>
     </view>
-    <view class="ui-record-box">
+    <view class="ui-record-box {{'small' === size ? 'hide' : ''}}">
         <view class="ui-user-record">敢说：  <i style="font-size:22rpx">{{ganshuoCounts}}</i>    |   敢做：   <i style="font-size:22rpx">{{ganzuoCounts}}</i> </view>
     </view>
 </view>
@@ -99,6 +125,10 @@
         default: ''
       },
       ganzuoCounts:{
+        type: String,
+        default: ''
+      },
+      size:{
         type: String,
         default: ''
       }
