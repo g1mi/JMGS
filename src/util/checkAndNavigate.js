@@ -35,7 +35,7 @@ async function firstTimeCheckAndNavigate(settings, url) {
   }
 
 }
-export default function navigateSafely(authsArray, url) {
+export default function checkAndNavigate(authsArray, url) {
 
   new Promise((resolve, reject) => {
     wx.getStorage({

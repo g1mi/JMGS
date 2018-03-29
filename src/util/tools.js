@@ -13,4 +13,22 @@ export default class tools {
       throw new Error('getEllipsis(): not a string')
     }
   }
+
+  static formatUrl(url, params) {
+    if('object' !== typeof params) {
+      throw Error('type of params incorrect')
+    }
+    let p = ''
+    let length = 0
+    for(let key in params) {
+      length++
+    }
+    for(let key in params) {
+      p += key + '=' + params[key]
+      if(--length > 0) {
+        p += '&'
+      }
+    }
+    return url + '?' + p
+  }
 }

@@ -23,6 +23,7 @@
 <script>
 import wepy from "wepy";
 import "wepy-async-function";
+import Config from '@/util/config'
 
 export default class extends wepy.app {
   config = {
@@ -34,8 +35,7 @@ export default class extends wepy.app {
       "pages/display",
       "pages/afterspeak",
       "pages/beforespeak",
-      "pages/afterfilm",
-      "pages/index"
+      "pages/afterfilm"
     ],
     window: {
       backgroundTextStyle: "light",
@@ -49,7 +49,9 @@ export default class extends wepy.app {
     userInfo: null,
     location: {},
     bulletinTyped: false,
-    acCtx: null
+    acCtx: null,
+    config: null,
+    token: '',
   };
 
   constructor() {
@@ -57,9 +59,13 @@ export default class extends wepy.app {
     this.use("requestfix");
   }
 
-  onLaunch() {
+  async onLaunch() {
+    const _this = this;
     //this.testAsync()
     this.globalData.acCtx = wepy.createInnerAudioContext();
+    this.globalData.config = Config();
+
+    this.login(this);
   }
 
   sleep(s) {
@@ -75,7 +81,7 @@ export default class extends wepy.app {
     console.log(data);
   }
 
-  getUserInfo(cb) {
+  async getUserInfo(cb) {
     const that = this;
     if (this.globalData.userInfo) {
       return this.globalData.userInfo;
@@ -87,5 +93,65 @@ export default class extends wepy.app {
       }
     });
   }
+
+  login(app) {
+    new Promise((resolve, reject) => {
+      wx.login({
+        success(res) {
+          const code = res.code;
+          if (code) {
+            wx.getUserInfo({
+              success(res) {
+                //取得code iv encryptedData
+                const iv = res.iv;
+                const encryptedData = res.encryptedData;
+                const rawData = res.rawData;
+                wx.request({
+                  url: app.globalData.config.loginUrl,
+                  method: "POST",
+                  data: {
+                    code: code,
+                    encryptedData: encryptedData,
+                    iv: iv,
+                    rawData: rawData
+                  },
+                  success: function (data) {
+                    if (data.error) {
+                      wepy.showToast({
+                        title: data.error,
+                        icon: 'none'
+                      })
+                    } else {
+                      //返回的数据中应当包含jwt
+                      resolve(data)
+                    }
+                  },
+                  fail: function () {
+                    console.log("系统错误");
+                    wepy.showToast({
+                      title: '未连接到服务器。',
+                      icon: 'none'
+                    })
+                  }
+                });
+              },
+              fail() {
+                console.log("获取用户信息失败！");
+              }
+            });
+          } else {
+            console.log("获取用户登录态失败！");
+          }
+        }
+      });
+    }).then(res => {
+      //取得token ，加入缓存中
+      console.log(res)
+      const {authorization, userInfo} = res.data;
+      app.globalData.userInfo = userInfo;
+      this.globalData.token = authorization;
+    })
+  }
 }
+
 </script>

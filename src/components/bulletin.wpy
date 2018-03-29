@@ -1,85 +1,83 @@
 <style lang="less">
-.hero__terminal {
-  width: 80%;
-  margin: 1rem auto 3rem auto;
-  text-align: left;
-  color: white;
-  padding: 0 1rem 1rem;
-  border-radius: 4px;
-  background-color: #232323;
-  min-height: 285px;
-  animation: fadeUp 2s;
-  box-shadow: 0px 12px 36.8px 9.2px rgba(0, 0, 0, 0.1);
-}
-.code {
-  font-size: 12px;
-  font-family: "Courier New", Courier, monospace;
-  color: #f0e8e8;
-  display: block;
-  white-space: pre-line;
-}
-.i {
-  font-size: 16px;
-  font-family: "Courier New", Courier, monospace;
-  color: #f0e8e8;
-}
+  .hero__terminal {
+    width: 80%;
+    margin: 1rem auto 3rem auto;
+    text-align: left;
+    color: white;
+    padding: 0 1rem 1rem;
+    border-radius: 4px;
+    background-color: #232323;
+    min-height: 285px;
+    animation: fadeUp 2s;
+    box-shadow: 0px 12px 36.8px 9.2px rgba(0, 0, 0, 0.1);
+  }
+  .code {
+    font-size: 12px;
+    font-family: "Courier New", Courier, monospace;
+    color: #f0e8e8;
+    display: block;
+    white-space: pre-line;
+  }
+  .i {
+    font-size: 16px;
+    font-family: "Courier New", Courier, monospace;
+    color: #f0e8e8;
+  }
 </style>
+
 <template>
-    <view class="hero__terminal">
-      <code class="code">
-        <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>{{content}}
-      </code>
-    </view>
+  <view class="hero__terminal">
+    <code class="code">
+          <i style="color:#BFA588">G1milo</i><i style="color:#568D4B"> ~ $ </i>{{content}}
+        </code>
+  </view>
 </template>
+
 <script>
-import wepy from "wepy";
-import "wepy-async-function";
-
-export default class Bulletin extends wepy.component {
-  props = {
-    content: {
-      type: String,
-      default: ""
-    }
-  };
-
-  data = {
-    showInfo: false
-  };
-  events = {};
-
-  watch = {};
-
-  methods = {
-    typeInfo(arg) {
-      this.typeOut(arg);
-    },
-    showInfo(arg) {
-      this.showInfo = true
-      this.content = arg
-    }
-  };
-  async typeOut(content) {
-    let script = content.split("");
-    let speed = 60;
-    for (let i = 0; i < script.length; i++) {
-      this.content += await this.spitLetter(
-        script[i],
-        "\n" === script[i] ? speed * 5 : speed
-      );
-      //页面切换后应直接显示内容
-      if(this.showInfo) {
-        return;
+  import wepy from "wepy";
+  import "wepy-async-function";
+  export default class Bulletin extends wepy.component {
+    props = {
+      content: {
+        type: String,
+        default: ""
       }
-      this.$apply();
+    };
+    data = {
+      showInfo: false
+    };
+    events = {};
+    watch = {};
+    methods = {
+      typeInfo(arg) {
+        this.typeOut(arg);
+      },
+      showInfo(arg) {
+        this.showInfo = true
+        this.content = arg
+      }
+    };
+    async typeOut(content) {
+      let script = content.split("");
+      let speed = 60;
+      for (let i = 0; i < script.length; i++) {
+        this.content += await this.spitLetter(
+          script[i],
+          "\n" === script[i] ? speed * 5 : speed
+        );
+        //页面切换后应直接显示内容
+        if (this.showInfo) {
+          return;
+        }
+        this.$apply();
+      }
+    }
+    spitLetter(letter, speed) {
+      return new Promise((resolve, reject) => {
+        let t = setTimeout(() => {
+          resolve(letter);
+        }, speed);
+      });
     }
   }
-  spitLetter(letter, speed) {
-    return new Promise((resolve, reject) => {
-      let t = setTimeout(() => {
-        resolve(letter);
-      }, speed);
-    });
-  }
-}
 </script>

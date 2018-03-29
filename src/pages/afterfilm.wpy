@@ -1,35 +1,55 @@
 <style lang="less">
 
 </style>
+
+
 <template>
   <view class="container">
+    <button @tap="tap">test</button>
   </view>
 </template>
 
+
 <script>
-import wepy from "wepy";
-import testMixin from "../mixins/test";
-
-export default class AfterRecord extends wepy.page {
-  config = {
-    navigationBarTitleText: "Grcoin"
-  };
-  components = {};
-
-  mixins = [testMixin];
-
-  data = {};
-
-  computed = {
-    now() {
-      return +new Date();
-    }
-  };
-
-  methods = {};
-
-  events = {};
-
-  onLoad() {}
-}
+  import wepy from "wepy";
+  export default class AfterRecord extends wepy.page {
+    config = {
+      navigationBarTitleText: "Grcoin"
+    };
+    components = {};
+    mixins = [];
+    data = {};
+    computed = {
+      now() {
+        return +new Date();
+      }
+    };
+    methods = {
+      tap() {
+        wepy.request({
+          url: 'http://127.0.0.1:7001/api/user', // + "5ab45a594c39050ddcb6eb83"
+          header: {
+            "authorization": "eyJhbGciOiJIUzI1NiJ9.eyJuaWNrTmFtZSI6IkcuIiwiZ2VuZGVyIjoxLCJsYW5ndWFnZSI6InpoX0NOIiwiY2l0eSI6IiIsInByb3ZpbmNlIjoiIiwiY291bnRyeSI6Ik9tYW4iLCJhdmF0YXJVcmwiOiJodHRwczovL3d4LnFsb2dvLmNuL21tb3Blbi92aV8zMi9RZzdIaWFCcGNhZG1OdGZzNXNlZllTaWJhWmt3Qk44eHJjN2FBT1BadW0ydHB2VWswbHgwYjU0aWJ0Y0NMTDFxRXFpYjhVZmo3bWg0VDJ5aWJlaWNpY3JTMHB6b0EvMCJ9TW04MVE3QmFWdVhDQmpuSUZBSU5TQT09.0wJ-o1R3FP7TdCGyaqGbDDTKf07pAK8248C__2Qxa2"
+          },
+          dataType: 'json',
+          data: {
+            "unionId": "ssss",
+            "nickname": "nickname1111",
+            "avatarUrl": "avatar1111",
+          },
+          method: 'POST',
+          success(res) {
+            if (res.data.error) {
+              wepy.showModal({
+                title: '有错误: ',
+                content: res.data.error
+              })
+            }
+          }
+        })
+      }
+    };
+    events = {};
+    onLoad() {}
+  }
 </script>

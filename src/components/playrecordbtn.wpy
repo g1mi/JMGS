@@ -1,68 +1,63 @@
 <style lang="less">
-.play-record-btn {
-  text-align: left;
-  font-size: 14px;
-}
-</style>
-<template>
-<button type="primary" plain="true" loading="{{playingRecord}}" class="play-record-btn" @tap.stop="playrecord" hover-class="button-hover">
-                {{playingRecord ? pageVars.playingRecord : pageVars.playRecord }}
-              </button>
-</template>
-<script>
-import wepy from "wepy";
-
-export default class PlayRecordBtn extends wepy.component {
-  props = {
-
-  };
-
-  data = {
-    acCtx: null, // audio context
-    playingRecord: "",
-    pageVars: {
-      playRecord: "播放内容",
-      playingRecord: "播放中……"
-    }
-  };
-  events = {};
-
-  watch = {};
-
-  methods = {
-    playrecord() {
-      //播放录音
-      //console.log('play button taped', this.playingRecord, this.acCtx)
-      if ("true" === this.playingRecord) {
-        this.acCtx.stop();
-      } else {
-        this.acCtx.play();
-      }
-    }
-  };
-
-  onLoad() {
-    let _this = this
-    this.acCtx = this.$parent.$parent.globalData.acCtx
-
-    this.acCtx.onPlay(() => {
-      //播放时改变button内容
-      _this.playingRecord = "true";
-      _this.$apply();
-      //console.log("play record : " + this.acCtx.src);
-    });
-    this.acCtx.onStop(() => {
-      //停止时改回button内容
-      _this.playingRecord = "";
-      _this.$apply();
-     //console.log("stop playing");
-    });
-    this.acCtx.onEnded(() => {
-      //完成时改回button内容
-      _this.playingRecord = "";
-      _this.$apply();
-     // console.log("played done");
-    });
+  .play-record-btn {
+    text-align: left;
+    font-size: 14px;
   }
-}
+</style>
+
+<template>
+  <button type="primary" plain="true" loading="{{playingRecord}}" class="play-record-btn" @tap.stop="playrecord" hover-class="button-hover">
+                  {{playingRecord ? pageVars.playingRecord : pageVars.playRecord }}
+                </button>
+</template>
+
+<script>
+  import wepy from "wepy";
+  export default class PlayRecordBtn extends wepy.component {
+    props = {
+    };
+    data = {
+      acCtx: null, // audio context
+      playingRecord: "",
+      pageVars: {
+        playRecord: "播放内容",
+        playingRecord: "播放中……"
+      }
+    };
+    events = {};
+    watch = {};
+    methods = {
+      playrecord() {
+        //播放录音
+        //console.log('play button taped', this.playingRecord, this.acCtx)
+        if ("true" === this.playingRecord) {
+          this.acCtx.stop();
+        } else {
+          this.acCtx.play();
+        }
+      }
+    };
+    onLoad() {
+      let _this = this
+      this.acCtx = this.$parent.$parent.globalData.acCtx
+      this.acCtx.onPlay(() => {
+        //播放时改变button内容
+        _this.playingRecord = "true";
+        _this.$apply();
+        //console.log("play record : " + this.acCtx.src);
+      });
+      this.acCtx.onStop(() => {
+        //停止时改回button内容
+        _this.playingRecord = "";
+        _this.$apply();
+        //console.log("stop playing");
+      });
+      this.acCtx.onEnded(() => {
+        //完成时改回button内容
+        _this.playingRecord = "";
+        _this.$apply();
+        // console.log("played done");
+      });
+    }
+  }
 </script>

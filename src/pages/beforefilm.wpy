@@ -1,218 +1,210 @@
 <style lang="less">
-.camera {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-.btn-back {
-  position: absolute;
-  border-radius: 50rpx;
-  top: calc(80%);
-  left: calc(65%);
-  background: transparent;
-  width: 64rpx;
-  height: 64rpx;
-  padding: 12rpx;
-  font-size: 22rpx;
-  color: #ccc;
-  text-align: center;
-}
-.btn-film {
-  position: absolute;
-  border-radius: 90rpx;
-  top: calc(60%);
-  left: calc(60%);
-  background: transparent;
-  width: 160rpx;
-  height: 160rpx;
-  border: 5rpx orange solid;
-  padding: 14rpx;
-  font-size: 118rpx;
-  color: orange;
-  text-align: center;
-}
-.btn-switch {
-  position: absolute;
-  border-radius: 90rpx;
-  top: calc(3%);
-  left: calc(80%);
-  background: transparent;
-  width: 64rpx;
-  height: 64rpx;
-  padding: 14rpx;
-  font-size: 56rpx;
-  color: orange;
-  text-align: center;
-}
-.hideContent {
-  display: none;
-}
-.showContent {
-  display: inline;
-}
-.film-tip {
-  position: absolute;
-  top: calc(3%);
-  left: calc(5%);
-  font-size: 24px;
-  color: white;
-}
+  .camera {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+  .btn-back {
+    position: absolute;
+    border-radius: 50rpx;
+    top: calc(80%);
+    left: calc(65%);
+    background: transparent;
+    width: 64rpx;
+    height: 64rpx;
+    padding: 12rpx;
+    font-size: 22rpx;
+    color: #ccc;
+    text-align: center;
+  }
+  .btn-film {
+    position: absolute;
+    border-radius: 90rpx;
+    top: calc(60%);
+    left: calc(60%);
+    background: transparent;
+    width: 160rpx;
+    height: 160rpx;
+    border: 5rpx orange solid;
+    padding: 14rpx;
+    font-size: 118rpx;
+    color: orange;
+    text-align: center;
+  }
+  .btn-switch {
+    position: absolute;
+    border-radius: 90rpx;
+    top: calc(3%);
+    left: calc(80%);
+    background: transparent;
+    width: 64rpx;
+    height: 64rpx;
+    padding: 14rpx;
+    font-size: 56rpx;
+    color: orange;
+    text-align: center;
+  }
+  .hideContent {
+    display: none;
+  }
+  .showContent {
+    display: inline;
+  }
+  .film-tip {
+    position: absolute;
+    top: calc(3%);
+    left: calc(5%);
+    font-size: 24px;
+    color: white;
+  }
 </style>
+
 <template>
-    <camera class="camera" device-position="{{cameraDirection}}" flash='off' bindstop="" binderror="">
-        <cover-view class="btn-back {{unlocked ? 'hideContent' : 'showContent'}}" @tap.stop="goBack">
-        <cover-image src="../assets/images/goback.png"></cover-image>
-       </cover-view>
-       <cover-view class="btn-film {{unlocked ? 'hideContent' : 'showContent'}}" @tap.stop="film"  bindlongpress="longpress">
-        敢
-       </cover-view>
-       <cover-view class="btn-switch {{unlocked ? 'hideContent' : 'showContent'}}" @tap="switchCamera">
-        <cover-image src="../assets/images/switch.png"></cover-image>
-       </cover-view>
-      <cover-view class="film-tip {{unlocked ? 'showContent' : 'hideContent'}}">
-         {{countDownTip}}
-       </cover-view>
-    </camera>
+  <camera class="camera" device-position="{{cameraDirection}}" flash='off' bindstop="" binderror="">
+    <cover-view class="btn-back {{unlocked ? 'hideContent' : 'showContent'}}" @tap.stop="goBack">
+      <cover-image src="../assets/images/goback.png"></cover-image>
+    </cover-view>
+    <cover-view class="btn-film {{unlocked ? 'hideContent' : 'showContent'}}" @tap.stop="film" bindlongpress="longpress">
+      敢
+    </cover-view>
+    <cover-view class="btn-switch {{unlocked ? 'hideContent' : 'showContent'}}" @tap="switchCamera">
+      <cover-image src="../assets/images/switch.png"></cover-image>
+    </cover-view>
+    <cover-view class="film-tip {{unlocked ? 'showContent' : 'hideContent'}}">
+      {{countDownTip}}
+    </cover-view>
+  </camera>
 </template>
 
 <script>
-import wepy from "wepy";
-import Mock from "@/util/Mock";
-import Tools from "@/util/tools";
-import xs from "xstream";
-export default class BeforeFilm extends wepy.page {
-  config = {};
-  components = {};
-
-  mixins = [];
-
-  data = {
-    cameraCtx: null,
-    cameraDirection: "front",
-    unlocked: false,
-    countDownTip: ""
-  };
-
-  computed = {
-    now() {
-      return +new Date();
+  import wepy from "wepy";
+  import Mock from "@/util/Mock";
+  import Tools from "@/util/tools";
+  import xs from "xstream";
+  export default class BeforeFilm extends wepy.page {
+    config = {};
+    components = {};
+    mixins = [];
+    data = {
+      cameraCtx: null,
+      cameraDirection: "front",
+      unlocked: false,
+      countDownTip: ""
+    };
+    computed = {
+      now() {
+        return +new Date();
+      }
+    };
+    methods = {
+      goBack() {
+        //返回
+        wx.navigateBack();
+      },
+      film() {
+        let _this = this;
+        //解锁录制
+        this.unlocked = true;
+        this.countDownTip = "轻晃手机，开始录制";
+        this.$apply();
+        //开始监听晃动事件 只检测一次
+        wx.startAccelerometer({
+          success() {
+            //监听晃动事件
+            wx.onAccelerometerChange(function(e) {
+              if (e.x > 1 || e.y > 1 || e.z > 1) {
+                //取得晃动事件
+                //结束监听
+                wx.stopAccelerometer({
+                  success() {
+                    //开始录制视频
+                    _this.cameraCtx.startRecord({
+                      success() {
+                        //添加流 控制时间
+                        let stream = xs
+                          .periodic(1000)
+                          .endWhen(xs.periodic(15000).take(1));
+                        stream.addListener({
+                          next: i => {
+                            _this.countDownTip = "还剩 " + (14 - i) + " 秒";
+                            _this.$apply();
+                          },
+                          error: err => console.error(err),
+                          complete: () => {
+                            //录制时间到，停止录制
+                            _this.cameraCtx.stopRecord({
+                              compressed: true,
+                              success(res) {
+                                wx.showLoading({
+                                  title: "请稍后……",
+                                  mask: true
+                                });
+                                //处理视频
+                                _this.$preload(
+                                  "tempThumbPath",
+                                  res.tempThumbPath
+                                );
+                                _this.$preload(
+                                  "tempVideoPath",
+                                  res.tempVideoPath
+                                );
+                                _this.$redirect({
+                                  url: "playvideo"
+                                });
+                                wx.hideLoading();
+                                console.log(res);
+                              },
+                              fail(res) {
+                                wx.showToast({
+                                  title: "无法结束录像!" + res.errMessage,
+                                  icon: "none"
+                                });
+                              }
+                            });
+                          }
+                        });
+                      },
+                      fail(res) {
+                        wx.showToast({
+                          title: "无法开始录像!" + res.errMessage,
+                          icon: "none"
+                        });
+                      }
+                    });
+                  },
+                  fail(res) {
+                    wx.showToast({
+                      title: "无法停止监听晃动事件!" + res.errMessage,
+                      icon: "none"
+                    });
+                  }
+                });
+              }
+              //检测到晃动res
+            });
+          },
+          fail(res) {
+            wx.showToast({
+              title: "无法检测晃动事件!" + res.errMessage,
+              icon: "none"
+            });
+          }
+        });
+      },
+      switchCamera() {
+        this.cameraDirection =
+          "front" === this.cameraDirection ? "back" : "front";
+      },
+      longpress() {
+        wx.navigateBack();
+      }
+    };
+    events = {};
+    onLoad() {
+      this.cameraCtx = wx.createCameraContext(this);
     }
-  };
-
-  methods = {
-    goBack() {
-      //返回
-      wx.navigateBack();
-    },
-    film() {
-      let _this = this;
-      //解锁录制
-      this.unlocked = true;
-      this.countDownTip = "轻晃手机，开始录制";
+    onReady() {
       this.$apply();
-
-      //开始监听晃动事件 只检测一次
-      wx.startAccelerometer({
-        success() {
-          //监听晃动事件
-          wx.onAccelerometerChange(function(e) {
-            if (e.x > 1 || e.y > 1 || e.z > 1) {
-              //取得晃动事件
-              //结束监听
-              wx.stopAccelerometer({
-                success() {
-                  //开始录制视频
-                  _this.cameraCtx.startRecord({
-                    success() {
-                      //添加流 控制时间
-                      let stream = xs
-                        .periodic(1000)
-                        .endWhen(xs.periodic(15000).take(1));
-
-                      stream.addListener({
-                        next: i => {
-                          _this.countDownTip = "还剩 " + (14 - i) + " 秒";
-                          _this.$apply();
-                        },
-                        error: err => console.error(err),
-                        complete: () => {
-                          //录制时间到，停止录制
-                          _this.cameraCtx.stopRecord({
-                            compressed:true,
-                            success(res) {
-                              wx.showLoading({
-                                title: "请稍后……",
-                                mask: true
-                              });
-                              //处理视频
-                              _this.$preload(
-                                "tempThumbPath",
-                                res.tempThumbPath
-                              );
-                              _this.$preload(
-                                "tempVideoPath",
-                                res.tempVideoPath
-                              );
-                              _this.$redirect({
-                                url: "playvideo"
-                              });
-                              wx.hideLoading();
-                              console.log(res);
-                            },
-                            fail(res) {
-                              wx.showToast({
-                                title: "无法结束录像!" + res.errMessage,
-                                icon: "none"
-                              });
-                            }
-                          });
-                        }
-                      });
-                    },
-                    fail(res) {
-                      wx.showToast({
-                        title: "无法开始录像!" + res.errMessage,
-                        icon: "none"
-                      });
-                    }
-                  });
-                },
-                fail(res) {
-                  wx.showToast({
-                    title: "无法停止监听晃动事件!" + res.errMessage,
-                    icon: "none"
-                  });
-                }
-              });
-            }
-
-            //检测到晃动res
-          });
-        },
-        fail(res) {
-          wx.showToast({
-            title: "无法检测晃动事件!" + res.errMessage,
-            icon: "none"
-          });
-        }
-      });
-    },
-    switchCamera() {
-      this.cameraDirection =
-        "front" === this.cameraDirection ? "back" : "front";
-    },
-    longpress() {
-      wx.navigateBack();
     }
-  };
-
-  events = {};
-
-  onLoad() {
-    this.cameraCtx = wx.createCameraContext(this);
   }
-  onReady() {
-    this.$apply();
-  }
-}
 </script>
