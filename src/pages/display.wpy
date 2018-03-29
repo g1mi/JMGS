@@ -1,21 +1,19 @@
 <style lang='less'>
 
 </style>
+
 <template>
   <view>
     <userinfo nickname="我最帅" avatarSrc="../assets/images/default-avatar.png" ganshuoCounts="256" ganzuoCounts="22" size="small">
       <view slot="content" class="weui-panel__hd" style="width:70%">
-            <playrecordbtn></playrecordbtn>
+        <playrecordbtn></playrecordbtn>
       </view>
     </userinfo>
-
-    <repeat for="{{ticketDetailList}}" item="item">
+    <repeat for="{{challenges}}" item="item">
       <ticketdetail :details="item"></ticketdetail>
     </repeat>
-
     <roundbutton class="" name="敢" shine="true" @tap.user="tapBtn"></roundbutton>
-
-    <view class="weui-footer">
+    <view class="weui-footer {{onBottom ? '' : 'hide'}}">
       <view class="weui-footer__text">———— 到底啦， 没有更多啦 —————</view>
     </view>
   </view>
@@ -23,163 +21,92 @@
 
 
 <script>
-import wepy from "wepy";
-import Mock from "@/util/Mock";
-import Tools from "@/util/tools";
-import TicketDetail from "@/components/ticketdetail";
-import RoundButton from "@/components/roundbutton";
-import PlayRecordBtn from '../components/playrecordbtn'
-import UserInfo from "@/components/userinfo";
-export default class Display extends wepy.page {
-  config = {
-    onPullDownRefresh: true,
-    navigationBarTitleText: 'de 敢说'
-  };
-  components = {
-    ticketdetail: TicketDetail,
-    roundbutton: RoundButton,
-    playrecordbtn: PlayRecordBtn,
-    userinfo: UserInfo,
-  };
-
-  mixins = [];
-
-  data = {
-    ticketDetailList: [
-      {
-        nickname: "帅帅帅帅帅帅1",
+  import wepy from "wepy";
+  import Mock from "@/util/Mock";
+  import Tools from "@/util/tools";
+  import TicketDetail from "@/components/ticketdetail";
+  import RoundButton from "@/components/roundbutton";
+  import PlayRecordBtn from '../components/playrecordbtn'
+  import UserInfo from "@/components/userinfo";
+  import request from '@/util/request'
+  export default class Display extends wepy.page {
+    config = {
+      onPullDownRefresh: true,
+      navigationBarTitleText: 'de 敢说'
+    };
+    components = {
+      ticketdetail: TicketDetail,
+      roundbutton: RoundButton,
+      playrecordbtn: PlayRecordBtn,
+      userinfo: UserInfo,
+    };
+    mixins = [];
+    data = {
+      challenges: [{
+        challengeId: 'sssss',
+        challengeOwnerNickName: "帅帅帅帅帅帅1",
+        challengeOwnerAvatarUrl: '../assets/images/default-avatar.png',
+        posterUrl: '../assets/images/default-poster.jpg',
         vertical: "true",
-        timeset: "2018/3/4 14:38",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg",
-        self: 'true'
-      },
-      {
-        nickname: "帅帅帅帅帅帅2",
-        vertical: "false",
-        timeset: "2018/3/4 14:39",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅3",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
-      },
-      {
-        nickname: "帅帅帅帅帅帅007",
-        vertical: "true",
-        timeset: "2018/3/4 14:48",
-        avatarSrc: "../assets/images/default-avatar.png",
-        posterSrc: "../assets/images/default-poster.jpg"
+        createTime: "2018/3/4 14:38",
+        self: 'true',
+      }],
+      currentPage: 1,
+      acCtx: null,
+      ticketId: '',
+      ticketOwnerNickName: '',
+      ticketOnwerAvatarUrl: '',
+      audioUrl: '',
+      onBottom: false,
+    };
+    computed = {
+      now() {
+        return +new Date();
       }
-    ],
-    acCtx: null
-  };
-
-  computed = {
-    now() {
-      return +new Date();
-    }
-  };
-
-  methods = {
-    tapBtn() {
-      console.log("round button taped in display page");
-      wx.showModal({
-        title: "提示",
-        content: "时限为20秒，超过时间将无法上传！",
-        success(res) {
-          if (res.confirm) {
-            wx.chooseVideo({
-              sourceType: ["camera"],
-              compressed: true,
-              maxDuration: 60,
-              success(res) {
-                console.log(res);
-              }
-            });
-          }
-        },
-        fail() {}
+    };
+    methods = {
+      tapBtn() {
+        console.log("round button taped in display page");
+        wx.showModal({
+          title: "提示",
+          content: "时限为20秒，超过时间将无法上传！",
+          success(res) {
+            if (res.confirm) {
+              wx.chooseVideo({
+                sourceType: ["camera"],
+                compressed: true,
+                maxDuration: 60,
+                success(res) {
+                  console.log(res);
+                }
+              });
+            }
+          },
+          fail() {}
+        });
+        // this.$navigate({
+        //   url: 'beforefilm'
+        // })
+      }
+    };
+    events = {};
+    onLoad(params, data) {
+      wepy.showLoading({
+        mask: true
       });
+      //取得ticket内容
+      //赋值页面
+      //取得访问权限， 所有的url都需要加上参数
+      //解锁页面
+      const ticketId = data.preload.ticketId;
+      request.display(this, ticketId, this.currentPage,
+        data => {
+          console.log(data);
+          wepy.hideLoading();
+        },
+        error => {});
 
-      // this.$navigate({
-      //   url: 'beforefilm'
-      // })
     }
-  };
-
-  events = {};
-
-  onLoad() {
-
+    onReady() {}
   }
-  onReady() {}
-}
 </script>

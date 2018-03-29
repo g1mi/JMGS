@@ -1,51 +1,43 @@
 <style lang="less">
-.video-frame {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-}
+  .video-frame {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
 </style>
+
 <template>
-    <view class="videoframe">
-          <video class="video-frame" id="myVideo" direction="0"
-          src="{{tempVideoPath}}"
-          ></video>
-    </view>
+  <view class="videoframe">
+    <video class="video-frame" id="myVideo" direction="0" src="{{tempVideoPath}}"></video>
+  </view>
 </template>
 
 <script>
-import wepy from "wepy";
-import testMixin from "../mixins/test";
-import Tools from "@/util/tools";
-import Mock from "@/util/Mock";
-export default class PlayVideo extends wepy.page {
-  config = {
-    navigationBarTitleText: "播放视频"
-  };
-  components = {};
-
-  mixins = [testMixin];
-
-  data = {
-    videoContext: null,
-    tempVideoPath: ''
-  };
-
-  computed = {
-    now() {
-      return +new Date();
+  import wepy from "wepy";
+  import Tools from "@/util/tools";
+  import Mock from "@/util/Mock";
+  export default class PlayVideo extends wepy.page {
+    config = {
+      navigationBarTitleText: "播放视频"
+    };
+    components = {};
+    mixins = [];
+    data = {
+      videoContext: null,
+      tempVideoPath: ''
+    };
+    computed = {
+      now() {
+        return +new Date();
+      }
+    };
+    methods = {};
+    events = {};
+    onLoad(param, data) {
+      this.tempVideoPath = 'http://g1milo-coming-static.oss-cn-beijing.aliyuncs.com/HeavensGate.mkv' //data.preload.tempVideoPath
+      this.videoContext = wepy.createVideoContext('myVideo')
+      this.videoContext.requestFullScreen()
+      this.videoContext.play()
     }
-  };
-
-  methods = {};
-
-  events = {};
-
-  onLoad(param, data) {
-    this.tempVideoPath = data.preload.tempVideoPath
-    this.videoContext = wepy.createVideoContext('myVideo')
-    this.videoContext.requestFullScreen()
-    this.videoContext.play()
   }
-}
 </script>

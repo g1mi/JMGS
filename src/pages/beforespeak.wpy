@@ -1,197 +1,200 @@
 <style lang='css'>
-@import "../assets/style/animate.wxss";
-
-.recorder {
-  width: 80%;
-  position: absolute;
-  bottom: 0;
-  padding: 15px calc(10%) 2rem;
-}
+  @import "../assets/style/animate.wxss";
+  .recorder {
+    width: 80%;
+    position: absolute;
+    bottom: 0;
+    padding: 15px calc(10%) 2rem;
+  }
 </style>
-<template>
-<view class="container">
 
+<template>
+  <view class="container">
     <bulletin></bulletin>
     <view>{{log}}</view>
     <view id="btn-speak" class="recorder {{animation}}">
-      <button type="{{buttonState.type}}"
-          @tap="tip" @longpress="record" @touchend="touchend" @touchcancel=""
-          hover-stop-propagation="true">
+      <button type="{{buttonState.type}}" @tap="tip" @longpress="record" @touchend="touchend" @touchcancel="" hover-stop-propagation="true">
         {{buttonState.content}}
       </button>
     </view>
-
-</view>
+  </view>
 </template>
 
 
 <script>
-import wepy from "wepy";
-import Bulletin from "@/components/bulletin";
-import Mock from "@/util/Mock";
-import Config from "@/util/config"
-import moment from "moment";
-import "moment/locale/zh-cn";
-
-const status = {
-  beforeRecording: 0,
-  recording: 1,
-  recorded: 2,
-  canceled: 3
-};
-export default class BeforeSpeak extends wepy.page {
-  config = {
-    navigationBarTitleText: "准备说"
+  import wepy from "wepy";
+  import Bulletin from "@/components/bulletin";
+  import Mock from "@/util/Mock";
+  import moment from "moment";
+  import "moment/locale/zh-cn";
+  const status = {
+    beforeRecording: 0,
+    recording: 1,
+    recorded: 2,
+    canceled: 3
   };
-  components = {
-    bulletin: Bulletin
-  };
-
-  mixins = [];
-
-  data = {
-    config: Config(),
-    animation: "animated bounce", //record button div
-    buttonState: {
-      content: Config().readyToRecord,
-      type: "default"
-    },
-    currentStatus: status.beforeRecording,
-    touchPoint: {
-      clientX: 0,
-      clientY: 0
-    },
-    recorderManager: null, //recorderManager
-    tempFilePath: "", //save
-    log: ""
-  };
-
-  computed = {
-    now() {
-      return +new Date();
-    }
-  };
-
-  methods = {
-    tip() {
-      this.buttonState.content = this.config.buttonTip;
-    },
-    record(e) {
-      let _this = this
-      //longpress
-
-      //震动
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-          wepy.vibrateShort();
-        }, i * 15);
+  export default class BeforeSpeak extends wepy.page {
+    config = {
+      navigationBarTitleText: "准备说"
+    };
+    components = {
+      bulletin: Bulletin
+    };
+    mixins = [];
+    data = {
+      animation: "animated bounce", //record button div
+      buttonState: {
+        content: '准备说：',
+        type: "default"
+      },
+      currentStatus: status.beforeRecording,
+      touchPoint: {
+        clientX: 0,
+        clientY: 0
+      },
+      recorderManager: null, //recorderManager
+      tempFilePath: "", //save
+      log: "",
+    };
+    computed = {
+      now() {
+        return +new Date();
       }
-
-      this.currentStatus = status.recording;
-      this.buttonState.content = this.config.cancelRecording;
-      wepy.showToast({
-        icon: "loading",
-        title: _this.config.recording,
-        mask: true,
-        duration: 60000
-      });
-      //mark the coordinates
-      this.touchPoint = {
-        clientX: e.touches[0].clientX,
-        clientY: e.touches[0].clientY
-      };
-
-      //start recording------
-      let args = {
-        duration: 60000,
-        sampleRate: 16000,
-        numberOfChannels: 1,
-        encodeBitRate: 36000,
-        format: "aac"
-      };
-      this.recorderManager.start(args);
-    },
-    touchend(e) {
-      //when catch the touchend event , we should check the status first
-      if (status.recording === this.currentStatus) {
+    };
+    methods = {
+      tip() {
+        this.buttonState.content = this.$parent.globalData.config.buttonTip;
+      },
+      record(e) {
         let _this = this
-        wepy.hideToast();
-        let slidedUp =  (this.touchPoint.clientY - e.changedTouches[0].clientY) > 20; // canceling recording by sliding up
-        if (slidedUp) {
-          // if canceled the recording
-          console.log("canceled the recording");
-          this.currentStatus = status.canceled;
-          this.buttonState.content = this.config.readyToRecord; //reset the button
+        //longpress
+        //震动
+        for (let i = 0; i < 5; i++) {
           setTimeout(() => {
-            wepy.showToast({
-              title: _this.config.canceled,
-              icon: "none"
+            wepy.vibrateShort();
+          }, i * 15);
+        }
+        this.currentStatus = status.recording;
+        this.buttonState.content = this.$parent.globalData.config.cancelRecording;
+        wepy.showToast({
+          icon: "loading",
+          title: _this.$parent.globalData.config.recording,
+          mask: true,
+          duration: 60000
+        });
+        //mark the coordinates
+        this.touchPoint = {
+          clientX: e.touches[0].clientX,
+          clientY: e.touches[0].clientY
+        };
+        //start recording------
+        let args = {
+          duration: 30000,
+          sampleRate: 16000,
+          numberOfChannels: 1,
+          encodeBitRate: 36000,
+          format: "aac"
+        };
+        this.recorderManager.start(args);
+      },
+      touchend(e) {
+        //when catch the touchend event , we should check the status first
+        if (status.recording === this.currentStatus) {
+          let _this = this
+          wepy.hideToast();
+          let slidedUp = (this.touchPoint.clientY - e.changedTouches[0].clientY) > 20; // canceling recording by sliding up
+          if (slidedUp) {
+            // if canceled the recording
+            console.log("canceled the recording");
+            this.currentStatus = status.canceled;
+            this.buttonState.content = this.$parent.globalData.config.readyToRecord; //reset the button
+            setTimeout(() => {
+              wepy.showToast({
+                title: _this.$parent.globalData.config.canceled,
+                icon: "none"
+              });
+            }, 300);
+            //stop recording and not save
+            this.recorderManager.stop();
+          } else {
+            //console.log('recorded')
+            // 录音完成 处理文件时锁定屏幕
+            wepy.showLoading({
+              title: _this.$parent.globalData.config.waitAWhile,
+              mask: true
             });
-          }, 300);
-          //stop recording and not save
-          this.recorderManager.stop();
-        } else {
-          //console.log('recorded')
-          // 录音完成 处理文件时锁定屏幕
-          wepy.showLoading({
-            title: _this.config.waitAWhile,
-            mask: true
-          });
-          // 处理录音文件
-          console.log('stop recording')
-          this.recorderManager.stop();
+            // 处理录音文件
+            console.log('stop recording')
+            this.recorderManager.stop();
+          }
         }
       }
+    };
+    events = {};
+    onLoad() {
+      let _this = this
+      //取得recordmanager
+      let rm = wepy.getRecorderManager();
+      rm.onStart(() => {
+        console.log("recorder start");
+      });
+      rm.onResume(() => {
+        console.log("recorder resume");
+      });
+      rm.onStop(res => {
+        console.log("recorder stop", res);
+        //保存临时文件
+        this.tempFilePath = res.tempFilePath;
+        console.log("filepath: " + this.tempFilePath);
+        if (status.canceled === this.currentStatus) {
+          this.log = "cancel the recording, nothing saved  ";
+        } else {
+          // 处理录音文件
+          // let ac = wepy.createInnerAudioContext();
+          // ac.src = this.tempFilePath;
+          // ac.play();
+          //this.log = res.tempFilePath
+          this.$preload('recordPath', res.tempFilePath)
+          this.$redirect({
+            url: 'afterspeak'
+          })
+        }
+      });
+      this.recorderManager = this.recorderManager || rm;
     }
-  };
-
-  events = {};
-
-  onLoad() {
-    let _this = this
-    //检测是否已经打印过bulletin信息，否则直接显示
-    let typed = this.$parent.globalData.bulletinTyped
-    if(typed) {
-      this.$invoke("bulletin", "showInfo", Mock.getBulletinInfo());
-    } else {
-      this.$invoke("bulletin", "typeInfo", Mock.getBulletinInfo());
-      this.$parent.globalData.bulletinTyped = true
+    onShow() {
+      const _this = this
+      new Promise((resolve, reject) => {
+        wx.request({
+          url: _this.$parent.globalData.config.bulltinInfoUrl,
+          method: "GET",
+          header: {
+            "authorization": _this.$parent.globalData.token
+          },
+          data: {},
+          success: function(res) {
+            if (res.error) {
+              wepy.showToast({
+                title: res.error,
+                icon: 'none'
+              })
+            } else {
+              // 返回的数据中应当包含jwt
+              resolve(res.data.bulletinInfo || '')
+            }
+          },
+          fail: function() {
+            console.log("系统错误");
+          }
+        });
+      }).then(info => {
+        //检测是否已经打印过bulletin信息，否则直接显示(源于粗糙的计时器，寡人没有那么多时间了啦)
+        _this.$invoke("bulletin", _this.$parent.globalData.bulletinTyped ? "showInfo" : "typeInfo", info);
+        _this.$parent.globalData.bulletinTyped = !_this.$parent.globalData.bulletinTyped
+      })
     }
-
-    //取得recordmanager
-    let rm = wepy.getRecorderManager();
-    rm.onStart(() => {
-      console.log("recorder start");
-    });
-    rm.onResume(() => {
-      console.log("recorder resume");
-    });
-    rm.onStop(res => {
-      console.log("recorder stop", res);
-      //保存临时文件
-      this.tempFilePath = res.tempFilePath;
-      console.log("filepath: " + this.tempFilePath);
-      if (status.canceled === this.currentStatus) {
-        this.log = "cancel the recording, nothing saved  ";
-      } else {
-        // 处理录音文件
-        // let ac = wepy.createInnerAudioContext();
-        // ac.src = this.tempFilePath;
-        // ac.play();
-        //this.log = res.tempFilePath
-        this.$preload('recordPath', res.tempFilePath)
-        this.$redirect({
-          url: 'afterspeak'
-        })
-      }
-    });
-    this.recorderManager = this.recorderManager || rm;
+    onUnload() {
+    }
+    onReady() {}
   }
-
-  onUnload() {
-
-  }
-  onReady() {
-  }
-}
 </script>
