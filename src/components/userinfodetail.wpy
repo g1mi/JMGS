@@ -39,7 +39,7 @@
   <view class="uid-wrap-box">
     <!-- should calculate the time locally and show the progress -->
     <view style=" box-shadow: 0 0 6rpx rgba(0, 0, 0, 0.15);" class="uid-box">
-      <image class="uid-user-avatar" src="{{detail.avatarSrc}}"></image>
+      <image lazy-load="true" class="uid-user-avatar" src="{{detail.avatarSrc}}"></image>
       <view class="uid-rd-box">
         <view class="uid-record-detail">发起时间：{{detail.createTime}}</view>
         <view class="uid-record-detail">当前状态：<i style="color:{{status}}">{{ }}</i></view>

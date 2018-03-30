@@ -44,7 +44,7 @@
         //播放时改变button内容
         _this.playingRecord = "true";
         _this.$apply();
-        //console.log("play record : " + this.acCtx.src);
+        //console.log('component.playrecordbtn: 正在播放...',_this.acCtx.src);
       });
       this.acCtx.onStop(() => {
         //停止时改回button内容

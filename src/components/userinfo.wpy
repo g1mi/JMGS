@@ -87,7 +87,7 @@
 <template>
   <view class="ui-userinfo--box {{'small' === size ? 'ui-detail-border' : ''}}">
     <view class="ui-userinfo">
-      <image class="ui-user-avatar{{'small' === size ? '-small' : ''}}" src="{{avatarSrc}}"></image>
+      <image lazy-load="true" class="ui-user-avatar{{'small' === size ? '-small' : ''}}" src="{{avatarSrc}}"></image>
       <view class="ui-user-nickname{{'small' === size ? '-small' : ''}}">{{nickname}}</view>
     </view>
     <slot name="content"></slot>

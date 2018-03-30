@@ -71,12 +71,12 @@
     <view class="td-content-box {{details.self ? 'td-flex-self' : 'td-flex-user'}}">
       <view class="td-userinfo">
         <view class="td-user-pic">
-          <image class="td-image" src="{{details.challengeOwnerAvatarUrl}}"></image>
+          <image lazy-load="true" class="td-image" src="{{details.challengeOwnerAvatarUrl}}"></image>
         </view>
         <view class="td-user-name">{{details.challengeOwnerNickName}}</view>
       </view>
       <view class="{{details.vertical === 'true' ? videoDirection.verShell : videoDirection.hozShell}}">
-        <image mode="aspectFill" class="{{details.vertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}"></image>
+        <image lazy-load="true" mode="aspectFill" class="{{details.vertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}"></image>
       </view>
     </view>
   </view>
