@@ -1,10 +1,11 @@
  import Tools from './tools';
  // -------------MAP----------------------
-function locate(res, _this) {
+function locate(coordinates, _this) {
+  console.log('request.locate : 请求坐标为 [' + coordinates.longitude + ',' + coordinates.latitude + '] 周围的敢说');
   wx.request({
     url: Tools.formatUrl(_this.config.locateUrl, {
-      longitude: res.longitude,
-      latitude: res.latitude,
+      longitude: coordinates.longitude,
+      latitude: coordinates.latitude,
       maxDistance: 0.01
     }),
     header: {
@@ -15,7 +16,8 @@ function locate(res, _this) {
       if (!res.error && res.data.tickets) {
         let i = 0;
         let tickets = res.data.tickets
-        console.log('准备添加marker [' + tickets.length + '] ')
+        console.log('request.locate : 找到 [' + coordinates.longitude + ',' + coordinates.latitude + '] 周围的敢说 [' + tickets.length + '] 个');
+        console.log(tickets);
         tickets.forEach(ticket => {
           let t = {
             iconPath: "../assets/images/placeholder.png",
@@ -39,19 +41,24 @@ function locate(res, _this) {
  // -------------DISPLAY----------------------
 function display(_this, ticketId, page, success_cb, fail_cb) {
   //request取得ticket所有数据
+  console.log('request.display : 请求 ticketId 为 [' + ticketId + '] 的内容');
   wx.request({
     url: Tools.formatUrl(_this.$parent.globalData.config.getTicketUrl + ticketId, {'page':page}), //首页数据
     header: {
       'authorization': _this.$parent.globalData.token
     },
     success(res) {
-      if(res.error) {
-        fail_cb(res.error)
+
+      if(res.data.error) {
+        console.log('request.display : 返回【失败】',res.data.error);
+        fail_cb(res.data.error)
       } else {
+        console.log('request.display : 返回【成功】',res.data);
         success_cb(res.data)
       }
     },
     fail(res) {
+      console.log('request.display : 返回【失败】',res.data);
       fail_cb(res)
     }
   })

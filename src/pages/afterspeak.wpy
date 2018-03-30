@@ -221,29 +221,42 @@
               'authorization': _this.$parent.globalData.token
             },
             success(res) {
+              console.log('afterspeak.submit 上传授权成功');
               if (res.error) {
+                console.log('afterspeak.submit 错误发生：' + res.error);
                 reject(res.error)
               } else if (res.data.ticketToken) {
                 resolve(res.data.ticketToken)
               }
               reject(res.error)
+            },
+            fail(res) {
+              reject(res)
             }
           })
         }).then(token => {
-          //console.log('token已获得：' + token)
           const owner = _this.$parent.globalData.userInfo.id;
           const filename = 'ticket/' + owner + '-' + Date.now();
+          console.log('afterspeak.submit 准备上传文件');
           qiniuUploader.upload(_this.acCtx.src,
             (data) => {
               // callback response, 返回的是string， 坑死老子了
               // console.log(typeof data);
-              const ticketId = JSON.parse(data).ticketId;
-              _this.$preload('ticketId', ticketId);
-              _this.$redirect('display');
+
+              const obj = JSON.parse(data);
+              if (obj.ticketId) {
+                console.log('afterspeak.submit 上传成功， callback调用成功，返回ticketId：' + obj.ticketId);
+                _this.$preload('ticketId', obj.ticketId);
+                _this.$redirect('display');
+              } else {
+                console.log(obj);
+                throw '上传成功，但未正确返回ticketId'
+              }
             },
             (error) => {
               wx.navigateBack({
                 success() {
+                  console.log('afterspeak.submit 文件上传失败：', error);
                   wepy.showToast({
                     title: '服务器发生错误！',
                     icon: 'none'
@@ -258,9 +271,7 @@
               key: filename,
             },
             (progress) => {
-              console.log(progress)
-              console.log('已经上传的数据长度', progress.totalBytesSent)
-              console.log('预期需要上传的数据总长度', progress.totalBytesExpectedToSend)
+              console.log('afterspeak.submit 文件上传进度：' + progress.progress);
             }, {
               //添加ticket
               "x:owner": owner,
@@ -270,8 +281,8 @@
               "x:location": JSON.stringify([_this.formData.where.longitude, _this.formData.where.latitude]),
             }
           );
-        }).catch(err => {
-          console.log('错误：' + err)
+        }).catch(error => {
+          console.log('afterspeak.submit 上传ticket提交失败：', error);
           wx.navigateBack({
             success() {
               wepy.showToast({

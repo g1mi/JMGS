@@ -5,7 +5,7 @@
 
 <template>
   <view class="container">
-    <button @tap="tap">test</button>
+    <video id="myVideo" src="http://p6eq0ioki.bkt.clouddn.com/FriendsS02E20.mp4" danmu-list="{{danmuList}}" enable-danmu danmu-btn controls></video>
   </view>
 </template>
 

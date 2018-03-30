@@ -84,6 +84,7 @@
         // request信息
         // 取得信息，通过则跳转，否则提示错误
         const ticketId = this.markers[e.markerId].ticketId;
+        console.log('map.markertap: 点击了[' + ticketId + ']' );
         this.$preload("ticketId", ticketId);
         this.$navigate({
           url: "display"

@@ -4,7 +4,7 @@
 
 <template>
   <view>
-    <userinfo nickname="我最帅" avatarSrc="../assets/images/default-avatar.png" ganshuoCounts="256" ganzuoCounts="22" size="small">
+    <userinfo :nickname.sync="ticketOwnerNickName" :avatarSrc.sync="ticketOwnerAvatarUrl" size="small">
       <view slot="content" class="weui-panel__hd" style="width:70%">
         <playrecordbtn></playrecordbtn>
       </view>
@@ -24,6 +24,8 @@
   import wepy from "wepy";
   import Mock from "@/util/Mock";
   import Tools from "@/util/tools";
+  import moment from "moment";
+  import "moment/locale/zh-cn";
   import TicketDetail from "@/components/ticketdetail";
   import RoundButton from "@/components/roundbutton";
   import PlayRecordBtn from '../components/playrecordbtn'
@@ -52,10 +54,9 @@
         self: 'true',
       }],
       currentPage: 1,
-      acCtx: null,
       ticketId: '',
       ticketOwnerNickName: '',
-      ticketOnwerAvatarUrl: '',
+      ticketOwnerAvatarUrl: '',
       audioUrl: '',
       onBottom: false,
     };
@@ -66,7 +67,7 @@
     };
     methods = {
       tapBtn() {
-        console.log("round button taped in display page");
+        console.log("display.tapBtn@roundbutton : 敢 按钮点击");
         wx.showModal({
           title: "提示",
           content: "时限为20秒，超过时间将无法上传！",
@@ -75,7 +76,7 @@
               wx.chooseVideo({
                 sourceType: ["camera"],
                 compressed: true,
-                maxDuration: 60,
+                maxDuration: 20,
                 success(res) {
                   console.log(res);
                 }
@@ -91,21 +92,61 @@
     };
     events = {};
     onLoad(params, data) {
+      const _this = this;
       wepy.showLoading({
         mask: true
       });
-      //取得ticket内容
-      //赋值页面
-      //取得访问权限， 所有的url都需要加上参数
-      //解锁页面
       const ticketId = data.preload.ticketId;
-      request.display(this, ticketId, this.currentPage,
-        data => {
-          console.log(data);
-          wepy.hideLoading();
-        },
-        error => {});
-
+      //取得ticket内容
+      new Promise((resolve, reject) => {
+        request.display(this, ticketId, this.currentPage,
+          successData => {
+            console.log('display.onLoad: 获得数据，准备展示', successData);
+            resolve(successData);
+            //console.log(_this.$parent.globalData.acCtx.src);
+          },
+          error => {
+            reject(error)
+          });
+      }).then(data => {
+        //--------------------赋值页面------------------
+        _this.ticketId = data.ticketId;
+        _this.ticketOwnerNickName = data.ticketOwnerNickName;
+        _this.ticketOwnerAvatarUrl = data.ticketOwnerAvatarUrl;
+        _this.audioUrl = data.audioUrl;
+        _this.$parent.globalData.acCtx.src = data.audioUrl;
+        _this.ticketId = data.ticketId;
+        const challenges = data.challenges;
+        if (challenges) {
+          challenges.forEach(challenge => {
+            _this.challenge.challenges.push({
+              challengeId: challenge.challengeId,
+              challengeOwnerNickName: challenge.challengeOwnerNickName,
+              challengeOwnerAvatarUrl: challenge.challengeOwnerAvatarUrl,
+              posterUrl: challenge.posterUrl,
+              vertical: "true",
+              createTime: moment(challenge.createTime).fromNow(),
+              self: _this.$parent.globalData.userInfo.id === challenge.challengeId ? true : false,
+            })
+          });
+        }
+        _this.$apply();
+        //--------------------赋值页面------------------
+      }).then(() => {
+        //解锁页面
+        wepy.hideLoading();
+      }).catch(error => {
+        console.log('display.submit.catch: 发生错误！');
+        console.log(error)
+        wepy.navigateBack({
+          success() {
+            wepy.showToast({
+              title: '发生错误！',
+              icon: 'none'
+            })
+          }
+        })
+      });
     }
     onReady() {}
   }
