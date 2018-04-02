@@ -57,8 +57,8 @@
     };
     data = {
       btnPos: {
-        x: "300",
-        y: "180"
+        x: "250",
+        y: "100"
       },
       touchDeviation: {
         x: "0",

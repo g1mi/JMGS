@@ -76,12 +76,9 @@
         }
         this.currentStatus = status.recording;
         this.buttonState.content = this.$parent.globalData.config.cancelRecording;
-        wepy.showToast({
-          icon: "loading",
-          title: _this.$parent.globalData.config.recording,
-          mask: true,
-          duration: 60000
-        });
+        wepy.showLoading({
+          title: _this.$parent.globalData.config.recording
+        })
         //mark the coordinates
         this.touchPoint = {
           clientX: e.touches[0].clientX,
@@ -89,7 +86,7 @@
         };
         //start recording------
         let args = {
-          duration: 30000,
+          duration: 30000, // 录音时间限制，30秒
           sampleRate: 16000,
           numberOfChannels: 1,
           encodeBitRate: 36000,
@@ -101,11 +98,11 @@
         //when catch the touchend event , we should check the status first
         if (status.recording === this.currentStatus) {
           let _this = this
-          wepy.hideToast();
+          wepy.hideLoading();
           let slidedUp = (this.touchPoint.clientY - e.changedTouches[0].clientY) > 20; // canceling recording by sliding up
           if (slidedUp) {
             // if canceled the recording
-            console.log("canceled the recording");
+            console.log("beforespeak.touchend 取消录音");
             this.currentStatus = status.canceled;
             this.buttonState.content = this.$parent.globalData.config.readyToRecord; //reset the button
             setTimeout(() => {
@@ -124,7 +121,7 @@
               mask: true
             });
             // 处理录音文件
-            console.log('stop recording')
+            console.log("beforespeak.touchend 停止录音");
             this.recorderManager.stop();
           }
         }
@@ -136,18 +133,18 @@
       //取得recordmanager
       let rm = wepy.getRecorderManager();
       rm.onStart(() => {
-        console.log("recorder start");
+        console.log("beforespeak.recordManager.onStart");
       });
       rm.onResume(() => {
-        console.log("recorder resume");
+        console.log("beforespeak.recordManager.onResume");
       });
       rm.onStop(res => {
-        console.log("recorder stop", res);
+        console.log("beforespeak.recordManager.onStop  ", JSON.stringify(res));
         //保存临时文件
         this.tempFilePath = res.tempFilePath;
         console.log("filepath: " + this.tempFilePath);
         if (status.canceled === this.currentStatus) {
-          this.log = "cancel the recording, nothing saved  ";
+          this.log = "已取消录音";
         } else {
           // 处理录音文件
           // let ac = wepy.createInnerAudioContext();
@@ -184,7 +181,7 @@
             }
           },
           fail: function() {
-            console.log("系统错误");
+            console.log("beforespeak.onLoad 获取bulletinInfo");
           }
         });
       }).then(info => {
