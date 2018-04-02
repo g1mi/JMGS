@@ -4,7 +4,7 @@
 
 ## 使用
 
-```
+```language: javascript
 git clone https://github.com/g1mi/JMGS.git your-path
 cd your-path
 npm i  //等待安装完所需要的包
@@ -16,7 +16,8 @@ npm run dev
 
 #### 基本功能
 
-- [x] 地图显示敢说- [x] 添加敢说
+- [x] 地图显示敢说
+- [x] 添加敢说
 - [x] 浏览敢说
 - [x] 添加敢说
 - [x] 浏览敢说记录

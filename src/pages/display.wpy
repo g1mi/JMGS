@@ -192,7 +192,7 @@
               wx.hideLoading();
               new Promise(resolve => { // request 获取创建后的challengeObj, 这里应当已最前面的challenge的时间戳为信标进行查询。
                 request.retrieveData(_this, createdChallengeId, 'challenge',
-                  _this.challenges ? {
+                  _this.challenges.length ? {
                     'isUpdate': true,
                     'utilWhen': _this.challenges[0].createTime
                   } : null,
@@ -261,7 +261,7 @@
         _this.ticketId = data.ticketId;
         const challenges = data.challenges;
         console.log(challenges);
-        if (challenges) {
+        if (challenges.length) {
           challenges.forEach(item => {
             item.vertical = "false";
             item.timeFromNow = Tools.formatTime(parseInt(item.createTime, 10));
@@ -308,19 +308,20 @@
               reject(error)
             });
         }).then(challenges => {
-          if (challenges.length > 0) {
+          if (challenges.length) {
             //分页数据存在， 准备展示
             challenges.forEach(item => {
               item.vertical = "false";
               item.timeFromNow = Tools.formatTime(parseInt(item.createTime, 10));
               item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
               _this.challenges.push(item);
+              _this.$apply();
             });
-            _this.$apply();
             return;
           }
           // 没有分页数据了，
           _this.onBottom = true;
+          _this.$apply();
         }).then(() => {
           // 解除加载
           wx.hideNavigationBarLoading();

@@ -84,7 +84,7 @@
       <view class="weui-panel weui-panel_access {{pickerDisplay}}">
         <view class="weui-panel__hd">请在地图中选中展出的位置</view>
         <view class="weui-panel__bd  addPadding">
-          <map id="map" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" controls="{{controls}}" show-location style="width:100%; height:15rem;"></map>
+          <map id="map" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" controls="{{controls}}" show-location style="width:100%; height:20rem;"></map>
         </view>
         <view class="weui-flex addPadding" style="padding-bottom: 1rem;">
           <button size="mini" @tap="cancelPick" type="default" plain="true" style="width:40%">返回</button>
