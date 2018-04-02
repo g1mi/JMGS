@@ -54,8 +54,6 @@
 <script>
   import wepy from "wepy";
   import Config from "@/util/config";
-  import moment from "moment";
-  import "moment/locale/zh-cn";
   import xs from "xstream";
   import Mock from "@/util/Mock";
   import checkAndNavigate from "@/util/checkAndNavigate";

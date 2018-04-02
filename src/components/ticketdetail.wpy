@@ -27,8 +27,12 @@
     height: 1rem;
     margin: 0.2rem 0.2rem 0.2rem;
     text-align: center;
-    font-size: 10px;
+    font-size: 9px;
     word-wrap: break-word;
+    max-width: 2.8rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
   .td-content--detail-ver {
     .td-video-ver;
@@ -51,11 +55,12 @@
   .td-video-hoz {
     width: 10rem;
     height: 6rem;
+    border-radius: 12rpx;
   }
   .td-video-ver {
     width: 6rem;
     height: 10rem;
-    border-radius: 9rpx;
+    border-radius: 12rpx;
   }
   .td-image {
     width: 2.8rem;
@@ -67,7 +72,7 @@
 
 <template>
   <view class="td-ticket-box">
-    <view class="td-timeset">{{details.createTime}}</view>
+    <view class="td-timeset">{{ details.timeFromNow }}</view>
     <view class="td-content-box {{details.self ? 'td-flex-self' : 'td-flex-user'}}">
       <view class="td-userinfo">
         <view class="td-user-pic">
@@ -76,7 +81,8 @@
         <view class="td-user-name">{{details.challengeOwnerNickName}}</view>
       </view>
       <view class="{{details.vertical === 'true' ? videoDirection.verShell : videoDirection.hozShell}}">
-        <image lazy-load="true" mode="aspectFill" class="{{details.vertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}"></image>
+        <image lazy-load="true" mode="aspectFill" class="{{details.vertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}">
+        </image>
       </view>
     </view>
   </view>
@@ -85,6 +91,8 @@
 <script>
   import wepy from 'wepy'
   import tools from '../util/tools.js'
+  import moment from "moment";
+  import "moment/locale/zh-cn";
   export default class TicketDetail extends wepy.component {
     props = {
       details: {
@@ -94,10 +102,8 @@
         challengeOwnerAvatarUrl: '',
         posterUrl: '',
         vertical: '',
-        self: {
-          type: String,
-          default: ''
-        }
+        self: '',
+        timeFromNow: '',
       }
     }
     data = {
@@ -113,12 +119,9 @@
       }
     }
     computed = {}
-    events = {
-    }
+    events = {}
     watch = {}
-    methods = {
-    }
-    onLoad() {
-    }
+    methods = {}
+    onLoad() {}
   }
 </script>

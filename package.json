@@ -1,6 +1,6 @@
 {
   "name": "jmgs",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -14,7 +14,6 @@
     "moment": "^2.21.0",
     "wepy": "^1.7.0",
     "wepy-async-function": "^1.4.4",
-    "wepy-com-toast": "^1.0.2",
     "xstream": "^11.2.0"
   },
   "devDependencies": {

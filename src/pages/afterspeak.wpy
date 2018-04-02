@@ -57,10 +57,10 @@
       <view class="weui-cell">
         <view class="weui-cell__bd">地点：</view>
         <view class="weui-cell__ft flex">
+          <button type="{{mapPicked}}" plain="true" size="mini" @tap="pickLoc" >{{config.beforPosChosed}}</button>
           <view class="checkedIcon {{posChosed}}">
             <icon type="success" size="32" />
           </view>
-          <button type="{{mapPicked}}" plain="true" size="mini" @tap="pickLoc">{{config.beforPosChosed}}</button>
         </view>
       </view>
     </view>
@@ -141,7 +141,7 @@
       },
       playrecord() {
         //播放录音
-        //console.log('play button taped', this.playingRecord, this.acCtx)
+        console.log('afterspeak.playrecord 正在播放录音', this.acCtx.src)
         if ("true" === this.playingRecord) {
           this.acCtx.stop();
         } else {
@@ -151,11 +151,13 @@
       pickLoc() {
         //在小地图中选择展出坐标
         let _this = this;
-        console.log("mapPicker taped");
+        console.log('afterspeak.pickLoc 准备选择展出坐标');
         this.pickerDisplay = "show";
         this.$invoke("mappicker", "showPopup");
         //add loading toast for safety
-        wepy.showLoading({mask: true});
+        wepy.showLoading({
+          mask: true
+        });
         //在动画结束后加载pin
         setTimeout(() => {
           //hideloading
@@ -184,6 +186,7 @@
       },
       cancelPick() {
         //小地图选取中点击返回按钮
+        console.log('afterspeak.cancelPick 取消选择展出坐标');
         this.pickerDisplay = "hide";
         this.$invoke("mappicker", "hidePopup");
       },
@@ -204,6 +207,7 @@
             };
             _this.posChosed = "show";
             _this.$apply();
+            console.log('afterspeak.grabCoordinates 选择展出坐标',JSON.stringify(_this.formData.where));
           },
           fail: function(res) {
             console.log(res);
@@ -212,7 +216,9 @@
       },
       submit() {
         let _this = this
-        wx.showLoading({mask: true});
+        wx.showLoading({
+          mask: true
+        });
         // 上传前获取上传授权
         new Promise((resolve, reject) => {
           wx.request({
@@ -242,7 +248,6 @@
             (data) => {
               // callback response, 返回的是string， 坑死老子了
               // console.log(typeof data);
-
               const obj = JSON.parse(data);
               if (obj.ticketId) {
                 console.log('afterspeak.submit 上传成功， callback调用成功，返回ticketId：' + obj.ticketId);
@@ -264,10 +269,9 @@
                 }
               });
             }, {
-              region: _this.config.bucketRegion, // 华北区
-              uptoken: token, // token
+              region: _this.config.bucketRegionUrl, // 华北区
+              token: token, // token
               domain: _this.config.bucketUrl, // 对象存储服务器
-              shouldUseQiniuFileName: false, // 不适用七牛文件名
               key: filename,
             },
             (progress) => {
@@ -304,6 +308,7 @@
     };
     events = {};
     onLoad(params, data) {
+      console.log('afterspeak.onLoad');
       let _this = this;
       //取得录音文件地址
       this.acCtx = this.$parent.globalData.acCtx
