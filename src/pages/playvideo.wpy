@@ -8,7 +8,7 @@
 
 <template>
   <view class="videoframe">
-    <video class="video-frame" id="myVideo" direction="0" src="{{tempVideoPath}}"></video>
+    <video class="video-frame" id="myVideo" direction="0" src="{{tempVideoPath}}" autoplay="true" bindended="onEnd"></video>
   </view>
 </template>
 
@@ -31,13 +31,20 @@
         return +new Date();
       }
     };
-    methods = {};
+    methods = {
+      onEnd() { //播放完成
+        wx.navigateBack();
+      }
+    };
     events = {};
     onLoad(param, data) {
-      this.tempVideoPath = 'http://g1milo-coming-static.oss-cn-beijing.aliyuncs.com/HeavensGate.mkv' //data.preload.tempVideoPath
-      this.videoContext = wepy.createVideoContext('myVideo')
+      this.tempVideoPath = data.preload.videoUrl
+      this.$apply();
+    };
+    onReady() {
+      console.log('playvideo.onLoad:  准备播放视频');
+      this.videoContext = wepy.createVideoContext('myVideo',this)
       this.videoContext.requestFullScreen()
-      this.videoContext.play()
-    }
+    };
   }
 </script>
