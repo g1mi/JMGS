@@ -53,12 +53,8 @@
 
 <script>
   import wepy from "wepy";
-  import Config from "@/util/config";
-  import xs from "xstream";
-  import Mock from "@/util/Mock";
   import checkAndNavigate from "@/util/checkAndNavigate";
-  import Tools from "@/util/tools";
-  import request from '../util/request.js'
+  import request from '@/util/request.js'
   let readyTorequest = undefined; //定义变量延时request，后面的request会取代之前未完成的request
   export default class Map extends wepy.page {
     config = {
@@ -68,7 +64,7 @@
     mixins = [];
     data = {
       mapCtx: null, //map context
-      config: Config(),
+      config: null,
       markers: [],
     };
     computed = {
@@ -82,7 +78,7 @@
         // request信息
         // 取得信息，通过则跳转，否则提示错误
         const ticketId = this.markers[e.markerId].ticketId;
-        console.log('map.markertap: 点击了[' + ticketId + ']' );
+        console.info('map.markertap: 点击了[' + ticketId + ']' );
         this.$preload("ticketId", ticketId);
         this.$navigate({
           url: "display"
@@ -114,7 +110,7 @@
               if (readyTorequest) {
                 clearTimeout(readyTorequest);
               } else {
-                console.log("首次request");
+                console.info("map.getGSNearBy : 首次request");
               }
               readyTorequest = setTimeout(() => {
                 //发送请求,取得附近敢说
@@ -122,10 +118,7 @@
               }, 350);
             },
             fail(res) {
-              //console.log(res)
-            },
-            complete(res) {
-              //console.log(res)
+              console.info("map.getGSNearBy :", res);
             }
           });
         }
@@ -134,12 +127,11 @@
     events = {};
     onLoad() {
       this.mapCtx = wx.createMapContext("map", this);
+      this.config = this.$parent.globalData.config;
     }
     onShow() {
-      // console.log("map show");
     }
     onHide() {
-      // console.log("map hide");
     }
   }
 </script>

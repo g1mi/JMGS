@@ -1,0 +1,145 @@
+<style lang="less">
+  .full-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #f8f8f8;
+  }
+  .speak {
+    position: absolute;
+    top: 60%;
+    right: 5%;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: inline-block;
+  }
+  .record {
+    .speak;
+    top: 78%;
+  }
+  .pin {
+    .speak;
+    width: 1.5rem;
+    height: 1.5rem;
+    top: 50% - 1.5rem;
+    left: 50% - 0.75rem;
+  }
+  .precision {
+    .speak;
+    width: 1.5rem;
+    height: 1.5rem;
+    top: 55% - 1.5rem;
+    left: 87% - 0.75rem;
+  }
+</style>
+
+<template>
+  <view>
+    <map id="map" class="full-screen" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" scale="16" controls="" bindcontroltap="" markers="{{markers}}" bindmarkertap="markertap" bindregionchange="getGSNearBy" show-location="true"></map>
+    <cover-view class="speak">
+      <cover-image src="../assets/images/speak.png" @tap.stop="beforespeak" />
+    </cover-view>
+    <cover-view class="record">
+      <cover-image src="../assets/images/record.png" @tap.stop="userrecord" />
+    </cover-view>
+    <cover-view class="pin">
+      <cover-image src="../assets/images/pin.png" />
+    </cover-view>
+    <cover-view class="precision">
+      <cover-image src="../assets/images/precision.png" @tap.stop="locate" />
+    </cover-view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import Config from "@/util/config";
+  import xs from "xstream";
+  import Mock from "@/util/Mock";
+  import checkAndNavigate from "@/util/checkAndNavigate";
+  import Tools from "@/util/tools";
+  import request from '../util/request.js'
+  let readyTorequest = undefined; //定义变量延时request，后面的request会取代之前未完成的request
+  export default class Map extends wepy.page {
+    config = {
+      navigationBarTitleText: "吉米敢说"
+    };
+    components = {};
+    mixins = [];
+    data = {
+      mapCtx: null, //map context
+      config: Config(),
+      markers: [],
+    };
+    computed = {
+      now() {
+        return +new Date();
+      }
+    };
+    methods = {
+      markertap(e) {
+        // 添加Loading
+        // request信息
+        // 取得信息，通过则跳转，否则提示错误
+        const ticketId = this.markers[e.markerId].ticketId;
+        console.log('map.markertap: 点击了[' + ticketId + ']' );
+        this.$preload("ticketId", ticketId);
+        this.$navigate({
+          url: "display"
+        });
+      },
+      locate() {
+        //返回自己的所在地点
+        this.mapCtx.moveToLocation();
+      },
+      beforespeak: function(e) {
+        // 检测授权
+        checkAndNavigate(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], "beforespeak");
+      },
+      userrecord: function(e) {
+        // 检测授权
+        checkAndNavigate(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], "userrecord");
+      },
+      getGSNearBy(e) {
+        let _this = this;
+        let center = null;
+        if ("begin" === e.type) {
+          //清理markers
+          _this.markers.splice(0, _this.markers.length);
+        } else {
+          //仅仅只检测滑动结束
+          this.mapCtx.getCenterLocation({
+            success(res) {
+              //记录timer，后面的timer会取代之前的timer
+              if (readyTorequest) {
+                clearTimeout(readyTorequest);
+              } else {
+                console.log("首次request");
+              }
+              readyTorequest = setTimeout(() => {
+                //发送请求,取得附近敢说
+                request.locate(res, _this);
+              }, 350);
+            },
+            fail(res) {
+              //console.log(res)
+            },
+            complete(res) {
+              //console.log(res)
+            }
+          });
+        }
+      }
+    };
+    events = {};
+    onLoad() {
+      this.mapCtx = wx.createMapContext("map", this);
+    }
+    onShow() {
+      // console.log("map show");
+    }
+    onHide() {
+      // console.log("map hide");
+    }
+  }
+</script>

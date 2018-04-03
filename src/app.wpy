@@ -29,13 +29,11 @@ export default class extends wepy.app {
   config = {
     pages: [
       "pages/map",
-      "pages/beforefilm",
       "pages/playvideo",
       "pages/userrecord",
       "pages/display",
       "pages/afterspeak",
       "pages/beforespeak",
-      "pages/afterfilm"
     ],
     window: {
       backgroundTextStyle: "light",

@@ -1,0 +1,132 @@
+<style lang="less">
+  .td-ticket-box {
+    margin: 0.5rem 0.6rem 0.5px;
+  }
+  .td-content-box {
+    margin: 0.2rem 0rem 2rpx;
+  }
+  .td-flex-user {
+    display: flex;
+    flex-direction: row;
+  }
+  .td-flex-self {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+  .td-userinfo {
+    width: 3rem;
+    border-radius: 9rpx;
+    margin: 0 0 0.5px;
+  }
+  .td-user-pic {
+    margin: 0.2rem 0.2rem 0.2rem;
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+  .td-user-name {
+    height: 1rem;
+    margin: 0.2rem 0.2rem 0.2rem;
+    text-align: center;
+    font-size: 9px;
+    word-wrap: break-word;
+    max-width: 2.8rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .td-content--detail-ver {
+    .td-video-ver;
+    border: 1rpx solid #999;
+    margin: 0.2rem 0.2rem 0.2rem;
+  }
+  .td-content--detail-hoz {
+    .td-video-hoz;
+    border: 1rpx solid #999;
+    margin: 0.2rem 0.2rem 0.2rem;
+  }
+  .td-timeset {
+    text-align: center;
+    margin: 50rpx 0 0;
+    margin: 0 1rem 0.8px;
+    word-wrap: break-word;
+    font-size: 11px;
+    color: #555;
+  }
+  .td-video-hoz {
+    width: 10rem;
+    height: 6rem;
+    border-radius: 12rpx;
+  }
+  .td-video-ver {
+    width: 6rem;
+    height: 10rem;
+    border-radius: 12rpx;
+  }
+  .td-image {
+    width: 2.8rem;
+    height: 2.8rem;
+    border-radius: 1.4rem;
+    box-shadow: 0 0 6rpx rgba(0, 0, 0, .15);
+  }
+</style>
+
+<template>
+  <view class="td-ticket-box">
+    <view class="td-timeset">{{ details.timeFromNow }}</view>
+    <view class="td-content-box {{details.self ? 'td-flex-self' : 'td-flex-user'}}">
+      <view class="td-userinfo">
+        <view class="td-user-pic">
+          <image lazy-load="true" class="td-image" src="{{details.challengeOwnerAvatarUrl}}"></image>
+        </view>
+        <view class="td-user-name">{{details.challengeOwnerNickName}}</view>
+      </view>
+      <view class="{{details.isVertical === 'true' ? videoDirection.verShell : videoDirection.hozShell}}" @tap="tap">
+        <image lazy-load="true" mode="aspectFill" class="{{details.isVertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}">
+        </image>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import tools from '../util/tools.js'
+  import moment from "moment";
+  import "moment/locale/zh-cn";
+  export default class TicketDetail extends wepy.component {
+    props = {
+      details: {
+        challengeId: '',
+        challengeOwnerNickName: '',
+        createTime: '',
+        challengeOwnerAvatarUrl: '',
+        posterUrl: '',
+        videoUrl: '',
+        isVertical: '',
+        self: '',
+        timeFromNow: '',
+      }
+    }
+    data = {
+      videoDirection: {
+        ver: 'td-video-ver',
+        hoz: 'td-video-hoz',
+        verShell: 'td-content--detail-ver',
+        hozShell: 'td-content--detail-hoz'
+      },
+      defaultSrc: {
+        defaultAvatar: '../assets/images/default-avatar.png',
+        defaultPoster: '../assets/images/default-poster.jpg'
+      }
+    }
+    computed = {}
+    events = {}
+    watch = {}
+    methods = {
+      tap() {
+        this.$emit('tap', this.details.videoUrl);
+      }
+    }
+    onLoad() {}
+  }
+</script>

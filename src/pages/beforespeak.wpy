@@ -24,9 +24,6 @@
 <script>
   import wepy from "wepy";
   import Bulletin from "@/components/bulletin";
-  import Mock from "@/util/Mock";
-  import moment from "moment";
-  import "moment/locale/zh-cn";
   const status = {
     beforeRecording: 0,
     recording: 1,
@@ -102,7 +99,7 @@
           let slidedUp = (this.touchPoint.clientY - e.changedTouches[0].clientY) > 20; // canceling recording by sliding up
           if (slidedUp) {
             // if canceled the recording
-            console.log("beforespeak.touchend 取消录音");
+            console.info("beforespeak.touchend 取消录音");
             this.currentStatus = status.canceled;
             this.buttonState.content = this.$parent.globalData.config.readyToRecord; //reset the button
             setTimeout(() => {
@@ -121,7 +118,7 @@
               mask: true
             });
             // 处理录音文件
-            console.log("beforespeak.touchend 停止录音");
+            console.info("beforespeak.touchend 停止录音");
             this.recorderManager.stop();
           }
         }
@@ -133,24 +130,19 @@
       //取得recordmanager
       let rm = wepy.getRecorderManager();
       rm.onStart(() => {
-        console.log("beforespeak.recordManager.onStart");
+        console.info("beforespeak.recordManager.onStart");
       });
       rm.onResume(() => {
-        console.log("beforespeak.recordManager.onResume");
+        console.info("beforespeak.recordManager.onResume");
       });
       rm.onStop(res => {
-        console.log("beforespeak.recordManager.onStop  ", JSON.stringify(res));
+        console.info("beforespeak.recordManager.onStop  ", JSON.stringify(res));
         //保存临时文件
         this.tempFilePath = res.tempFilePath;
-        console.log("filepath: " + this.tempFilePath);
+        console.info("beforespeak.recordManager.tempFilePath: " + this.tempFilePath);
         if (status.canceled === this.currentStatus) {
           this.log = "已取消录音";
         } else {
-          // 处理录音文件
-          // let ac = wepy.createInnerAudioContext();
-          // ac.src = this.tempFilePath;
-          // ac.play();
-          //this.log = res.tempFilePath
           this.$preload('recordPath', res.tempFilePath)
           this.$redirect({
             url: 'afterspeak'
@@ -181,7 +173,7 @@
             }
           },
           fail: function() {
-            console.log("beforespeak.onLoad 获取bulletinInfo");
+            console.error("beforespeak.onLoad: 获取bulletinInfo失败");
           }
         });
       }).then(info => {

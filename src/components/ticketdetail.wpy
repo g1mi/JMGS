@@ -90,9 +90,6 @@
 
 <script>
   import wepy from 'wepy'
-  import tools from '../util/tools.js'
-  import moment from "moment";
-  import "moment/locale/zh-cn";
   export default class TicketDetail extends wepy.component {
     props = {
       details: {

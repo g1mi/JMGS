@@ -22,14 +22,14 @@
 
 <script>
   import wepy from "wepy";
-  import Mock from "@/util/Mock";
-  import Tools from "@/util/tools";
+
   import TicketDetail from "@/components/ticketdetail";
   import RoundButton from "@/components/roundbutton";
-  import PlayRecordBtn from '../components/playrecordbtn'
+  import PlayRecordBtn from '@/components/playrecordbtn'
   import UserInfo from "@/components/userinfo";
+
   import request from '@/util/request'
-  import qiniuUploader from '@/util/qiniuUploader'
+
   export default class Display extends wepy.page {
     config = {
       navigationBarTitleText: 'de 敢说',
@@ -167,7 +167,7 @@
                   "x:videoUrl": _this.$parent.globalData.config.bucketUrl + filename,
                 };
                 console.warn(params);
-                qiniuUploader.upload(filePath,
+                request.upload(filePath,
                   (data) => {
                     const obj = JSON.parse(data);
                     if (obj.challengeId) {
@@ -226,7 +226,7 @@
                 if (challenges.length) {
                   for (let i = challenges.length - 1; i >= 0; i--) {
                     const data = challenges[i];
-                    data.timeFromNow = Tools.formatTime(parseInt(data.createTime, 10));
+                    data.timeFromNow = request.formatTime(parseInt(data.createTime, 10));
                     data.self = _this.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
                     _this.challenges.splice(0, 0, data);
                     _this.$apply();
@@ -260,7 +260,7 @@
             'page': this.currentPage
           },
           successData => {
-            console.log('display.onLoad: 获得数据，准备展示', successData);
+            console.info('display.onLoad: 获得数据，准备展示', successData);
             resolve(successData);
             //console.log(_this.$parent.globalData.acCtx.src);
           },
@@ -276,23 +276,23 @@
         _this.$parent.globalData.acCtx.src = data.audioUrl;
         _this.ticketId = data.ticketId;
         const challenges = data.challenges;
-        console.log(challenges);
+        console.info(challenges);
         if (challenges.length) {
           challenges.forEach(item => {
-            item.timeFromNow = Tools.formatTime(parseInt(item.createTime, 10));
+            item.timeFromNow = request.formatTime(parseInt(item.createTime, 10));
             item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
             _this.challenges.push(item);
           });
         }
         _this.$apply();
-        console.log(_this.challenges);
+        console.info(_this.challenges);
         //--------------------赋值页面------------------
       }).then(() => {
         //解锁页面
         wepy.hideLoading();
       }).catch(error => {
-        console.log('display.onLoad.catch: 发生错误！');
-        console.log(error)
+        console.error('display.onLoad.catch: 发生错误！');
+        console.error(error)
         wepy.navigateBack({
           success() {
             wepy.showToast({
@@ -325,8 +325,9 @@
         }).then(challenges => {
           if (challenges.length) {
             //分页数据存在， 准备展示
+            console.log(challenges);
             challenges.forEach(item => {
-              item.timeFromNow = Tools.formatTime(parseInt(item.createTime, 10));
+              item.timeFromNow = request.formatTime(parseInt(item.createTime, 10));
               item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
               _this.challenges.push(item);
               _this.$apply();
@@ -374,7 +375,7 @@
         if (challenges.length) {
           for (let i = challenges.length - 1; i >= 0; i--) {
             const data = challenges[i];
-            data.timeFromNow = Tools.formatTime(parseInt(data.createTime, 10));
+            data.timeFromNow = request.formatTime(parseInt(data.createTime, 10));
             data.self = _this.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
             _this.challenges.splice(0, 0, data);
             _this.$apply();
