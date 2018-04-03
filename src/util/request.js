@@ -1,9 +1,11 @@
- import Tools from './tools';
+
+ import moment from "moment";
+ import "moment/locale/zh-cn";
  // -------------MAP----------------------
  function locate(coordinates, _this) {
    console.log('request.locate : 请求坐标为 [' + coordinates.longitude + ',' + coordinates.latitude + '] 周围的敢说');
    wx.request({
-     url: Tools.formatUrl(_this.config.locateUrl, {
+     url: formatUrl(_this.config.locateUrl, {
        longitude: coordinates.longitude,
        latitude: coordinates.latitude,
        maxDistance: 0.01
@@ -42,7 +44,7 @@
    //request取得ticket所有数据
    console.log('request.retrieveData.' + type + ' : 请求 id 为 [' + id + '] 的内容');
    wx.request({
-     url: Tools.formatUrl(_this.$parent.globalData.config.retrievers[type] + id, params), //首页数据
+     url: formatUrl(_this.$parent.globalData.config.retrievers[type] + id, params), //首页数据
      header: {
        'authorization': _this.$parent.globalData.token
      },
@@ -63,8 +65,70 @@
    })
  }
 
+ function upload(filePath, success_cb, fail_cb, options, progress, params) {
+  const url = options.region; // 华北
+  console.log(url);
+  console.log(options.region);
+  const formData = {
+    'token': options.token,
+    'key': options.key
+  };
+  // 添加自定义变量
+  for (const key in params) {
+    formData[key] = params[key];
+  };
+  console.log(formData);
+  const uploadTask = wx.uploadFile({
+    url: url,
+    filePath: filePath,
+    name: 'file',
+    formData: formData,
+    success: function (res) {
+      try {
+        if (res.data) {
+          success_cb(res.data)
+        }
+      } catch (error) {
+        fail_cb(error)
+      }
+    },
+    fail: function (error) {
+      console.error(error);
+      fail_cb(error);
+    }
+  })
+
+  uploadTask.onProgressUpdate((res) => {
+    progress && progress(res)
+  })
+};
+
+function formatUrl(url, params) {
+  let p = '';
+  if ('object' === typeof params) {
+    let length = 0
+    for (let key in params) {
+      length++
+    }
+    for (let key in params) {
+      p += key + '=' + params[key]
+      if (--length > 0) {
+        p += '&'
+      }
+    }
+    return url + '?' + p;
+  }
+  return url;
+};
+
+function formatTime(milliseconds) {
+  return moment(milliseconds).fromNow();
+}
 
  module.exports = {
+   upload: upload,
    locate: locate,
-   retrieveData: retrieveData
+   retrieveData: retrieveData,
+   formatUrl: formatUrl,
+   formatTime: formatTime
  }

@@ -1,0 +1,50 @@
+<style lang="less">
+
+</style>
+
+<template>
+  <view class="container">
+    <userinfo nickname="我最帅" avatarSrc="../assets/images/default-avatar.png" ganshuoCounts="256" ganzuoCounts="22"></userinfo>
+    <infodetail :detail="detail"></infodetail>
+    <infodetail :detail="detail"></infodetail>
+    <infodetail :detail="detail"></infodetail>
+    <infodetail :detail="detail"></infodetail>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import Mock from "@/util/Mock";
+  import Tools from "@/util/tools";
+  import UserInfo from "@/components/userinfo";
+  import UserInfoDetail from "@/components/userinfodetail";
+  export default class UserRecord extends wepy.page {
+    config = {
+      enablePullDownRefresh: true
+    };
+    components = {
+      userinfo: UserInfo,
+      infodetail: UserInfoDetail
+    };
+    mixins = [];
+    data = {
+      detail: {
+        avatarSrc: "../assets/images/default-avatar.png",
+        createTime: "2018/9/11 14:22",
+        status: "launching"
+      }
+    };
+    computed = {
+      now() {
+        return +new Date();
+      }
+    };
+    onPullDownRefresh() {}
+    methods = {};
+    events = {};
+    onLoad() {}
+    onPullDownRefresh() {
+      wx.stopPullDownRefresh();
+    }
+  }
+</script>

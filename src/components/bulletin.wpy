@@ -35,7 +35,6 @@
 
 <script>
   import wepy from "wepy";
-  import "wepy-async-function";
   export default class Bulletin extends wepy.component {
     props = {
       content: {

@@ -1,0 +1,344 @@
+<style lang='less'>
+  .player {
+    width: 80%;
+    bottom: 0;
+    text-align: center;
+    padding: 15px calc(10%) 15px;
+  }
+  .submit {
+    position: absolute;
+    width: 80%;
+    bottom: 0px;
+    padding: 15px calc(10%) 2rem;
+  }
+  .hide {
+    display: none;
+  }
+  .show {
+    display: inline;
+  }
+  .addPadding {
+    padding: 2rem auto 2rem;
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+  .checkedIcon {
+    margin: 0px 10px 0px;
+  }
+  .flex {
+    display: flex;
+    flex-direction: row;
+  }
+  .play-record {
+    text-align: left;
+    font-size: 16px;
+  }
+</style>
+
+<template>
+  <view class="container">
+    <view class="weui-panel weui-panel_access">
+      <view class="weui-panel__hd">
+        <playrecordbtn></playrecordbtn>
+      </view>
+    </view>
+    <view class="weui-cells__title">默认为{{config.howLong}}天，超出需要支付占位费。</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">时限：</view>
+        <view class="weui-cell__ft">
+          <!-- remember to set the value with the data in config file, set it dynamically will cause the slider not working -->
+          <slider min="1" max="7" @change="changeTime" show-value/>
+        </view>
+      </view>
+    </view>
+    <view class="weui-cells__title">默认为当前地址。范围: {{config.allowedCities}}内。</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">地点：</view>
+        <view class="weui-cell__ft flex">
+          <button type="{{mapPicked}}" plain="true" size="mini" @tap="pickLoc" >{{config.beforPosChosed}}</button>
+          <view class="checkedIcon {{posChosed}}">
+            <icon type="success" size="32" />
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="weui-cells__title">当前人数限制为：
+      <i style="color:{{500 >formData.howMany ? 'red' : 'green'}}">{{ 500 >formData.howMany ? config.howMany : '无限制'}}</i>
+      <i style="font-size:12px">{{ formData.howMany ? '' : '（无限制须支援服务器费用。） '}}</i>
+    </view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">人数限制：</view>
+        <view class="weui-cell__ft">
+          <switch bindchange="unlimitNoCheck" checked/>
+        </view>
+      </view>
+    </view>
+    <view class="submit weui-flex">
+      <button type="warn" plain="true" style="width:40%" @tap="goback">返回</button>
+      <button type="primary" style="width:40%" @tap="submit">提交</button>
+    </view>
+    <mappicker direction="bottom">
+      <view class="weui-panel weui-panel_access {{pickerDisplay}}">
+        <view class="weui-panel__hd">请在地图中选中展出的位置</view>
+        <view class="weui-panel__bd  addPadding">
+          <map id="map" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" controls="{{controls}}" show-location style="width:100%; height:20rem;"></map>
+        </view>
+        <view class="weui-flex addPadding" style="padding-bottom: 1rem;">
+          <button size="mini" @tap="cancelPick" type="default" plain="true" style="width:40%">返回</button>
+          <button size="mini" @tap="grabCoordinates" type="primary" plain="true" style="width:40%">选中</button>
+        </view>
+      </view>
+    </mappicker>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import Mock from "@/util/Mock";
+  import Config from "@/util/config";
+  import MapPicker from "../components/mappicker";
+  import PlayRecordBtn from '../components/playrecordbtn'
+  import Tools from "@/util/tools";
+  import qiniuUploader from '@/util/qiniuUploader'
+  export default class AfterSpeak extends wepy.page {
+    config = {
+      navigationBarTitleText: "创建敢说"
+    };
+    components = {
+      mappicker: MapPicker,
+      playrecordbtn: PlayRecordBtn
+    };
+    mixins = [];
+    data = {
+      pickerDisplay: "hide", //flag to hide the original component
+      mapPicked: "warn",
+      posChosed: "hide",
+      controls: [],
+      formData: {
+        howLong: 1,
+        where: {
+          longitude: "",
+          latitude: ""
+        },
+        howMany: 50
+      },
+      config: Config(),
+      mapCtx: null, //map context
+      acCtx: null, // audio context
+    };
+    computed = {
+      now() {
+        return +new Date();
+      }
+    };
+    methods = {
+      goback() {
+        //返回程序首页 地图
+        wepy.navigateBack()
+      },
+      playrecord() {
+        //播放录音
+        console.log('afterspeak.playrecord 正在播放录音', this.acCtx.src)
+        if ("true" === this.playingRecord) {
+          this.acCtx.stop();
+        } else {
+          this.acCtx.play();
+        }
+      },
+      pickLoc() {
+        //在小地图中选择展出坐标
+        let _this = this;
+        console.log('afterspeak.pickLoc 准备选择展出坐标');
+        this.pickerDisplay = "show";
+        this.$invoke("mappicker", "showPopup");
+        //add loading toast for safety
+        wepy.showLoading({
+          mask: true
+        });
+        //在动画结束后加载pin
+        setTimeout(() => {
+          //hideloading
+          wepy.hideLoading();
+          //get the coordinates of pin pic
+          wepy
+            .createSelectorQuery()
+            .select("#map")
+            .boundingClientRect(function(rect) {
+              _this.controls.push({
+                id: 1,
+                iconPath: "../assets/images/pin.png",
+                position: {
+                  left: rect.width / 2 - 12,
+                  top: rect.height / 2 - 24,
+                  width: 24,
+                  height: 24
+                },
+                clickable: false
+              });
+              _this.$apply();
+              //console.log(rect);
+            })
+            .exec();
+        }, 400); // a lucky number
+      },
+      cancelPick() {
+        //小地图选取中点击返回按钮
+        console.log('afterspeak.cancelPick 取消选择展出坐标');
+        this.pickerDisplay = "hide";
+        this.$invoke("mappicker", "hidePopup");
+      },
+      grabCoordinates() {
+        //抓取所选坐标
+        this.pickerDisplay = "hide";
+        this.$invoke("mappicker", "hidePopup");
+        this.mapPicked = "primary";
+        this.config.beforPosChosed = this.config.afterPosChosed;
+        //在提交数据formdata中加入所选坐标
+        this.mapCtx = this.mapCtx || wepy.createMapContext("map");
+        let _this = this;
+        this.mapCtx.getCenterLocation({
+          success: function(res) {
+            _this.formData.where = {
+              longitude: res.longitude,
+              latitude: res.latitude
+            };
+            _this.posChosed = "show";
+            _this.$apply();
+            console.log('afterspeak.grabCoordinates 选择展出坐标',JSON.stringify(_this.formData.where));
+          },
+          fail: function(res) {
+            console.log(res);
+          }
+        });
+      },
+      submit() {
+        let _this = this
+        wx.showLoading({
+          mask: true
+        });
+        // 上传前获取上传授权
+        new Promise((resolve, reject) => {
+          wx.request({
+            url: _this.config.ticketTokenUrl,
+            header: {
+              'authorization': _this.$parent.globalData.token
+            },
+            success(res) {
+              console.log('afterspeak.submit 上传授权成功');
+              if (res.error) {
+                console.log('afterspeak.submit 错误发生：' + res.error);
+                reject(res.error)
+              } else if (res.data.ticketToken) {
+                resolve(res.data.ticketToken)
+              }
+              reject(res.error)
+            },
+            fail(res) {
+              reject(res)
+            }
+          })
+        }).then(token => {
+          const owner = _this.$parent.globalData.userInfo.id;
+          const filename = 'ticket/' + owner + '-' + Date.now();
+          console.log('afterspeak.submit 准备上传文件');
+          qiniuUploader.upload(_this.acCtx.src,
+            (data) => {
+              // callback response, 返回的是string， 坑死老子了
+              // console.log(typeof data);
+              const obj = JSON.parse(data);
+              if (obj.ticketId) {
+                console.log('afterspeak.submit 上传成功， callback调用成功，返回ticketId：' + obj.ticketId);
+                _this.$preload('ticketId', obj.ticketId);
+                _this.$redirect('display');
+              } else {
+                console.log(obj);
+                throw '上传成功，但未正确返回ticketId'
+              }
+            },
+            (error) => {
+              wx.navigateBack({
+                success() {
+                  console.log('afterspeak.submit 文件上传失败：', error);
+                  wepy.showModal({
+                    title: '服务器发生错误, 未能上传成功！',
+                    content: JSON.stringify(error)
+                  })
+                }
+              });
+            }, {
+              region: _this.config.bucketRegionUrl, // 华北区
+              token: token, // token
+              domain: _this.config.bucketUrl, // 对象存储服务器
+              key: filename,
+            },
+            (progress) => {
+              console.log('afterspeak.submit 文件上传进度：' + progress.progress);
+            }, {
+              //添加ticket
+              "x:owner": owner,
+              "x:audioUrl": _this.config.bucketUrl + filename,
+              "x:duration": _this.formData.howLong * 1000 * 60 * 60 * 24,
+              "x:amount": _this.formData.howMany,
+              "x:location": JSON.stringify([_this.formData.where.longitude, _this.formData.where.latitude]),
+            }
+          );
+        }).catch(error => {
+          console.log('afterspeak.submit 上传ticket提交失败：', error);
+          wx.navigateBack({
+            success() {
+              wepy.showModal({
+                title: '服务器发生错误',
+                content: JSON.stringify(error)
+              })
+            }
+          });
+        })
+      },
+      changeTime(e) {
+        this.formData.howLong = e.detail.value;
+        // console.log(this.formData)
+      },
+      unlimitNoCheck(e) {
+        this.formData.howMany = e.detail.value ? this.config.howMany : this.config.howManyMax;
+        //console.log(e)
+      }
+    };
+    events = {};
+    onLoad(params, data) {
+      console.log('afterspeak.onLoad');
+      let _this = this;
+      //取得录音文件地址
+      this.acCtx = this.$parent.globalData.acCtx
+      this.acCtx.src = data.preload.recordPath;
+      //get current position
+      wepy.getLocation({
+        type: "gcj02",
+        success: function(res) {
+          //console.log(res);
+          _this.formData.where = {
+            longitude: res.longitude,
+            latitude: res.latitude
+          };
+        },
+        fail: function(err) {
+          wepy.showToast({
+            icon: "none",
+            title: "无法获取当前位置坐标"
+          });
+        }
+      });
+    }
+    onReady() {}
+    onHide() {
+      console.log('afterspeak onHide')
+      this.acCtx.stop()
+    }
+    onUnload() {
+      console.log('afterspeak onUnload')
+      this.acCtx.stop()
+    }
+  }
+</script>

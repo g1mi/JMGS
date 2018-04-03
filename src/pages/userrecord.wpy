@@ -14,8 +14,6 @@
 
 <script>
   import wepy from "wepy";
-  import Mock from "@/util/Mock";
-  import Tools from "@/util/tools";
   import UserInfo from "@/components/userinfo";
   import UserInfoDetail from "@/components/userinfodetail";
   export default class UserRecord extends wepy.page {

@@ -14,8 +14,6 @@
 
 <script>
   import wepy from "wepy";
-  import Tools from "@/util/tools";
-  import Mock from "@/util/Mock";
   export default class PlayVideo extends wepy.page {
     config = {
       navigationBarTitleText: "播放视频"
@@ -42,9 +40,15 @@
       this.$apply();
     };
     onReady() {
-      console.log('playvideo.onLoad:  准备播放视频');
+      console.info('playvideo.onLoad:  准备播放视频');
       this.videoContext = wepy.createVideoContext('myVideo',this)
       this.videoContext.requestFullScreen()
     };
+    onHide() {
+      this.videoContext.stop();
+    };
+    onUnload() {
+      this.videoContext.stop();
+    }
   }
 </script>
