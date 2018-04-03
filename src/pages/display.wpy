@@ -10,7 +10,7 @@
       </view>
     </userinfo>
     <repeat for="{{challenges}}" item="item">
-      <ticketdetail :details.sync="item"></ticketdetail>
+      <ticketdetail :details.sync="item" @tap.user="tapPlay"></ticketdetail>
     </repeat>
     <roundbutton class="" name="敢" shine="true" @tap.user="tapBtn"></roundbutton>
     <view class="weui-footer {{onBottom ? '' : 'hide'}}">
@@ -24,8 +24,6 @@
   import wepy from "wepy";
   import Mock from "@/util/Mock";
   import Tools from "@/util/tools";
-  import moment from "moment";
-  import "moment/locale/zh-cn";
   import TicketDetail from "@/components/ticketdetail";
   import RoundButton from "@/components/roundbutton";
   import PlayRecordBtn from '../components/playrecordbtn'
@@ -34,7 +32,8 @@
   import qiniuUploader from '@/util/qiniuUploader'
   export default class Display extends wepy.page {
     config = {
-      navigationBarTitleText: 'de 敢说'
+      navigationBarTitleText: 'de 敢说',
+      enablePullDownRefresh: true
     };
     components = {
       ticketdetail: TicketDetail,
@@ -44,13 +43,23 @@
     };
     mixins = [];
     data = {
-      challenges: [],
+      challenges: [
+        // challengeId: '',
+        // challengeOwnerNickName: '',
+        // createTime: '',
+        // challengeOwnerAvatarUrl: '',
+        // posterUrl: '',
+        // videoUrl: '',
+        // isVertical: '',
+        // self: '',
+        // timeFromNow: '',
+      ],
       currentPage: 1,
       ticketId: '',
       ticketOwnerNickName: '',
       ticketOwnerAvatarUrl: '',
       audioUrl: '',
-      onBottom: false,
+      onBottom: false
     };
     computed = {
       now() {
@@ -58,6 +67,10 @@
       }
     };
     methods = {
+      tapPlay(url) {
+        this.$preload('videoUrl', url);
+        this.$navigate('playvideo');
+      },
       async tapBtn(e) {
         const _this = this;
         try {
@@ -139,12 +152,21 @@
                     }
                   })
                 }
-              })
+              });
               const owner = _this.$parent.globalData.userInfo.id;
               const filename = 'challenge/' + owner + '-' + Date.now();
               const filePath = videoData.tempFilePath
               console.log('display.tapBtn  准备上传挑战视频文件');
               const createdChallengeId = await new Promise(resolve => { // 获取创建的challengeId
+                const params = {
+                  //添加challenge
+                  "x:isVertical": String(videoData.height > videoData.width), //参数只支持string
+                  "x:owner": owner,
+                  "x:posterUrl": _this.$parent.globalData.config.bucketUrl + filename + '?vframe/png/offset/0', // 截图参数，jpg,0秒
+                  "x:belongTo": _this.ticketId,
+                  "x:videoUrl": _this.$parent.globalData.config.bucketUrl + filename,
+                };
+                console.warn(params);
                 qiniuUploader.upload(filePath,
                   (data) => {
                     const obj = JSON.parse(data);
@@ -179,13 +201,8 @@
                       title: '上传进度  ' + progress.progress + '%',
                       mask: true
                     });
-                  }, {
-                    //添加ticket
-                    "x:owner": owner,
-                    "x:posterUrl": _this.$parent.globalData.config.bucketUrl + filename + '?vframe/jpg/offset/0', // 截图参数，jpg,0秒
-                    "x:belongTo": _this.ticketId,
-                    "x:videoUrl": _this.$parent.globalData.config.bucketUrl + filename,
-                  }
+                  },
+                  params
                 );
               })
               console.log('display.tapBtn : 新的challenge创建成功， id为' + createdChallengeId);
@@ -209,7 +226,6 @@
                 if (challenges.length) {
                   for (let i = challenges.length - 1; i >= 0; i--) {
                     const data = challenges[i];
-                    data.vertical = 'false';
                     data.timeFromNow = Tools.formatTime(parseInt(data.createTime, 10));
                     data.self = _this.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
                     _this.challenges.splice(0, 0, data);
@@ -263,7 +279,6 @@
         console.log(challenges);
         if (challenges.length) {
           challenges.forEach(item => {
-            item.vertical = "false";
             item.timeFromNow = Tools.formatTime(parseInt(item.createTime, 10));
             item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
             _this.challenges.push(item);
@@ -311,7 +326,6 @@
           if (challenges.length) {
             //分页数据存在， 准备展示
             challenges.forEach(item => {
-              item.vertical = "false";
               item.timeFromNow = Tools.formatTime(parseInt(item.createTime, 10));
               item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
               _this.challenges.push(item);
@@ -333,6 +347,49 @@
           })
         })
       }
+    }
+    onPullDownRefresh() {
+      wx.stopPullDownRefresh();
+      const _this = this;
+      wx.showNavigationBarLoading();
+      wx.showLoading({
+        title: '正在加载...',
+        mask: 'true'
+      });
+      new Promise(resolve => {
+        request.retrieveData(_this, _this.challenges[0].challengeId, 'challenge',
+          _this.challenges.length ? {
+            'isUpdate': true,
+            'utilWhen': _this.challenges[0].createTime
+          } : null,
+          data => {
+            resolve(data);
+            console.log('display.onPullDownRefresh : 取得challenge更新，准备展示');
+          },
+          error => {
+            throw error;
+          }
+        );
+      }).then(challenges => {
+        if (challenges.length) {
+          for (let i = challenges.length - 1; i >= 0; i--) {
+            const data = challenges[i];
+            data.timeFromNow = Tools.formatTime(parseInt(data.createTime, 10));
+            data.self = _this.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
+            _this.challenges.splice(0, 0, data);
+            _this.$apply();
+          }
+        }
+      }).catch(error => {
+        wepy.showToast({
+          title: '更新时出现错误',
+          icon: 'none'
+        });
+        console.error(error);
+      }).then(() => {
+        wx.hideNavigationBarLoading();
+        wx.hideLoading();
+      })
     }
   }
 </script>

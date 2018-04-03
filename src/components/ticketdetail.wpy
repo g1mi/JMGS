@@ -80,8 +80,8 @@
         </view>
         <view class="td-user-name">{{details.challengeOwnerNickName}}</view>
       </view>
-      <view class="{{details.vertical === 'true' ? videoDirection.verShell : videoDirection.hozShell}}">
-        <image lazy-load="true" mode="aspectFill" class="{{details.vertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}">
+      <view class="{{details.isVertical === 'true' ? videoDirection.verShell : videoDirection.hozShell}}" @tap="tap">
+        <image lazy-load="true" mode="aspectFill" class="{{details.isVertical === 'true' ? videoDirection.ver : videoDirection.hoz }}" src="{{details.posterUrl}}">
         </image>
       </view>
     </view>
@@ -101,7 +101,8 @@
         createTime: '',
         challengeOwnerAvatarUrl: '',
         posterUrl: '',
-        vertical: '',
+        videoUrl: '',
+        isVertical: '',
         self: '',
         timeFromNow: '',
       }
@@ -121,7 +122,11 @@
     computed = {}
     events = {}
     watch = {}
-    methods = {}
+    methods = {
+      tap() {
+        this.$emit('tap', this.details.videoUrl);
+      }
+    }
     onLoad() {}
   }
 </script>
