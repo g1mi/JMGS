@@ -133,6 +133,7 @@ async function passLogin(_this, url, method, data) {
       },
       success(res) {
         resolve(res.statusCode === 200)
+        console.log(res);
       },
       fail() {
         resolve(false);

@@ -75,11 +75,6 @@ export default class extends wepy.app {
     });
   }
 
-  async testAsync() {
-    const data = await this.sleep(3);
-    console.log(data);
-  }
-
   async getUserInfo(cb) {
     const that = this;
     if (this.globalData.userInfo) {
@@ -116,36 +111,31 @@ export default class extends wepy.app {
                   },
                   success: function (data) {
                     if (data.error) {
-                      wepy.showToast({
-                        title: data.error,
-                        icon: 'none'
-                      })
+                      app.globalData.config.showError('Err002', data.error);
                     } else {
                       //返回的数据中应当包含jwt
                       resolve(data)
                     }
                   },
-                  fail: function () {
-                    console.log("系统错误");
-                    wepy.showToast({
-                      title: '未连接到服务器。',
-                      icon: 'none'
-                    })
+                  fail: function (res) {
+                    console.warn("系统错误");
+                    app.globalData.config.showError('Err003', res);
                   }
                 });
               },
-              fail() {
-                console.log("获取用户信息失败！");
+              fail(res) {
+                console.warn("获取用户信息失败！");
+                app.globalData.config.showError('Err004', res);
               }
             });
           } else {
-            console.log("获取用户登录态失败！");
+            app.globalData.config.showError('Err001', res);
           }
         }
       });
     }).then(res => {
       //取得token ，加入缓存中
-      console.log(res)
+      app.globalData.config.showError('Msg001');
       const {authorization, userInfo} = res.data;
       app.globalData.userInfo = userInfo;
       this.globalData.token = authorization;

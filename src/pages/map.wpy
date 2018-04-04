@@ -106,6 +106,9 @@
         if (_this.isFirstTime[url]) {
           _this.isFirstTime[url] = false;
           _this.$apply();
+          setTimeout(() => {
+            _this.isFirstTime[url] = true;
+          }, 1500);
           const loggedin = await request.passLogin(_this, _this.config.checkLoginUrl, 'GET');
           if (loggedin) {
             // 检测授权
@@ -133,6 +136,7 @@
             success(res) {
               //记录timer，后面的timer会取代之前的timer
               if (readyTorequest) {
+                console.warn('map.getGSNearBy.getCenterLocation: ')
                 clearTimeout(readyTorequest);
               } else {
                 console.info("map.getGSNearBy : 首次request");
