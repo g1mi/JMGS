@@ -38,7 +38,7 @@
 </style>
 
 <template>
-  <view id="round-button" style="top: {{btnPos.y}}px;left: {{btnPos.x}}px;" class="rd-round-button {{'true' === shine ? buttonShine : ''}} {{buttonTouched}}" @touchstart="touchstart" @touchend="touchend" @touchmove.stop="touchmove" @tap="tap">
+  <view id="round-button" style="top: {{btnPos.y}}px;left: {{btnPos.x}}px;" class="rd-round-button {{'true' === shine ? buttonShine : ''}} {{buttonTouched}}" @touchstart.stop="touchstart" @touchend.stop="touchend" @touchmove.stop="touchmove" @tap.stop="tap">
     {{name}}</view>
 </template>
 
