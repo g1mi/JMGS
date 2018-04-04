@@ -42,37 +42,39 @@
         <playrecordbtn></playrecordbtn>
       </view>
     </view>
-    <view class="weui-cells__title">默认为{{config.howLong}}天，超出需要支付占位费。</view>
+    <view class="weui-cells__title">当前展出天数限制为：
+      <i style="color:{{formData.howLong > 2 ? (formData.howLong  > 5 ? 'red' : 'orange') : 'green'}}">{{formData.howLong}}</i>
+      天</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell">
         <view class="weui-cell__bd">时限(天)：</view>
         <view class="weui-cell__ft">
           <!-- remember to set the value with the data in config file, set it dynamically will cause the slider not working -->
-          <slider min="1" max="7" @change="changeTime" show-value/>
+          <slider min="1" max="7" @change="changeTime"/>
+        </view>
+      </view>
+    </view>
+
+    <view class="weui-cells__title">当前参与人数限制为：
+      <i style="color:{{formData.howMany > 150 ? (formData.howMany  > 400 ? 'red' : 'orange') : 'green'}}">{{formData.howMany}}</i>人
+    </view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">人数限制：</view>
+        <view class="weui-cell__ft">
+          <slider min="50" max="500" @change="changeAmount"/>
         </view>
       </view>
     </view>
     <view class="weui-cells__title">默认为当前地址。范围: {{config.allowedCities}}内。</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell">
-        <view class="weui-cell__bd">地点：</view>
+        <view class="weui-cell__bd">地点限制：</view>
         <view class="weui-cell__ft flex">
           <button type="{{mapPicked}}" plain="true" size="mini" @tap="pickLoc">{{config.beforPosChosed}}</button>
           <view class="checkedIcon {{posChosed}}">
             <icon type="success" size="32" />
           </view>
-        </view>
-      </view>
-    </view>
-    <view class="weui-cells__title">当前人数限制为：
-      <i style="color:{{500 >formData.howMany ? 'red' : 'green'}}">{{ 500 >formData.howMany ? config.howMany : '无限制'}}</i>
-      <i style="font-size:12px">{{ formData.howMany ? '' : '（无限制须支援服务器费用。） '}}</i>
-    </view>
-    <view class="weui-cells weui-cells_after-title">
-      <view class="weui-cell">
-        <view class="weui-cell__bd">人数限制：</view>
-        <view class="weui-cell__ft">
-          <switch bindchange="unlimitNoCheck" checked/>
         </view>
       </view>
     </view>
@@ -125,6 +127,11 @@
       config: null,
       mapCtx: null, //map context
       acCtx: null, // audio context
+      color: {
+        red: '\"red\"',
+        orange: '\"orange\"',
+        green: '\"green\"'
+      }
     };
     computed = {
       now() {
@@ -250,18 +257,14 @@
                 _this.$preload('ticketId', obj.ticketId);
                 _this.$redirect('display');
               } else {
-                console.error(obj);
-                throw '上传成功，但未正确返回ticketId'
+                throw new Error(obj)
               }
             },
             (error) => {
               wx.navigateBack({
                 success() {
                   console.error('afterspeak.submit 文件上传失败：', error);
-                  wx.showModal({
-                    title: '服务器发生错误, 未能上传成功！',
-                    content: JSON.stringify(error)
-                  })
+                  _this.config.showError('Err302',error);
                 }
               });
             }, {
@@ -285,10 +288,7 @@
           console.error('afterspeak.submit 上传ticket提交失败：', error);
           wx.navigateBack({
             success() {
-              wx.showModal({
-                title: '服务器发生错误',
-                content: JSON.stringify(error)
-              })
+              _this.config.showError('Err303',error);
             }
           });
         })
@@ -297,9 +297,9 @@
         this.formData.howLong = e.detail.value;
         console.info('afterspeak.changeTime:', this.formData);
       },
-      unlimitNoCheck(e) {
-        this.formData.howMany = e.detail.value ? this.config.howMany : this.config.howManyMax;
-        console.info('afterspeak.unlimitNoCheck:', this.formData.howMany);
+      changeAmount(e) {
+        this.formData.howMany = e.detail.value;
+        console.info('afterspeak.changeAmount:', this.formData.howMany);
       }
     };
     events = {};
@@ -320,10 +320,7 @@
           };
         },
         fail: function(err) {
-          wx.showToast({
-            icon: "none",
-            title: "无法获取当前位置坐标"
-          });
+          _this.config.showError('Err301',err);
         }
       });
     }

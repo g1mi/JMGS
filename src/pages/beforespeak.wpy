@@ -11,7 +11,6 @@
 <template>
   <view class="container">
     <bulletin></bulletin>
-    <view>{{log}}</view>
     <view id="btn-speak" class="recorder {{animation}}">
       <button type="{{buttonState.type}}" @tap="tip" @longpress="record" @touchend="touchend" @touchcancel="" hover-stop-propagation="true">
         {{buttonState.content}}
@@ -51,7 +50,6 @@
       },
       recorderManager: null, //recorderManager
       tempFilePath: "", //save
-      log: "",
     };
     computed = {
       now() {
@@ -66,7 +64,7 @@
         let _this = this
         //longpress
         //震动
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 4; i++) {
           setTimeout(() => {
             wepy.vibrateShort();
           }, i * 15);
@@ -136,13 +134,10 @@
         console.info("beforespeak.recordManager.onResume");
       });
       rm.onStop(res => {
-        console.info("beforespeak.recordManager.onStop  ", JSON.stringify(res));
+        console.info("beforespeak.recordManager.onStop  ");
         //保存临时文件
         this.tempFilePath = res.tempFilePath;
-        console.info("beforespeak.recordManager.tempFilePath: " + this.tempFilePath);
-        if (status.canceled === this.currentStatus) {
-          this.log = "已取消录音";
-        } else {
+        if (status.canceled !== this.currentStatus) {
           this.$preload('recordPath', res.tempFilePath)
           this.$redirect({
             url: 'afterspeak'
@@ -162,18 +157,14 @@
           },
           data: {},
           success: function(res) {
-            if (res.error) {
-              wepy.showToast({
-                title: res.error,
-                icon: 'none'
-              })
-            } else {
-              // 返回的数据中应当包含jwt
-              resolve(res.data.bulletinInfo || '')
+            if (res.data.bulletinInfo) {
+              resolve(res.data.bulletinInfo)
             }
+            _this.$parent.globalData.config.showError('Err201');
           },
-          fail: function() {
+          fail: function(err) {
             console.error("beforespeak.onLoad: 获取bulletinInfo失败");
+            _this.$parent.globalData.config.showError('Err201',err);
           }
         });
       }).then(info => {
@@ -184,6 +175,8 @@
     }
     onUnload() {
     }
-    onReady() {}
+    onReady() {
+      wx.hideLoading();
+    }
   }
 </script>

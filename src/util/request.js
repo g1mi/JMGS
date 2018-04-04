@@ -17,11 +17,11 @@
        //取得周围坐标 准备展示
        if (!res.error && res.data.tickets) {
          let tickets = res.data.tickets
-         console.log('request.locate : 找到 [' + coordinates.longitude + ',' + coordinates.latitude + '] 周围的敢说 [' + tickets.length + '] 个');
-         console.log(tickets);
+         console.info('request.locate : 找到 [' + coordinates.longitude + ',' + coordinates.latitude + '] 周围的敢说 [' + tickets.length + '] 个');
+         console.info(tickets);
          for (let i = 0; i < tickets.length; i++) {
            let t = {
-             iconPath: "../assets/images/placeholder.png",
+             iconPath: '../assets/images/placeholder.png',
              id: i,
              ticketId: tickets[i].ticketId,
              longitude: tickets[i].ticketLocation[0],
@@ -30,19 +30,19 @@
              height: 24
            };
            _this.markers.push(t);
+           _this.$apply();
          }
-         _this.$apply();
        }
      },
      fail(res) {
-       console.log(res)
+       console.error(res)
      }
    })
  }
  // ----------------------retrieveData----------------------------------------
  function retrieveData(_this , id, type, params, success_cb, fail_cb) {
    //request取得ticket所有数据
-   console.log('request.retrieveData.' + type + ' : 请求 id 为 [' + id + '] 的内容');
+   console.info('request.retrieveData.' + type + ' : 请求 id 为 [' + id + '] 的内容');
    wx.request({
      url: formatUrl(_this.$parent.globalData.config.retrievers[type] + id, params), //首页数据
      header: {
@@ -51,15 +51,15 @@
      success(res) {
 
        if (res.data.error) {
-         console.log('request.retrieveData.' + type + ' : 返回【失败】', res.data.error);
+         console.info('request.retrieveData.' + type + ' : 返回【失败】', res.data.error);
          fail_cb(res.data.error)
        } else {
-         console.log('request.retrieveData.' + type + ' : 返回【成功】', res.data);
+         console.info('request.retrieveData.' + type + ' : 返回【成功】', res.data);
          success_cb(res.data)
        }
      },
      fail(res) {
-       console.log('request.retrieveData.' + type + ' : 返回【失败】', res.data);
+       console.warn('request.retrieveData.' + type + ' : 返回【失败】', res.data);
        fail_cb(res)
      }
    })
@@ -67,8 +67,6 @@
 
  function upload(filePath, success_cb, fail_cb, options, progress, params) {
   const url = options.region; // 华北
-  console.log(url);
-  console.log(options.region);
   const formData = {
     'token': options.token,
     'key': options.key
@@ -77,7 +75,7 @@
   for (const key in params) {
     formData[key] = params[key];
   };
-  console.log(formData);
+  console.info('request.upload: 上传数据',formData);
   const uploadTask = wx.uploadFile({
     url: url,
     filePath: filePath,
@@ -125,10 +123,29 @@ function formatTime(milliseconds) {
   return moment(milliseconds).fromNow();
 }
 
+async function passLogin(_this, url, method, data) {
+  return await new Promise(resolve => {
+    wx.request({
+      url: url,
+      data: data,
+      header: {
+        'authorization': _this.$parent.globalData.token
+      },
+      success(res) {
+        resolve(res.statusCode === 200)
+      },
+      fail() {
+        resolve(false);
+      }
+    })
+  });
+}
+
  module.exports = {
    upload: upload,
    locate: locate,
    retrieveData: retrieveData,
    formatUrl: formatUrl,
-   formatTime: formatTime
+   formatTime: formatTime,
+   passLogin: passLogin
  }

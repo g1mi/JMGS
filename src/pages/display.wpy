@@ -59,7 +59,8 @@
       ticketOwnerNickName: '',
       ticketOwnerAvatarUrl: '',
       audioUrl: '',
-      onBottom: false
+      onBottom: false,
+      config: null
     };
     computed = {
       now() {
@@ -106,11 +107,8 @@
                   // width
                 },
                 fail(error) {
-                  wx.showToast({
-                    title: '视频录制已取消！',
-                    icon: 'none'
-                  })
-                  throw new Error('录制视频时出现错误！');
+                  _this.config.showError('Wrn401');
+                  throw new Error('录制视频时出现错误或取消！');
                 }
               });
             });
@@ -183,10 +181,7 @@
                     wx.navigateBack({
                       success() {
                         console.log('display.tapBtn 文件上传失败：', error);
-                        wepy.showToast({
-                          title: '服务器发生错误！',
-                          icon: 'none'
-                        })
+                        _this.config.showError('Err404',error)
                       }
                     });
                   }, {
@@ -240,16 +235,14 @@
         } catch (error) {
           console.error(error);
           wx.hideLoading();
-          wx.showToast({
-            title: error,
-            icon: 'none'
-          })
+          _this.config.showError('Err405', error)
         }
       }
     };
     events = {};
     onLoad(params, data) {
       const _this = this;
+      this.config = this.$parent.globalData.config;
       wepy.showLoading({
         mask: true
       });
@@ -278,14 +271,14 @@
         const challenges = data.challenges;
         console.info(challenges);
         if (challenges.length) {
-          challenges.forEach(item => {
+          for (let i = 0; i < challenges.length; i++) {
+            const item = challenges[i];
             item.timeFromNow = request.formatTime(parseInt(item.createTime, 10));
             item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
             _this.challenges.push(item);
-          });
+          }
         }
         _this.$apply();
-        console.info(_this.challenges);
         //--------------------赋值页面------------------
       }).then(() => {
         //解锁页面
@@ -295,10 +288,7 @@
         console.error(error)
         wepy.navigateBack({
           success() {
-            wepy.showToast({
-              title: '发生错误！',
-              icon: 'none'
-            })
+            _this.config.showError('Err401',error)
           }
         })
       });
@@ -326,12 +316,13 @@
           if (challenges.length) {
             //分页数据存在， 准备展示
             console.log(challenges);
-            challenges.forEach(item => {
+            for (let i = 0; i < challenges.length; i++) {
+              const item = challenges[i];
               item.timeFromNow = request.formatTime(parseInt(item.createTime, 10));
               item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
               _this.challenges.push(item);
               _this.$apply();
-            });
+            }
             return;
           }
           // 没有分页数据了，
@@ -342,10 +333,7 @@
           wx.hideNavigationBarLoading();
           wx.hideLoading()
         }).catch(err => {
-          wx.showToast({
-            title: '加载分页数据时出错！' + err,
-            icon: 'none'
-          })
+          _this.config.showError('Err402',err)
         })
       }
     }
@@ -382,10 +370,7 @@
           }
         }
       }).catch(error => {
-        wepy.showToast({
-          title: '更新时出现错误',
-          icon: 'none'
-        });
+        _this.config.showError('Err403',error)
         console.error(error);
       }).then(() => {
         wx.hideNavigationBarLoading();
