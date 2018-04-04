@@ -36,7 +36,7 @@
 <template>
   <view>
     <map id="map" class="full-screen" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" scale="16" controls="" bindcontroltap="" markers="{{markers}}" bindmarkertap="markertap" bindregionchange="getGSNearBy" show-location="true"></map>
-    <cover-view class="speak">
+    <cover-view class="speak" disabled="true">
       <cover-image src="../assets/images/speak.png" @tap.stop="beforespeak" />
     </cover-view>
     <cover-view class="record">
@@ -66,6 +66,12 @@
       mapCtx: null, //map context
       config: null,
       markers: [],
+      // 防多次点击
+      isFirstTime: {
+        locate: true,
+        beforespeak: true,
+        userrecord: true
+      }
     };
     computed = {
       now() {
@@ -78,23 +84,42 @@
         // request信息
         // 取得信息，通过则跳转，否则提示错误
         const ticketId = this.markers[e.markerId].ticketId;
-        console.info('map.markertap: 点击了[' + ticketId + ']' );
+        console.info('map.markertap: 点击了[' + ticketId + ']');
         this.$preload("ticketId", ticketId);
         this.$navigate({
           url: "display"
         });
       },
       locate() {
-        //返回自己的所在地点
-        this.mapCtx.moveToLocation();
+        const _this = this
+        if (this.isFirstTime.locate) {
+          //返回自己的所在地点
+          this.mapCtx.moveToLocation();
+          this.isFirstTime.locate = false;
+          this.$apply();
+          setTimeout(() => {
+            _this.isFirstTime.locate = true;
+          }, 1500);
+        }
       },
-      beforespeak: function(e) {
-        // 检测授权
-        checkAndNavigate(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], "beforespeak");
+      async navigateSafely(_this, url) {
+        if (_this.isFirstTime[url]) {
+          _this.isFirstTime[url] = false;
+          _this.$apply();
+          const loggedin = await request.passLogin(_this, _this.config.checkLoginUrl, 'GET');
+          if (loggedin) {
+            // 检测授权
+            checkAndNavigate(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], url);
+          } else {
+            _this.config.showError('Err101')
+          }
+        }
       },
-      userrecord: function(e) {
-        // 检测授权
-        checkAndNavigate(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], "userrecord");
+      beforespeak(e) {
+        this.methods.navigateSafely(this, 'beforespeak');
+      },
+      userrecord(e) {
+        this.methods.navigateSafely(this, 'userrecord');
       },
       getGSNearBy(e) {
         let _this = this;
@@ -113,9 +138,9 @@
                 console.info("map.getGSNearBy : 首次request");
               }
               readyTorequest = setTimeout(() => {
-                //发送请求,取得附近敢说
+                //发送请求,取得附近敢说 发从延迟 200ms
                 request.locate(res, _this);
-              }, 350);
+              }, 200);
             },
             fail(res) {
               console.info("map.getGSNearBy :", res);
@@ -130,8 +155,10 @@
       this.config = this.$parent.globalData.config;
     }
     onShow() {
+      for (let i in this.isFirstTime) {
+        this.isFirstTime[i] = true;
+      }
     }
-    onHide() {
-    }
+    onHide() {}
   }
 </script>

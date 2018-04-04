@@ -1,28 +1,29 @@
+import request from './request';
 function checkSetting(setting) {
   return new Promise((resolve, reject) => {
-    console.log('准备申请权限：' + setting)
+    console.info('准备申请权限：' + setting)
     wx.authorize({
       scope: setting,
       success(res) {
-        console.log('申请权限 ' + setting + ' 为 ：' + true)
+        console.info('申请权限 ' + setting + ' 为 ：' + true)
         resolve(true)
       },
       fail(res) {
-        console.log('申请权限 ' + setting + ' 为 ：' + false)
+        console.warn('申请权限 ' + setting + ' 为 ：' + false)
         resolve(false)
       }
     });
   })
 }
 async function firstTimeCheckAndNavigate(settings, url) {
-  console.log('首次申请权限')
+  console.info('首次申请权限')
   let pass = true
   for (let i = 0; i < settings.length; i++) {
     const element = settings[i];
     let checked = await checkSetting(element)
     pass = pass && checked
   }
-  console.log('首次申请权限结果：' + pass)
+  console.info('首次申请权限结果：' + pass)
   if (pass) {
     wx.navigateTo({
       url: url
@@ -41,7 +42,7 @@ export default function checkAndNavigate(authsArray, url) {
     wx.getStorage({
       key: 'authSettingsDone',
       success(res) {
-        console.log('从本地缓存中得知已获取权限：' + res.data)
+        console.info('从本地缓存中得知已获取权限：' + res.data)
         resolve(res.data)
       },
       fail() {
@@ -60,14 +61,14 @@ export default function checkAndNavigate(authsArray, url) {
     } else {
       wx.getSetting({
         success(res) {
-          console.log('取得用户权限列表')
+          console.info('取得用户权限列表')
           let allPass = true
           for (let i = 0; i < authsArray.length; i++) {
             allPass = allPass && res.authSetting[authsArray[i]];
           }
-          console.log('用户权限是否全部取得：' + allPass)
+          console.info('用户权限是否全部取得：' + allPass)
           if (allPass) {
-            console.log('用户已取得所需权限')
+            console.info('用户已取得所需权限')
             //申请成功，此时应当在缓存当中记录
             wx.setStorage({
               key: "authSettingsDone",
