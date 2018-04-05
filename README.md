@@ -35,7 +35,7 @@ npm run dev
 
 ### 用到的包
 
-> [moment.js](https://github.com/moment/moment)
+> [moment.js](https://github.com/moment/moment)   
 > [xstream.js](https://github.com/staltz/xstream)
 
 ### license
