@@ -34,9 +34,14 @@ async function firstTimeCheckAndNavigate(settings, url) {
       icon: "none"
     });
   }
-
 }
-export default function checkAndNavigate(authsArray, url) {
+// 只在确定授权全部成功后执行
+function checkIfLogin(_this) {
+  if(!_this.$parent.globalData.userInfo) {
+    _this.$parent.login(_this.$parent);
+  }
+}
+export default function checkAndNavigate(_this, authsArray, url) {
 
   new Promise((resolve, reject) => {
     wx.getStorage({
@@ -62,7 +67,11 @@ export default function checkAndNavigate(authsArray, url) {
       wx.getSetting({
         success(res) {
           console.info('取得用户权限列表')
-          let allPass = true
+          let allPass = true;
+          let authsCount = 0;
+          for(let key in res.authSetting) {
+            authsCount++;
+          }
           for (let i = 0; i < authsArray.length; i++) {
             allPass = allPass && res.authSetting[authsArray[i]];
           }
@@ -77,7 +86,8 @@ export default function checkAndNavigate(authsArray, url) {
             wx.navigateTo({
               url: url
             });
-          } else if (undefined === allPass) {
+
+          } else if (undefined === allPass || authsCount !== authsArray.length) {
             //首次申请权限
             firstTimeCheckAndNavigate(authsArray, url)
           } else {
@@ -87,7 +97,13 @@ export default function checkAndNavigate(authsArray, url) {
               icon: "none"
             });
             setTimeout(() => {
-              wx.openSetting();
+              wx.openSetting({
+                success(res) {
+                  if(res.authSetting['scope.userInfo']) {
+                    checkIfLogin(_this);
+                  }
+                }
+              });
             }, 1500);
           }
         },

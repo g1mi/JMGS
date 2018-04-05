@@ -38,7 +38,7 @@
 </style>
 
 <template>
-  <view id="round-button" style="top: {{btnPos.y}}px;left: {{btnPos.x}}px;" class="rd-round-button {{'true' === shine ? buttonShine : ''}} {{buttonTouched}}" @touchstart.stop="touchstart" @touchend.stop="touchend" @touchmove.stop="touchmove" @tap.stop="tap">
+  <view id="round-button" style="top: {{btnPos.y}}px;left: {{btnPos.x}}px;" class="rd-round-button {{'true' === shine ? buttonShine : ''}} {{buttonTouched}}" @touchstart="touchstart" @touchend="touchend" @touchmove="touchmove" @tap="tap">
     {{name}}</view>
 </template>
 
@@ -72,14 +72,14 @@
     watch = {};
     methods = {
       touchstart(e) {
-        //console.log('touch started')
+        console.log('touch started')
         this.buttonTouched = "rd-round-button-tap";
         this.buttonShine = "";
         this.touchStarted = true;
         this.$apply()
       },
       touchend(e) {
-        //console.log('touch ended')
+        console.log('touch ended')
         let _this = this;
         setTimeout(() => {
           _this.buttonTouched = "";

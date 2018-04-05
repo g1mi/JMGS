@@ -95,27 +95,26 @@
         if (this.isFirstTime.locate) {
           //返回自己的所在地点
           this.mapCtx.moveToLocation();
-          this.isFirstTime.locate = false;
-          this.$apply();
-          setTimeout(() => {
-            _this.isFirstTime.locate = true;
-          }, 1500);
+          _this.methods.addTapLock(_this, 'locate')
         }
+      },
+      addTapLock(_this, url) {
+        _this.isFirstTime[url] = false;
+        _this.$apply();
+        setTimeout(() => {
+          _this.isFirstTime[url] = true;
+        }, 1500);
       },
       async navigateSafely(_this, url) {
         if (_this.isFirstTime[url]) {
-          _this.isFirstTime[url] = false;
-          _this.$apply();
-          setTimeout(() => {
-            _this.isFirstTime[url] = true;
-          }, 1500);
+          _this.methods.addTapLock(_this, url)
           const loggedin = await request.passLogin(_this, _this.config.checkLoginUrl, 'GET');
-          if (loggedin) {
+          //if (loggedin) {
             // 检测授权
-            checkAndNavigate(["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], url);
-          } else {
-            _this.config.showError('Err101')
-          }
+            checkAndNavigate(_this, ["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], url);
+          // } else {
+          //   _this.config.showError('Err101')
+          // }
         }
       },
       beforespeak(e) {
@@ -157,6 +156,7 @@
     onLoad() {
       this.mapCtx = wx.createMapContext("map", this);
       this.config = this.$parent.globalData.config;
+
     }
     onShow() {
       for (let i in this.isFirstTime) {
