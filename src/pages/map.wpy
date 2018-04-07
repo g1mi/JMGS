@@ -91,30 +91,30 @@
         });
       },
       locate() {
-        const _this = this
+        const page = this
         if (this.isFirstTime.locate) {
           //返回自己的所在地点
           this.mapCtx.moveToLocation();
-          _this.methods.addTapLock(_this, 'locate')
+          page.methods.addTapLock(page, 'locate')
         }
       },
-      addTapLock(_this, url) {
-        _this.isFirstTime[url] = false;
-        _this.$apply();
+      addTapLock(page, url) {
+        page.isFirstTime[url] = false;
+        page.$apply();
         setTimeout(() => {
-          _this.isFirstTime[url] = true;
+          page.isFirstTime[url] = true;
         }, 1500);
       },
-      async navigateSafely(_this, url) {
-        if (_this.isFirstTime[url]) {
-          _this.methods.addTapLock(_this, url)
-          const loggedin = await request.passLogin(_this, _this.config.checkLoginUrl, 'GET');
-          //if (loggedin) {
+      async navigateSafely(page, url) {
+        if (page.isFirstTime[url]) {
+          page.methods.addTapLock(page, url)
+          const loggedin = await request.passLogin(page, page.config.checkLoginUrl, 'GET');
+          if (loggedin) {
             // 检测授权
-            checkAndNavigate(_this, ["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], url);
-          // } else {
-          //   _this.config.showError('Err101')
-          // }
+            checkAndNavigate(page, ["scope.userInfo", "scope.userLocation", "scope.record", "scope.camera", "scope.writePhotosAlbum"], url);
+          } else {
+            page.config.showError('Err101')
+          }
         }
       },
       beforespeak(e) {
@@ -124,11 +124,11 @@
         this.methods.navigateSafely(this, 'userrecord');
       },
       getGSNearBy(e) {
-        let _this = this;
+        let page = this;
         let center = null;
         if ("begin" === e.type) {
           //清理markers
-          _this.markers.splice(0, _this.markers.length);
+          page.markers.splice(0, page.markers.length);
         } else {
           //仅仅只检测滑动结束
           this.mapCtx.getCenterLocation({
@@ -142,7 +142,7 @@
               }
               readyTorequest = setTimeout(() => {
                 //发送请求,取得附近敢说 发从延迟 200ms
-                request.locate(res, _this);
+                request.locate(res, page);
               }, 200);
             },
             fail(res) {

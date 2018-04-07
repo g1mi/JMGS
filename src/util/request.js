@@ -20,7 +20,7 @@ function locate(coordinates, _this) {
         console.info(tickets);
         for (let i = 0; i < tickets.length; i++) {
           let t = {
-            iconPath: '../assets/images/placeholder.png',
+            iconPath: '../assets/images/placeholder-'+tickets[i].hotLevel+'.png',
             id: i,
             ticketId: tickets[i].ticketId,
             longitude: tickets[i].ticketLocation[0],
@@ -118,9 +118,20 @@ function formatUrl(url, params) {
   return url;
 };
 
-function formatTime(milliseconds) {
-  return moment(milliseconds).fromNow();
+function formatTime(milliseconds, type) {
+  let timestamp = milliseconds;
+  if(typeof timestamp === 'string') {
+    timestamp = parseInt(timestamp, 10);
+  }
+  if(type === 'normal') {
+    return moment(timestamp).format('lll');
+  } else {
+    return moment(timestamp).fromNow();
+  }
+
 }
+
+
 
 async function passLogin(_this, url, method, data) {
   return await new Promise(resolve => {

@@ -6,11 +6,10 @@ export default config => {
     //----------afterspeak---------------
     beforPosChosed: '点击选取地图坐标',
     afterPosChosed: '点击重新选取坐标',
-    howLong: '1',
-    allowedCities: ['宝鸡市', '汉中市'],
-    howMany: '50',
-    howManyMax: '500',
-    unlimitNo: false,
+    howLong: '1', // 默认展示时长
+    allowedCities: ['宝鸡市'],
+    howMany: '50', // 默认参与人数
+    howManyMax: '500', // 最大参与人数
 
     //----------beforespeak---------------
     readyToRecord: '准备说：',
@@ -34,7 +33,8 @@ export default config => {
 
     retrievers: {
       ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
-      challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/'
+      challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/',
+      user: 'http://jmgs.viphk.ngrok.org/api/user/',
     },
 
     // locateUrl: 'https://jmgs.g1mi.cn/api/location',
@@ -48,7 +48,8 @@ export default config => {
 
     // retrievers: {
     //   ticket: 'https://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
-    //   challenge: 'https://jmgs.g1mi.cn/api/challenge/'
+    //   challenge: 'https://jmgs.g1mi.cn/api/challenge/',
+    //   user: 'http://jmgs.viphk.ngrok.org/api/user/',
     // },
 
     //错误信息：
@@ -84,6 +85,7 @@ export default config => {
     Err404: 'Err 404：文件上传失败~',
     Err405: 'Err 405：发布敢说时出现错误~',
     Wrn401: 'Wrn 401：视频录制已取消~',
+    Err501: 'Err 501：获取用户记录失败~',
   }
   return con
 }
