@@ -154,7 +154,7 @@
       },
       pickLoc() {
         //在小地图中选择展出坐标
-        let _this = this;
+        let page = this;
         console.info('afterspeak.pickLoc 准备选择展出坐标');
         this.pickerDisplay = "show";
         this.$invoke("mappicker", "showPopup");
@@ -171,7 +171,7 @@
             .createSelectorQuery()
             .select("#map")
             .boundingClientRect(function(rect) {
-              _this.controls.push({
+              page.controls.push({
                 id: 1,
                 iconPath: "../assets/images/pin.png",
                 position: {
@@ -182,7 +182,7 @@
                 },
                 clickable: false
               });
-              _this.$apply();
+              page.$apply();
             })
             .exec();
         }, 400); // a lucky number
@@ -201,16 +201,16 @@
         this.config.beforPosChosed = this.config.afterPosChosed;
         //在提交数据formdata中加入所选坐标
         this.mapCtx = this.mapCtx || wx.createMapContext("map");
-        let _this = this;
+        let page = this;
         this.mapCtx.getCenterLocation({
           success: function(res) {
-            _this.formData.where = {
+            page.formData.where = {
               longitude: res.longitude,
               latitude: res.latitude
             };
-            _this.posChosed = "show";
-            _this.$apply();
-            console.info('afterspeak.grabCoordinates 选择展出坐标', JSON.stringify(_this.formData.where));
+            page.posChosed = "show";
+            page.$apply();
+            console.info('afterspeak.grabCoordinates 选择展出坐标', JSON.stringify(page.formData.where));
           },
           fail: function(res) {
             console.error(res);
@@ -218,16 +218,16 @@
         });
       },
       submit() {
-        let _this = this
+        let page = this
         wx.showLoading({
           mask: true
         });
         // 上传前获取上传授权
         new Promise((resolve, reject) => {
           wx.request({
-            url: _this.config.ticketTokenUrl,
+            url: page.config.ticketTokenUrl,
             header: {
-              'authorization': _this.$parent.globalData.token
+              'authorization': page.$parent.globalData.token
             },
             success(res) {
               console.info('afterspeak.submit 上传授权成功');
@@ -244,18 +244,18 @@
             }
           })
         }).then(token => {
-          const owner = _this.$parent.globalData.userInfo.id;
+          const owner = page.$parent.globalData.userInfo.id;
           const filename = 'ticket/' + owner + '-' + Date.now();
           console.info('afterspeak.submit 准备上传文件');
-          request.upload(_this.acCtx.src,
+          request.upload(page.acCtx.src,
             (data) => {
               // callback response, 返回的是string， 坑死老子了
               // console.log(typeof data);
               const obj = JSON.parse(data);
               if (obj.ticketId) {
                 console.info('afterspeak.submit 上传成功， callback调用成功，返回ticketId：' + obj.ticketId);
-                _this.$preload('ticketId', obj.ticketId);
-                _this.$redirect('display');
+                page.$preload('ticketId', obj.ticketId);
+                page.$redirect('display');
               } else {
                 throw new Error(obj)
               }
@@ -264,13 +264,13 @@
               wx.navigateBack({
                 success() {
                   console.error('afterspeak.submit 文件上传失败：', error);
-                  _this.config.showError('Err302',error);
+                  page.config.showError('Err302',error);
                 }
               });
             }, {
-              region: _this.config.bucketRegionUrl, // 华北区
+              region: page.config.bucketRegionUrl, // 华北区
               token: token, // token
-              domain: _this.config.bucketUrl, // 对象存储服务器
+              domain: page.config.bucketUrl, // 对象存储服务器
               key: filename,
             },
             (progress) => {
@@ -278,17 +278,17 @@
             }, {
               //添加ticket
               "x:owner": owner,
-              "x:audioUrl": _this.config.bucketUrl + filename,
-              "x:duration": _this.formData.howLong * 1000 * 60 * 60 * 24,
-              "x:amount": _this.formData.howMany,
-              "x:location": JSON.stringify([_this.formData.where.longitude, _this.formData.where.latitude]),
+              "x:audioUrl": page.config.bucketUrl + filename,
+              "x:duration": page.formData.howLong * 1000 * 60 * 60 * 24,
+              "x:amount": page.formData.howMany,
+              "x:location": JSON.stringify([page.formData.where.longitude, page.formData.where.latitude]),
             }
           );
         }).catch(error => {
           console.error('afterspeak.submit 上传ticket提交失败：', error);
           wx.navigateBack({
             success() {
-              _this.config.showError('Err303',error);
+              page.config.showError('Err303',error);
             }
           });
         })
@@ -305,7 +305,7 @@
     events = {};
     onLoad(params, data) {
       console.info('afterspeak.onLoad');
-      let _this = this;
+      let page = this;
       this.config = this.$parent.globalData.config;
       //取得录音文件地址
       this.acCtx = this.$parent.globalData.acCtx
@@ -314,13 +314,13 @@
       wx.getLocation({
         type: "gcj02",
         success: function(res) {
-          _this.formData.where = {
+          page.formData.where = {
             longitude: res.longitude,
             latitude: res.latitude
           };
         },
         fail: function(err) {
-          _this.config.showError('Err301',err);
+          page.config.showError('Err301',err);
         }
       });
     }

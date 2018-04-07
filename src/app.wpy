@@ -135,7 +135,7 @@ export default class extends wepy.app {
       });
     }).then(res => {
       //取得token ，加入缓存中
-      app.globalData.config.showError('Msg001');
+      //app.globalData.config.showError('Msg001');
       const {authorization, userInfo} = res.data;
       app.globalData.userInfo = userInfo;
       this.globalData.token = authorization;
