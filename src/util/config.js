@@ -51,7 +51,7 @@ export default config => {
     retrievers: {
       ticket: 'http://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
       challenge: 'http://jmgs.g1mi.cn/api/challenge/',
-      user: 'http://jmgs.viphk.ngrok.org/api/user/',
+      user: 'http://jmgs.g1mi.cn/api/user/',
     },
 
     //错误信息：
