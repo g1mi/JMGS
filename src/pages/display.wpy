@@ -73,7 +73,7 @@
         this.$navigate('playvideo');
       },
       async tapBtn(e) {
-        const _this = this;
+        const page = this;
         try {
           console.log("display.tapBtn@roundbutton : 敢 按钮点击， 准备录制挑战视频");
           const agreed = await new Promise(resolve => {
@@ -107,7 +107,7 @@
                   // width
                 },
                 fail(error) {
-                  _this.config.showError('Wrn401');
+                  page.config.showError('Wrn401');
                   throw new Error('录制视频时出现错误或取消！');
                 }
               });
@@ -132,9 +132,9 @@
                     mask: true
                   });
                   wx.request({
-                    url: _this.$parent.globalData.config.challengeTokenUrl,
+                    url: page.$parent.globalData.config.challengeTokenUrl,
                     header: {
-                      'authorization': _this.$parent.globalData.token
+                      'authorization': page.$parent.globalData.token
                     },
                     success(res) {
                       console.log('display.tapBtn 获取上传challenge授权成功');
@@ -151,7 +151,7 @@
                   })
                 }
               });
-              const owner = _this.$parent.globalData.userInfo.id;
+              const owner = page.$parent.globalData.userInfo.id;
               const filename = 'challenge/' + owner + '-' + Date.now();
               const filePath = videoData.tempFilePath
               console.log('display.tapBtn  准备上传挑战视频文件');
@@ -160,9 +160,9 @@
                   //添加challenge
                   "x:isVertical": String(videoData.height > videoData.width), //参数只支持string
                   "x:owner": owner,
-                  "x:posterUrl": _this.$parent.globalData.config.bucketUrl + filename + '?vframe/png/offset/0', // 截图参数，jpg,0秒
-                  "x:belongTo": _this.ticketId,
-                  "x:videoUrl": _this.$parent.globalData.config.bucketUrl + filename,
+                  "x:posterUrl": page.$parent.globalData.config.bucketUrl + filename + '?vframe/png/offset/0', // 截图参数，jpg,0秒
+                  "x:belongTo": page.ticketId,
+                  "x:videoUrl": page.$parent.globalData.config.bucketUrl + filename,
                 };
                 console.warn(params);
                 request.upload(filePath,
@@ -181,13 +181,13 @@
                     wx.navigateBack({
                       success() {
                         console.log('display.tapBtn 文件上传失败：', error);
-                        _this.config.showError('Err404',error)
+                        page.config.showError('Err404',error)
                       }
                     });
                   }, {
-                    region: _this.$parent.globalData.config.bucketRegionUrl, // 华北区
+                    region: page.$parent.globalData.config.bucketRegionUrl, // 华北区
                     token: challengeToken, // token
-                    domain: _this.$parent.globalData.config.bucketUrl, // 对象存储服务器
+                    domain: page.$parent.globalData.config.bucketUrl, // 对象存储服务器
                     key: filename,
                   },
                   (progress) => {
@@ -203,10 +203,10 @@
               console.log('display.tapBtn : 新的challenge创建成功， id为' + createdChallengeId);
               wx.hideLoading();
               new Promise(resolve => { // request 获取创建后的challengeObj, 这里应当已最前面的challenge的时间戳为信标进行查询。
-                request.retrieveData(_this, createdChallengeId, 'challenge',
-                  _this.challenges.length ? {
+                request.retrieveData(page, createdChallengeId, 'challenge',
+                  page.challenges.length ? {
                     'isUpdate': true,
-                    'utilWhen': _this.challenges[0].createTime
+                    'utilWhen': page.challenges[0].createTime
                   } : null,
                   data => {
                     resolve(data);
@@ -222,9 +222,9 @@
                   for (let i = challenges.length - 1; i >= 0; i--) {
                     const data = challenges[i];
                     data.timeFromNow = request.formatTime(parseInt(data.createTime, 10));
-                    data.self = _this.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
-                    _this.challenges.splice(0, 0, data);
-                    _this.$apply();
+                    data.self = page.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
+                    page.challenges.splice(0, 0, data);
+                    page.$apply();
                   }
                 }
               })
@@ -235,13 +235,13 @@
         } catch (error) {
           console.error(error);
           wx.hideLoading();
-          _this.config.showError('Err405', error)
+          page.config.showError('Err405', error)
         }
       }
     };
     events = {};
     onLoad(params, data) {
-      const _this = this;
+      const page = this;
       this.config = this.$parent.globalData.config;
       wepy.showLoading({
         mask: true
@@ -255,30 +255,30 @@
           successData => {
             console.info('display.onLoad: 获得数据，准备展示', successData);
             resolve(successData);
-            //console.log(_this.$parent.globalData.acCtx.src);
+            //console.log(page.$parent.globalData.acCtx.src);
           },
           error => {
             reject(error)
           });
       }).then(data => {
         //--------------------赋值页面------------------
-        _this.ticketId = data.ticketId;
-        _this.ticketOwnerNickName = data.ticketOwnerNickName;
-        _this.ticketOwnerAvatarUrl = data.ticketOwnerAvatarUrl;
-        _this.audioUrl = data.audioUrl;
-        _this.$parent.globalData.acCtx.src = data.audioUrl;
-        _this.ticketId = data.ticketId;
+        page.ticketId = data.ticketId;
+        page.ticketOwnerNickName = data.ticketOwnerNickName;
+        page.ticketOwnerAvatarUrl = data.ticketOwnerAvatarUrl;
+        page.audioUrl = data.audioUrl;
+        page.$parent.globalData.acCtx.src = data.audioUrl;
+        page.ticketId = data.ticketId;
         const challenges = data.challenges;
         console.info(challenges);
         if (challenges.length) {
           for (let i = 0; i < challenges.length; i++) {
             const item = challenges[i];
             item.timeFromNow = request.formatTime(parseInt(item.createTime, 10));
-            item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
-            _this.challenges.push(item);
+            item.self = page.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
+            page.challenges.push(item);
           }
         }
-        _this.$apply();
+        page.$apply();
         //--------------------赋值页面------------------
       }).then(() => {
         //解锁页面
@@ -288,25 +288,25 @@
         console.error(error)
         wepy.navigateBack({
           success() {
-            _this.config.showError('Err401',error)
+            page.config.showError('Err401',error)
           }
         })
       });
     }
     onReady() {}
     onReachBottom() {
-      const _this = this;
-      if (!_this.onBottom) {
+      const page = this;
+      if (!page.onBottom) {
         wx.showNavigationBarLoading();
         wx.showLoading({
           title: '载入中...',
         })
         new Promise((resolve, reject) => {
-          request.retrieveData(this, _this.ticketId, 'ticket', {
+          request.retrieveData(this, page.ticketId, 'ticket', {
               'page': ++this.currentPage
             },
             successData => {
-              console.log('display.onReachBottom: 加载分页数据， 第  ' + (_this.currentPage + 1) + '  页。');
+              console.log('display.onReachBottom: 加载分页数据， 第  ' + (page.currentPage + 1) + '  页。');
               resolve(successData.challenges);
             },
             error => {
@@ -319,37 +319,37 @@
             for (let i = 0; i < challenges.length; i++) {
               const item = challenges[i];
               item.timeFromNow = request.formatTime(parseInt(item.createTime, 10));
-              item.self = _this.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
-              _this.challenges.push(item);
-              _this.$apply();
+              item.self = page.$parent.globalData.userInfo.avatarUrl === item.challengeOwnerAvatarUrl;
+              page.challenges.push(item);
+              page.$apply();
             }
             return;
           }
           // 没有分页数据了，
-          _this.onBottom = true;
-          _this.$apply();
+          page.onBottom = true;
+          page.$apply();
         }).then(() => {
           // 解除加载
           wx.hideNavigationBarLoading();
           wx.hideLoading()
         }).catch(err => {
-          _this.config.showError('Err402',err)
+          page.config.showError('Err402',err)
         })
       }
     }
     onPullDownRefresh() {
       wx.stopPullDownRefresh();
-      const _this = this;
+      const page = this;
       wx.showNavigationBarLoading();
       wx.showLoading({
         title: '正在加载...',
         mask: 'true'
       });
       new Promise(resolve => {
-        request.retrieveData(_this, _this.challenges[0].challengeId, 'challenge',
-          _this.challenges.length ? {
+        request.retrieveData(page, page.challenges[0].challengeId, 'challenge',
+          page.challenges.length ? {
             'isUpdate': true,
-            'utilWhen': _this.challenges[0].createTime
+            'utilWhen': page.challenges[0].createTime
           } : null,
           data => {
             resolve(data);
@@ -364,13 +364,13 @@
           for (let i = challenges.length - 1; i >= 0; i--) {
             const data = challenges[i];
             data.timeFromNow = request.formatTime(parseInt(data.createTime, 10));
-            data.self = _this.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
-            _this.challenges.splice(0, 0, data);
-            _this.$apply();
+            data.self = page.$parent.globalData.userInfo.avatarUrl === data.challengeOwnerAvatarUrl;
+            page.challenges.splice(0, 0, data);
+            page.$apply();
           }
         }
       }).catch(error => {
-        _this.config.showError('Err403',error)
+        page.config.showError('Err403',error)
         console.error(error);
       }).then(() => {
         wx.hideNavigationBarLoading();
