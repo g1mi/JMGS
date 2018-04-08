@@ -43,18 +43,17 @@
       </view>
     </view>
     <view class="weui-cells__title">当前展出天数限制为：
-      <i style="color:{{formData.howLong > 2 ? (formData.howLong  > 5 ? 'red' : 'orange') : 'green'}}">{{formData.howLong}}</i>
-      天</view>
+      <i style="color:{{formData.howLong > 2 ? (formData.howLong  > 5 ? 'red' : 'orange') : 'green'}}">{{formData.howLong}}</i> 天
+    </view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell">
         <view class="weui-cell__bd">时限(天)：</view>
         <view class="weui-cell__ft">
           <!-- remember to set the value with the data in config file, set it dynamically will cause the slider not working -->
-          <slider min="1" max="7" @change="changeTime"/>
+          <slider min="1" max="7" @change="changeTime" />
         </view>
       </view>
     </view>
-
     <view class="weui-cells__title">当前参与人数限制为：
       <i style="color:{{formData.howMany > 150 ? (formData.howMany  > 400 ? 'red' : 'orange') : 'green'}}">{{formData.howMany}}</i>人
     </view>
@@ -62,7 +61,7 @@
       <view class="weui-cell">
         <view class="weui-cell__bd">人数限制：</view>
         <view class="weui-cell__ft">
-          <slider min="50" max="500" @change="changeAmount"/>
+          <slider min="50" max="500" @change="changeAmount" />
         </view>
       </view>
     </view>
@@ -261,14 +260,15 @@
               }
             },
             (error) => {
+              console.error('afterspeak.submit 文件上传失败：');
+              console.log(error);
               wx.navigateBack({
                 success() {
-                  console.error('afterspeak.submit 文件上传失败：', error);
-                  page.config.showError('Err302',error);
+                  page.config.showError('Err302', error);
                 }
               });
             }, {
-              region: page.config.bucketRegionUrl, // 华北区
+              region: page.config.bucketRegionUrl, //
               token: token, // token
               domain: page.config.bucketUrl, // 对象存储服务器
               key: filename,
@@ -288,7 +288,7 @@
           console.error('afterspeak.submit 上传ticket提交失败：', error);
           wx.navigateBack({
             success() {
-              page.config.showError('Err303',error);
+              page.config.showError('Err303', error);
             }
           });
         })
@@ -320,7 +320,7 @@
           };
         },
         fail: function(err) {
-          page.config.showError('Err301',err);
+          page.config.showError('Err301', err);
         }
       });
     }
