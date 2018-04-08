@@ -4,11 +4,10 @@
 
 <template>
   <view class="container">
-    <userinfo nickname="我最帅" avatarSrc="../assets/images/default-avatar.png" ganshuoCounts="256" ganzuoCounts="22"></userinfo>
-    <infodetail :detail="detail"></infodetail>
-    <infodetail :detail="detail"></infodetail>
-    <infodetail :detail="detail"></infodetail>
-    <infodetail :detail="detail"></infodetail>
+    <userinfo :nickname.sync="nickName" :avatarSrc.sync="avatarUrl" :ganshuoCounts.sync="ganshuoCounts" :ganzuoCounts.sync="ganzuoCounts"></userinfo>
+    <repeat for="{{details}}" item="item">
+      <userinfodetail :detail.sync="item" @tap.user="tapDetail"></userinfodetail>
+    </repeat>
   </view>
 </template>
 
@@ -16,21 +15,23 @@
   import wepy from "wepy";
   import UserInfo from "@/components/userinfo";
   import UserInfoDetail from "@/components/userinfodetail";
+  import request from '@/util/request'
   export default class UserRecord extends wepy.page {
     config = {
       enablePullDownRefresh: true
     };
     components = {
       userinfo: UserInfo,
-      infodetail: UserInfoDetail
+      userinfodetail: UserInfoDetail
     };
     mixins = [];
     data = {
-      detail: {
-        avatarSrc: "../assets/images/default-avatar.png",
-        createTime: "2018/9/11 14:22",
-        status: "launching"
-      }
+      details: [],
+      nickName: '',
+      avatarUrl: '',
+      ganshuoCounts: '',
+      ganzuoCounts: '',
+      isFirstTime: true,
     };
     computed = {
       now() {
@@ -38,9 +39,68 @@
       }
     };
     onPullDownRefresh() {}
-    methods = {};
+    methods = {
+      tapDetail(ticketId, evt) {
+        if(this.isFirstTime) {
+          this.isFirstTime = false;
+          this.$apply();
+          this.$preload('ticketId',ticketId);
+          this.$navigate('display');
+          setTimeout(() => {
+            this.isFirstTime = true;
+            this.$apply();
+          }, 1000);
+        }
+      }
+    };
     events = {};
-    onLoad() {}
+    onLoad() {
+      const page = this;
+      page.nickName = page.$parent.globalData.userInfo.nickName;
+      page.avatarUrl = page.$parent.globalData.userInfo.avatarUrl;
+      page.$apply();
+      // detail 需要时间倒序排列
+      const userId = page.$parent.globalData.userInfo.id;
+
+      // 获取userinfo
+      request.retrieveData(page, userId, 'user', null,
+        successData=> {
+          if(successData.tickets) {
+            page.ganshuoCounts = successData.tickets.length;
+            page.ganzuoCounts = successData.challenges.length;
+          } else {
+            page.$parent.globalData.config.showError('Err501', successData)
+          }
+        },
+        error => {
+          page.$parent.globalData.config.showError('Err501', error)
+        });
+
+      // 获取userrecord
+      request.retrieveData(page, userId, 'user', {type: 'userrecord'},
+        successData => {
+          //console.log(successData);
+          if(successData.length) {
+            const tickets = successData.sort((a,b)=>a.createTime - b.createTime).reverse();
+            for (let i = 0; i < successData.length; i++) {
+              const record = successData[i];
+              page.details.push({
+                createTime: record.createTime,
+                createTimeFormated: request.formatTime(record.createTime, 'normal'),
+                avatarSrc: record.avatarUrl,
+                status: record.isAlive ? 'launching' : 'closed',
+                ticketId: record.ticketId
+              })
+              page.$apply();
+            }
+          } else {
+            page.$parent.globalData.config.showError('Err501', successData)
+          }
+        },
+        error => {
+          page.$parent.globalData.config.showError('Err501', error)
+        })
+    };
     onPullDownRefresh() {
       wx.stopPullDownRefresh();
     }

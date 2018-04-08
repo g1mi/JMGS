@@ -6,11 +6,10 @@ export default config => {
     //----------afterspeak---------------
     beforPosChosed: '点击选取地图坐标',
     afterPosChosed: '点击重新选取坐标',
-    howLong: '1',
-    allowedCities: ['宝鸡市', '汉中市'],
-    howMany: '50',
-    howManyMax: '500',
-    unlimitNo: false,
+    howLong: '1', // 默认展示时长
+    allowedCities: ['宝鸡市'],
+    howMany: '50', // 默认参与人数
+    howManyMax: '500', // 最大参与人数
 
     //----------beforespeak---------------
     readyToRecord: '准备说：',
@@ -21,35 +20,39 @@ export default config => {
     cancelRecording: '向上滑动松开 取消录音',
 
 
-    //----------application---------------
-    checkLoginUrl: 'http://jmgs.viphk.ngrok.org/api/auth/checkLogin',
+    //----------------------------------------application-dev--------------
+    // checkLoginUrl: 'http://jmgs.viphk.ngrok.org/api/auth/checkLogin',
 
-    locateUrl: 'http://jmgs.viphk.ngrok.org/api/location',
-    loginUrl: 'http://jmgs.viphk.ngrok.org/login',
-    bulltinInfoUrl: 'http://jmgs.viphk.ngrok.org/api/info',
-    ticketTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/ticket',
-    challengeTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/challenge',
-    bucketUrl: 'http://p6lo0xc1f.bkt.clouddn.com/',
+    // locateUrl: 'http://jmgs.viphk.ngrok.org/api/location',
+    // loginUrl: 'http://jmgs.viphk.ngrok.org/login',
+    // bulltinInfoUrl: 'http://jmgs.viphk.ngrok.org/api/info',
+    // ticketTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/ticket',
+    // challengeTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/challenge',
+    // bucketUrl: 'http://p6lo0xc1f.bkt.clouddn.com/',
+    // bucketRegionUrl: 'http://upload-z2.qiniup.com',
+
+    // retrievers: {
+    //   ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
+    //   challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/',
+    //   user: 'http://jmgs.viphk.ngrok.org/api/user/',
+    // },
+
+    //--------------------------------------application-prod--------------
+    checkLoginUrl: 'http://jmgs.g1mi.cn/api/auth/checkLogin',
+
+    locateUrl: 'http://jmgs.g1mi.cn/api/location',
+    loginUrl: 'http://jmgs.g1mi.cn/login',
+    bulltinInfoUrl: 'http://jmgs.g1mi.cn/api/info',
+    ticketTokenUrl: 'http://jmgs.g1mi.cn/api/auth/ticket',
+    challengeTokenUrl: 'http://jmgs.g1mi.cn/api/auth/challenge',
+    bucketUrl: 'http://cloud.jmgs.g1mi.cn/',
     bucketRegionUrl: 'http://upload-z2.qiniup.com',
 
     retrievers: {
-      ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
-      challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/'
+      ticket: 'http://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
+      challenge: 'http://jmgs.g1mi.cn/api/challenge/',
+      user: 'http://jmgs.viphk.ngrok.org/api/user/',
     },
-
-    // locateUrl: 'https://jmgs.g1mi.cn/api/location',
-    // checkLoginUrl: 'https://jmgs.g1mi.cn/api/auth/checkLogin',
-    // loginUrl: 'https://jmgs.g1mi.cn/login',
-    // bulltinInfoUrl: 'https://jmgs.g1mi.cn/api/info',
-    // ticketTokenUrl: 'https://jmgs.g1mi.cn/api/auth/ticket',
-    // challengeTokenUrl: 'https://jmgs.g1mi.cn/api/auth/challenge',
-    // bucketUrl: 'https://cloud.jmgs.g1mi.cn/',
-    // bucketRegionUrl: 'https://upload-z2.qiniup.com',
-
-    // retrievers: {
-    //   ticket: 'https://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
-    //   challenge: 'https://jmgs.g1mi.cn/api/challenge/'
-    // },
 
     //错误信息：
     showError: (code, content) => {
@@ -84,6 +87,7 @@ export default config => {
     Err404: 'Err 404：文件上传失败~',
     Err405: 'Err 405：发布敢说时出现错误~',
     Wrn401: 'Wrn 401：视频录制已取消~',
+    Err501: 'Err 501：获取用户记录失败~',
   }
   return con
 }

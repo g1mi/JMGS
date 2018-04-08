@@ -114,14 +114,23 @@
       defaultSrc: {
         defaultAvatar: '../assets/images/default-avatar.png',
         defaultPoster: '../assets/images/default-poster.jpg'
-      }
+      },
+      isFirstTime: true,
     }
     computed = {}
     events = {}
     watch = {}
     methods = {
       tap() {
-        this.$emit('tap', this.details.videoUrl);
+        if(this.isFirstTime) {
+          this.isFirstTime = false;
+          this.$apply();
+          this.$emit('tap', this.details.videoUrl);
+          setTimeout(() => {
+            this.isFirstTime = true;
+            this.$apply();
+          }, 500);
+        }
       }
     }
     onLoad() {}
