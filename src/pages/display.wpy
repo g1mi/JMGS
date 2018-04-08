@@ -22,14 +22,11 @@
 
 <script>
   import wepy from "wepy";
-
   import TicketDetail from "@/components/ticketdetail";
   import RoundButton from "@/components/roundbutton";
   import PlayRecordBtn from '@/components/playrecordbtn'
   import UserInfo from "@/components/userinfo";
-
   import request from '@/util/request'
-
   export default class Display extends wepy.page {
     config = {
       navigationBarTitleText: 'de 敢说',
@@ -181,7 +178,7 @@
                     wx.navigateBack({
                       success() {
                         console.log('display.tapBtn 文件上传失败：', error);
-                        page.config.showError('Err404',error)
+                        page.config.showError('Err404', error)
                       }
                     });
                   }, {
@@ -206,7 +203,7 @@
                 request.retrieveData(page, createdChallengeId, 'challenge',
                   page.challenges.length ? {
                     'isUpdate': true,
-                    'utilWhen': page.challenges[0].createTime
+                    'utilWhen': page.challenges[0].createTime ? page.challenges[0].createTime : ''
                   } : null,
                   data => {
                     resolve(data);
@@ -264,6 +261,7 @@
         //--------------------赋值页面------------------
         page.ticketId = data.ticketId;
         page.ticketOwnerNickName = data.ticketOwnerNickName;
+        wx.setNavigationBarTitle({ title: data.ticketOwnerNickName + ' de敢说'})
         page.ticketOwnerAvatarUrl = data.ticketOwnerAvatarUrl;
         page.audioUrl = data.audioUrl;
         page.$parent.globalData.acCtx.src = data.audioUrl;
@@ -288,7 +286,7 @@
         console.error(error)
         wepy.navigateBack({
           success() {
-            page.config.showError('Err401',error)
+            page.config.showError('Err401', error)
           }
         })
       });
@@ -333,7 +331,7 @@
           wx.hideNavigationBarLoading();
           wx.hideLoading()
         }).catch(err => {
-          page.config.showError('Err402',err)
+          page.config.showError('Err402', err)
         })
       }
     }
@@ -346,21 +344,34 @@
         mask: 'true'
       });
       new Promise(resolve => {
-        request.retrieveData(page, page.challenges[0].challengeId, 'challenge',
-          page.challenges.length ? {
-            'isUpdate': true,
-            'utilWhen': page.challenges[0].createTime
-          } : null,
-          data => {
-            resolve(data);
-            console.log('display.onPullDownRefresh : 取得challenge更新，准备展示');
-          },
-          error => {
-            throw error;
-          }
-        );
+        if (page.challenges.length > 0) {
+          request.retrieveData(page, page.challenges[0].challengeId, 'challenge',
+            page.challenges.length ? {
+              'isUpdate': true,
+              'utilWhen': page.challenges[0].createTime
+            } : null,
+            data => {
+              resolve(data);
+              console.log('display.onPullDownRefresh : 取得challenge更新，准备展示', data);
+            },
+            error => {
+              throw error;
+            }
+          );
+        } else {
+          request.retrieveData(this, page.ticketId, 'ticket', {
+              'page': this.currentPage
+            },
+            successData => {
+              console.log('display.onReachBottom: 加载分页数据， 第  ' + page.currentPage + '  页。');
+              resolve(successData.challenges);
+            },
+            error => {
+              reject(error)
+            });
+        }
       }).then(challenges => {
-        if (challenges.length) {
+        if (challenges.length > 0) {
           for (let i = challenges.length - 1; i >= 0; i--) {
             const data = challenges[i];
             data.timeFromNow = request.formatTime(parseInt(data.createTime, 10));
@@ -370,7 +381,7 @@
           }
         }
       }).catch(error => {
-        page.config.showError('Err403',error)
+        page.config.showError('Err403', error)
         console.error(error);
       }).then(() => {
         wx.hideNavigationBarLoading();

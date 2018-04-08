@@ -38,20 +38,20 @@ export default config => {
     // },
 
     //--------------------------------------application-prod--------------
-    checkLoginUrl: 'http://jmgs.g1mi.cn/api/auth/checkLogin',
+    checkLoginUrl: 'https://jmgs.g1mi.cn/api/auth/checkLogin',
 
-    locateUrl: 'http://jmgs.g1mi.cn/api/location',
-    loginUrl: 'http://jmgs.g1mi.cn/login',
-    bulltinInfoUrl: 'http://jmgs.g1mi.cn/api/info',
-    ticketTokenUrl: 'http://jmgs.g1mi.cn/api/auth/ticket',
-    challengeTokenUrl: 'http://jmgs.g1mi.cn/api/auth/challenge',
-    bucketUrl: 'http://cloud.jmgs.g1mi.cn/',
-    bucketRegionUrl: 'http://upload-z2.qiniup.com',
+    locateUrl: 'https://jmgs.g1mi.cn/api/location',
+    loginUrl: 'https://jmgs.g1mi.cn/login',
+    bulltinInfoUrl: 'https://jmgs.g1mi.cn/api/info',
+    ticketTokenUrl: 'https://jmgs.g1mi.cn/api/auth/ticket',
+    challengeTokenUrl: 'https://jmgs.g1mi.cn/api/auth/challenge',
+    bucketUrl: 'https://cloud.jmgs.g1mi.cn/',
+    bucketRegionUrl: 'https://upload-z2.qiniup.com',
 
     retrievers: {
-      ticket: 'http://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
-      challenge: 'http://jmgs.g1mi.cn/api/challenge/',
-      user: 'http://jmgs.g1mi.cn/api/user/',
+      ticket: 'https://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
+      challenge: 'https://jmgs.g1mi.cn/api/challenge/',
+      user: 'https://jmgs.g1mi.cn/api/user/',
     },
 
     //错误信息：

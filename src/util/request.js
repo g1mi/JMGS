@@ -86,7 +86,7 @@ function upload(filePath, success_cb, fail_cb, options, progress, params) {
           success_cb(res.data)
         }
       } catch (error) {
-        fail_cb(error)
+        fail_cb(res)
       }
     },
     fail: function (error) {
