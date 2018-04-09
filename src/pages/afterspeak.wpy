@@ -85,7 +85,7 @@
       <view class="weui-panel weui-panel_access {{pickerDisplay}}">
         <view class="weui-panel__hd">请在地图中选中展出的位置</view>
         <view class="weui-panel__bd  addPadding">
-          <map id="map" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" controls="{{controls}}" show-location style="width:100%; height:20rem;"></map>
+          <map id="map" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" controls="{{controls}}" bindcontroltap="controltap" show-location style="width:100%; height:20rem;"></map>
         </view>
         <view class="weui-flex addPadding" style="padding-bottom: 1rem;">
           <button size="mini" @tap="cancelPick" type="default" plain="true" style="width:40%">返回</button>
@@ -170,6 +170,7 @@
             .createSelectorQuery()
             .select("#map")
             .boundingClientRect(function(rect) {
+              // 地图中心 pin
               page.controls.push({
                 id: 1,
                 iconPath: "../assets/images/pin.png",
@@ -181,10 +182,28 @@
                 },
                 clickable: false
               });
+
+              // locate 图标
+              page.controls.push({
+                id: 2,
+                iconPath: "../assets/images/precision.png",
+                position: {
+                  left: rect.width - 40,
+                  top: rect.height - 40,
+                  width: 32,
+                  height: 32
+                },
+                clickable: true
+              });
               page.$apply();
             })
             .exec();
         }, 400); // a lucky number
+      },
+      controltap(e) {
+        if(e.controlId === 2) {
+          this.mapCtx.moveToLocation();
+        }
       },
       cancelPick() {
         //小地图选取中点击返回按钮
@@ -306,6 +325,7 @@
     onLoad(params, data) {
       console.info('afterspeak.onLoad');
       let page = this;
+      this.mapCtx = this.mapCtx || wx.createMapContext("map");
       this.config = this.$parent.globalData.config;
       //取得录音文件地址
       this.acCtx = this.$parent.globalData.acCtx
