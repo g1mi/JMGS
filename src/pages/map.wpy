@@ -17,13 +17,6 @@
     .speak;
     top: 78%;
   }
-  .pin {
-    .speak;
-    width: 1.5rem;
-    height: 1.5rem;
-    top: 50% - 1.5rem;
-    left: 50% - 0.75rem;
-  }
   .precision {
     .speak;
     width: 1.5rem;
@@ -35,15 +28,12 @@
 
 <template>
   <view>
-    <map id="map" class="full-screen" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" scale="16" controls="" bindcontroltap="" markers="{{markers}}" bindmarkertap="markertap" bindregionchange="getGSNearBy" show-location="true"></map>
+    <map id="map" class="full-screen" longitude="{{config.defaultLongitude}}" latitude="{{config.defaultLatitude}}" scale="16" controls="{{controls}}" bindcontroltap="" markers="{{markers}}" bindmarkertap="markertap" bindregionchange="getGSNearBy" show-location="true"></map>
     <cover-view class="speak" disabled="true">
       <cover-image src="../assets/images/speak.png" @tap.stop="beforespeak" />
     </cover-view>
     <cover-view class="record">
       <cover-image src="../assets/images/record.png" @tap.stop="userrecord" />
-    </cover-view>
-    <cover-view class="pin">
-      <cover-image src="../assets/images/pin.png" />
     </cover-view>
     <cover-view class="precision">
       <cover-image src="../assets/images/precision.png" @tap.stop="locate" />
@@ -66,6 +56,7 @@
       mapCtx: null, //map context
       config: null,
       markers: [],
+      controls:[],
       // 防多次点击
       isFirstTime: {
         locate: true,
@@ -135,7 +126,7 @@
             success(res) {
               //记录timer，后面的timer会取代之前的timer
               if (readyTorequest) {
-                console.warn('map.getGSNearBy.getCenterLocation: ')
+                console.warn('map.getGSNearBy.getCenterLocation: cancel timeout')
                 clearTimeout(readyTorequest);
               } else {
                 console.info("map.getGSNearBy : 首次request");
@@ -157,6 +148,24 @@
       this.mapCtx = wx.createMapContext("map", this);
       this.config = this.$parent.globalData.config;
 
+    };
+    onReady(){
+      const page = this;
+      wx.createSelectorQuery().select("#map").boundingClientRect(function (rect) {
+          // 地图中心 pin
+          page.controls.push({
+            id: 1,
+            iconPath: "../assets/images/pin.png",
+            position: {
+              left: rect.width / 2 - 14,
+              top: rect.height / 2 - 24,
+              width: 28,
+              height: 28
+            },
+            clickable: false
+          });
+          page.$apply();
+        }).exec();
     }
     onShow() {
       for (let i in this.isFirstTime) {
