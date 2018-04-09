@@ -95,7 +95,7 @@
       <view class="ui-slogan"> 敢说不是能儿，敢做才是事儿</view>
     </view>
     <view class="ui-record-box {{'small' === size ? 'hide' : ''}}">
-      <view class="ui-user-record">敢说： <i style="font-size:22rpx">{{ganshuoCounts}}</i> | 敢做： <i style="font-size:22rpx">{{ganzuoCounts}}</i> </view>
+      <view class="ui-user-record">敢说： <i style="font-size:22rpx;color:red;">{{ganshuoCounts}}</i> | 敢做： <i style="font-size:22rpx;color:darkblue;">{{ganzuoCounts}}</i> </view>
     </view>
   </view>
 </template>

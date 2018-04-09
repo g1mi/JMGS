@@ -18,7 +18,8 @@
   import request from '@/util/request'
   export default class UserRecord extends wepy.page {
     config = {
-      enablePullDownRefresh: true
+      enablePullDownRefresh: true,
+      navigationBarTitleText: "敢说记录",
     };
     components = {
       userinfo: UserInfo,
@@ -103,6 +104,7 @@
     };
     onPullDownRefresh() {
       wx.stopPullDownRefresh();
+      this.onLoad();
     }
   }
 </script>
