@@ -1,9 +1,9 @@
 export default config => {
   let con = {
-    //----------map---------------宝鸡
+    // ----------map---------------宝鸡
     defaultLongitude: '107.235982',
     defaultLatitude: '34.360620',
-    //----------afterspeak---------------
+    // ----------afterspeak---------------
     beforPosChosed: '点击选取地图坐标',
     afterPosChosed: '点击重新选取坐标',
     howLong: '1', // 默认展示时长
@@ -11,7 +11,7 @@ export default config => {
     howMany: '50', // 默认参与人数
     howManyMax: '500', // 最大参与人数
 
-    //----------beforespeak---------------
+    // ----------beforespeak---------------
     readyToRecord: '准备说：',
     buttonTip: '请长按录音...',
     recording: '正在录音...',
@@ -20,41 +20,41 @@ export default config => {
     cancelRecording: '向上滑动松开 取消录音',
 
 
-    //----------------------------------------application-dev--------------
-    checkLoginUrl: 'http://jmgs.viphk.ngrok.org/api/auth/checkLogin',
+    // ----------------------------------------application-dev--------------
+    // checkLoginUrl: 'http://jmgs.viphk.ngrok.org/api/auth/checkLogin',
 
-    locateUrl: 'http://jmgs.viphk.ngrok.org/api/location',
-    loginUrl: 'http://jmgs.viphk.ngrok.org/login',
-    bulltinInfoUrl: 'http://jmgs.viphk.ngrok.org/api/info',
-    ticketTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/ticket',
-    challengeTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/challenge',
-    bucketUrl: 'http://p6lo0xc1f.bkt.clouddn.com/',
-    bucketRegionUrl: 'http://upload-z2.qiniup.com',
-
-    retrievers: {
-      ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
-      challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/',
-      user: 'http://jmgs.viphk.ngrok.org/api/user/',
-    },
-
-    //--------------------------------------application-prod--------------
-    // checkLoginUrl: 'https://jmgs.g1mi.cn/api/auth/checkLogin',
-
-    // locateUrl: 'https://jmgs.g1mi.cn/api/location',
-    // loginUrl: 'https://jmgs.g1mi.cn/login',
-    // bulltinInfoUrl: 'https://jmgs.g1mi.cn/api/info',
-    // ticketTokenUrl: 'https://jmgs.g1mi.cn/api/auth/ticket',
-    // challengeTokenUrl: 'https://jmgs.g1mi.cn/api/auth/challenge',
-    // bucketUrl: 'https://cloud.jmgs.g1mi.cn/',
-    // bucketRegionUrl: 'https://upload-z2.qiniup.com',
+    // locateUrl: 'http://jmgs.viphk.ngrok.org/api/location',
+    // loginUrl: 'http://jmgs.viphk.ngrok.org/login',
+    // bulltinInfoUrl: 'http://jmgs.viphk.ngrok.org/api/info',
+    // ticketTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/ticket',
+    // challengeTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/challenge',
+    // bucketUrl: 'http://p6lo0xc1f.bkt.clouddn.com/',
+    // bucketRegionUrl: 'http://upload-z2.qiniup.com',
 
     // retrievers: {
-    //   ticket: 'https://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
-    //   challenge: 'https://jmgs.g1mi.cn/api/challenge/',
-    //   user: 'https://jmgs.g1mi.cn/api/user/',
+    //   ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
+    //   challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/',
+    //   user: 'http://jmgs.viphk.ngrok.org/api/user/',
     // },
 
-    //错误信息：
+    // --------------------------------------application-prod--------------
+    checkLoginUrl: 'https://jmgs.g1mi.cn/api/auth/checkLogin',
+
+    locateUrl: 'https://jmgs.g1mi.cn/api/location',
+    loginUrl: 'https://jmgs.g1mi.cn/login',
+    bulltinInfoUrl: 'https://jmgs.g1mi.cn/api/info',
+    ticketTokenUrl: 'https://jmgs.g1mi.cn/api/auth/ticket',
+    challengeTokenUrl: 'https://jmgs.g1mi.cn/api/auth/challenge',
+    bucketUrl: 'https://cloud.jmgs.g1mi.cn/',
+    bucketRegionUrl: 'https://upload-z2.qiniup.com',
+
+    retrievers: {
+      ticket: 'https://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
+      challenge: 'https://jmgs.g1mi.cn/api/challenge/',
+      user: 'https://jmgs.g1mi.cn/api/user/',
+    },
+
+    // 错误信息：
     showError: (code, content) => {
       if (content) {
         wx.showModal({
