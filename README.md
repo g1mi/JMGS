@@ -22,6 +22,12 @@ npm run dev
 - [x] 添加敢说
 - [x] 浏览敢说记录
 
+#### 后台功能
+
+- [ ] bulletin展报信息
+- [ ] 修改bulletin展报信息（自定义统计变量）
+- [ ] 定时统计（今日，总等），定时删除（过期数据删除）
+
 #### 排序功能
 
 - [ ] 时间倒序
@@ -35,7 +41,7 @@ npm run dev
 
 ### 用到的包
 
-> [moment.js](https://github.com/moment/moment)   
+> [moment.js](https://github.com/moment/moment)
 > [xstream.js](https://github.com/staltz/xstream)
 
 ### license

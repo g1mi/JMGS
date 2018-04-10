@@ -112,6 +112,7 @@ export default class extends wepy.app {
                   success: function (data) {
                     if (data.error) {
                       app.globalData.config.showError('Err002', data.error);
+                      reject();
                     } else {
                       //返回的数据中应当包含jwt
                       resolve(data)
@@ -126,6 +127,7 @@ export default class extends wepy.app {
               fail(res) {
                 console.warn("获取用户信息失败！");
                 app.globalData.config.showError('Err004', res);
+                reject();
               }
             });
           } else {
@@ -139,6 +141,7 @@ export default class extends wepy.app {
       const {authorization, userInfo} = res.data;
       app.globalData.userInfo = userInfo;
       this.globalData.token = authorization;
+      console.info('登陆成功！');
     })
   }
 }
