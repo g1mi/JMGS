@@ -13,8 +13,8 @@
     <bulletin></bulletin>
     <view id="btn-speak" class="recorder {{animation}}">
       <button type="{{buttonState.type}}" @tap="tip" @longpress="record" @touchend="touchend" @touchcancel="" hover-stop-propagation="true">
-        {{buttonState.content}}
-      </button>
+          {{buttonState.content}}
+        </button>
     </view>
   </view>
 </template>
@@ -145,9 +145,6 @@
         }
       });
       this.recorderManager = this.recorderManager || rm;
-    }
-    onShow() {
-      const page = this
       new Promise((resolve, reject) => {
         wx.request({
           url: page.$parent.globalData.config.bulltinInfoUrl,
@@ -155,7 +152,6 @@
           header: {
             "authorization": page.$parent.globalData.token
           },
-          data: {},
           success: function(res) {
             if (res.data.bulletinInfo) {
               resolve(res.data.bulletinInfo)
@@ -164,7 +160,7 @@
           },
           fail: function(err) {
             console.error("beforespeak.onLoad: 获取bulletinInfo失败");
-            page.$parent.globalData.config.showError('Err201',err);
+            page.$parent.globalData.config.showError('Err201', err);
           }
         });
       }).then(info => {
@@ -173,9 +169,10 @@
         page.$parent.globalData.bulletinTyped = !page.$parent.globalData.bulletinTyped
       })
     }
-    onUnload() {
+    onShow() {
+      const page = this
     }
-    onReady() {
-    }
+    onUnload() {}
+    onReady() {}
   }
 </script>
