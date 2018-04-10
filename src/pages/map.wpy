@@ -166,6 +166,7 @@
           });
           page.$apply();
         }).exec();
+      this.mapCtx.moveToLocation();
     }
     onShow() {
       for (let i in this.isFirstTime) {

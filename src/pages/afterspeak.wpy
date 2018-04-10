@@ -161,6 +161,7 @@
         wx.showLoading({
           mask: true
         });
+        this.mapCtx.moveToLocation();
         //在动画结束后加载pin
         setTimeout(() => {
           //hideloading
