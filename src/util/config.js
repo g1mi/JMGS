@@ -20,39 +20,39 @@ export default config => {
     cancelRecording: '向上滑动松开 取消录音',
 
 
-    // ----------------------------------------application-dev-------------- 这个是本地开发用的，我买的ngrok.cc 内网渗透，比花生壳好用太特么多的多的多了，从来没断，花生壳平均每分钟断两次，害的我一下午以为我程序的毛病，骗老子6块钱
-    checkLoginUrl: 'http://jmgs.viphk.ngrok.org/api/auth/checkLogin',
+    // ----------------------------------------application-dev--------------
+    // checkLoginUrl: 'http://jmgs.viphk.ngrok.org/api/auth/checkLogin',
 
-    locateUrl: 'http://jmgs.viphk.ngrok.org/api/location',
-    loginUrl: 'http://jmgs.viphk.ngrok.org/login',
-    bulltinInfoUrl: 'http://jmgs.viphk.ngrok.org/api/info',
-    ticketTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/ticket',
-    challengeTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/challenge',
-    bucketUrl: 'http://p6lo0xc1f.bkt.clouddn.com/',
-    bucketRegionUrl: 'http://upload-z2.qiniup.com',
-
-    retrievers: {
-      ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
-      challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/',
-      user: 'http://jmgs.viphk.ngrok.org/api/user/',
-    },
-
-    // --------------------------------------application-prod--------------
-    // checkLoginUrl: 'https://your-host/api/auth/checkLogin',
-
-    // locateUrl: 'https://your-host/api/location',
-    // loginUrl: 'https://your-host/login',
-    // bulltinInfoUrl: 'https://your-host/api/info',
-    // ticketTokenUrl: 'https://your-host/api/auth/ticket',
-    // challengeTokenUrl: 'https://your-host/api/auth/challenge',
-    // bucketUrl: 'bucketUrl',
-    // bucketRegionUrl: 'bucket上传区url',
+    // locateUrl: 'http://jmgs.viphk.ngrok.org/api/location',
+    // loginUrl: 'http://jmgs.viphk.ngrok.org/login',
+    // bulltinInfoUrl: 'http://jmgs.viphk.ngrok.org/api/info',
+    // ticketTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/ticket',
+    // challengeTokenUrl: 'http://jmgs.viphk.ngrok.org/api/auth/challenge',
+    // bucketUrl: 'http://p6lo0xc1f.bkt.clouddn.com/',
+    // bucketRegionUrl: 'http://upload-z2.qiniup.com',
 
     // retrievers: {
-    //   ticket: 'https://your-host/api/ticket/', // 加/， 用来组合url
-    //   challenge: 'https://your-host/api/challenge/',
-    //   user: 'https://your-host/api/user/',
+    //   ticket: 'http://jmgs.viphk.ngrok.org/api/ticket/', // 加/， 用来组合url
+    //   challenge: 'http://jmgs.viphk.ngrok.org/api/challenge/',
+    //   user: 'http://jmgs.viphk.ngrok.org/api/user/',
     // },
+
+    // --------------------------------------application-prod--------------
+    checkLoginUrl: 'https://jmgs.g1mi.cn/api/auth/checkLogin',
+
+    locateUrl: 'https://jmgs.g1mi.cn/api/location',
+    loginUrl: 'https://jmgs.g1mi.cn/login',
+    bulltinInfoUrl: 'https://jmgs.g1mi.cn/api/info',
+    ticketTokenUrl: 'https://jmgs.g1mi.cn/api/auth/ticket',
+    challengeTokenUrl: 'https://jmgs.g1mi.cn/api/auth/challenge',
+    bucketUrl: 'https://cloud.jmgs.g1mi.cn/',
+    bucketRegionUrl: 'https://upload-z2.qiniup.com',
+
+    retrievers: {
+      ticket: 'https://jmgs.g1mi.cn/api/ticket/', // 加/， 用来组合url
+      challenge: 'https://jmgs.g1mi.cn/api/challenge/',
+      user: 'https://jmgs.g1mi.cn/api/user/',
+    },
 
     // 错误信息：
     showError: (code, content) => {
