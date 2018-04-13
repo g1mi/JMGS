@@ -71,6 +71,7 @@ npm run dev
 <img src="screenshots/微信图片_20180413200745.jpg" height="50%" />
 
 <img src="screenshots/微信图片_20180413200748.jpg" height="50%" />
+<img src="screenshots/电脑截屏.png" height="50%" />
 
 ### license
 
