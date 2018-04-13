@@ -60,6 +60,8 @@ npm run dev
 
 ### 屏幕截图
 
+
+<div style="display:flex">
 <img src="screenshots/微信图片_20180413200715.jpg" width="283px" />
 <img src="screenshots/微信图片_20180413200721.png" width="283px" />
 <img src="screenshots/微信图片_20180413200731.png" width="283px" />
@@ -72,6 +74,8 @@ npm run dev
 
 <img src="screenshots/微信图片_20180413200748.jpg" width="283px" />
 <img src="screenshots/电脑截屏.png" height="50%" />
+</div>
+
 
 ### license
 
