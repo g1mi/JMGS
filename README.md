@@ -9,7 +9,7 @@ git clone https://github.com/g1mi/JMGS.git your-path
 cd your-path
 npm i  //等待安装完所需要的包
 npm run dev
-上面步骤完成后用微信开发者工具导入目录下dist文件夹即可，util文件夹下的config.sample.js改名为config.js，里面的配置根据自己的情况修改
+上面步骤完成后用微信开发者工具导入目录下dist文件夹即可
 ```
 
 ### 基本功能
