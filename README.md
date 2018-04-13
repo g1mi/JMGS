@@ -60,17 +60,17 @@ npm run dev
 
 ### 屏幕截图
 
-<img src="screenshots/微信图片_20180413200715.jpg" height="50%" />
-<img src="screenshots/微信图片_20180413200721.png" height="50%" />
-<img src="screenshots/微信图片_20180413200731.png" height="50%" />
-<img src="screenshots/微信图片_20180413200735.jpg" height="50%" />
-<img src="screenshots/微信图片_20180413200728.png" height="50%" />
-<img src="screenshots/微信图片_20180413200724.png" height="50%" />
-<img src="screenshots/微信图片_20180413200742.png" height="50%" />
-<img src="screenshots/微信图片_20180413200738.png" height="50%" />
-<img src="screenshots/微信图片_20180413200745.jpg" height="50%" />
+<img src="screenshots/微信图片_20180413200715.jpg" width="283px" />
+<img src="screenshots/微信图片_20180413200721.png" width="283px" />
+<img src="screenshots/微信图片_20180413200731.png" width="283px" />
+<img src="screenshots/微信图片_20180413200735.jpg" width="283px" />
+<img src="screenshots/微信图片_20180413200728.png" width="283px" />
+<img src="screenshots/微信图片_20180413200724.png" width="283px" />
+<img src="screenshots/微信图片_20180413200742.png" width="283px" />
+<img src="screenshots/微信图片_20180413200738.png" width="283px" />
+<img src="screenshots/微信图片_20180413200745.jpg" width="283px" />
 
-<img src="screenshots/微信图片_20180413200748.jpg" height="50%" />
+<img src="screenshots/微信图片_20180413200748.jpg" width="283px" />
 <img src="screenshots/电脑截屏.png" height="50%" />
 
 ### license
