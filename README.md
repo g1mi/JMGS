@@ -56,8 +56,10 @@ npm run dev
 
 ### 用到的包
 
-> [moment.js](https://github.com/moment/moment)
+> [moment.js](https://github.com/moment/moment)    
 > [xstream.js](https://github.com/staltz/xstream)
+
+> [七牛对象存储](https://www.qiniu.com/products/kodo) 很地道的开发者友好云，dev几乎是免费开发，20g呢！    
 
 ### 屏幕截图
 
